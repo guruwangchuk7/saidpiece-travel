@@ -75,6 +75,7 @@ export default function Header() {
                                 </div>
                             </li>
                             <li><a href="#">Browse Trips</a></li>
+                            <li><a href="#">Trip Wizard</a></li>
                             <li><a href="#">Inspiration</a></li>
                             <li><a href="#">About WT</a></li>
                         </ul>
