@@ -180,7 +180,8 @@ ul {
   gap: 40px;
 }
 
-.nav-links a {
+.nav-links>li>a,
+.nav-links>li>.nav-button {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.875rem;
@@ -192,45 +193,59 @@ ul {
   transition: color 0.3s ease-in-out;
 }
 
-.global-header.state-dark .nav-links a {
+.nav-links>li>.nav-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+
+.global-header.state-dark .nav-links>li>a,
+.global-header.state-dark .nav-links>li>.nav-button {
   color: var(--color-white);
 }
 
-.global-header.state-light .nav-links a {
+.global-header.state-light .nav-links>li>a,
+.global-header.state-light .nav-links>li>.nav-button {
   color: var(--color-text-primary);
 }
 
-.nav-links a:hover {
+.nav-links>li>a:hover,
+.nav-links>li>.nav-button:hover,
+.nav-links>li>.nav-button.is-open {
   color: var(--color-brand);
 }
 
-.nav-links a::after {
-  content: '▾';
-  font-size: 0.7em;
-  margin-top: -2px;
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotate {
+  transform: rotate(180deg);
 }
 
 /* Mega Menu */
-.mega-menu {
+.mega-menu-panel {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: var(--color-white);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-  width: 900px;
-  padding: 40px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
+  width: 250px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
   z-index: 1000;
   border-top: 3px solid var(--color-brand);
 }
 
-.nav-links li:hover .mega-menu {
+.mega-menu-panel.is-open {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(0);

@@ -1,10 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isDestinationsOpen, setIsDestinationsOpen] = useState(false);
+    const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const handleMouseEnter = () => {
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = setTimeout(() => {
+            setIsDestinationsOpen(true);
+        }, 150);
+    };
+
+    const handleMouseLeave = () => {
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = setTimeout(() => {
+            setIsDestinationsOpen(false);
+        }, 150);
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -39,51 +55,21 @@ export default function Header() {
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li style={{ position: 'relative' }}>
-                                <a href="#">Destinations</a>
-                                <div className="mega-menu">
+                            <li className="nav-item" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={{ position: 'relative' }}>
+                                <button className="nav-button" aria-expanded={isDestinationsOpen} aria-controls="mega-menu-destinations">
+                                    Destinations
+                                    <svg className={`chevron ${isDestinationsOpen ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                <div id="mega-menu-destinations" className={`mega-menu-panel ${isDestinationsOpen ? 'is-open' : ''}`}>
                                     <div className="mega-menu-col">
-                                        <h5>Africa</h5>
                                         <ul>
-                                            <li><a href="#">Botswana</a></li>
-                                            <li><a href="#">Egypt</a></li>
-                                            <li><a href="#">Kenya</a></li>
-                                            <li><a href="#">Morocco</a></li>
-                                            <li><a href="#">Namibia</a></li>
-                                            <li><a href="#">Tanzania</a></li>
-                                        </ul>
-                                    </div>
-                                    <div className="mega-menu-col">
-                                        <h5>Asia & Pacific</h5>
-                                        <ul>
-                                            <li><a href="#">Bhutan</a></li>
-                                            <li><a href="#">India</a></li>
-                                            <li><a href="#">Japan</a></li>
-                                            <li><a href="#">Nepal</a></li>
-                                            <li><a href="#">New Zealand</a></li>
-                                            <li><a href="#">Vietnam</a></li>
-                                        </ul>
-                                    </div>
-                                    <div className="mega-menu-col">
-                                        <h5>Europe</h5>
-                                        <ul>
-                                            <li><a href="#">Alps</a></li>
-                                            <li><a href="#">France</a></li>
-                                            <li><a href="#">Greece</a></li>
-                                            <li><a href="#">Iceland</a></li>
-                                            <li><a href="#">Italy</a></li>
-                                            <li><a href="#">Spain</a></li>
-                                        </ul>
-                                    </div>
-                                    <div className="mega-menu-col">
-                                        <h5>Americas</h5>
-                                        <ul>
-                                            <li><a href="#">Alaska</a></li>
-                                            <li><a href="#">American West</a></li>
-                                            <li><a href="#">Costa Rica</a></li>
-                                            <li><a href="#">Galapagos</a></li>
-                                            <li><a href="#">Patagonia</a></li>
-                                            <li><a href="#">Peru</a></li>
+                                            <li><a href="#">Western Bhutan</a></li>
+                                            <li><a href="#">Eastern Bhutan</a></li>
+                                            <li><a href="#">Central Bhutan</a></li>
+                                            <li><a href="#">North Bhutan</a></li>
+                                            <li><a href="#">South Bhutan</a></li>
                                         </ul>
                                     </div>
                                 </div>
