@@ -102,41 +102,65 @@ ul {
 }
 
 /* Header & Nav */
+.global-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.global-header.state-dark {
+  background-color: transparent;
+}
+
+.global-header.state-light {
+  background-color: var(--color-white);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
 .top-utility-bar {
-  background-color: #F9F8F6;
-  padding: 8px 0;
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid #EEEEEE;
+  padding-top: 10px;
+  font-size: 0.9rem;
+  /* Increased font size */
+  transition: color 0.3s ease-in-out;
 }
 
 .top-utility-bar .container {
   display: flex;
   justify-content: flex-end;
   gap: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.global-header.state-dark .top-utility-bar {
+  color: var(--color-white);
+}
+
+.global-header.state-dark .top-utility-bar .container {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.global-header.state-light .top-utility-bar {
+  color: var(--color-text-secondary);
+}
+
+.global-header.state-light .top-utility-bar .container {
+  border-bottom-color: #E0E0E0;
 }
 
 .top-utility-bar a {
-  transition: color 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .top-utility-bar a:hover {
-  color: var(--color-brand);
+  opacity: 0.7;
 }
 
-.main-header {
-  position: sticky;
-  top: 0;
-  background-color: var(--color-white);
-  z-index: 100;
-  transition: box-shadow 0.3s ease;
-}
-
-.main-header.scrolled {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.nav-container {
+.nav-container-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -161,11 +185,19 @@ ul {
   letter-spacing: 0.12em;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
   position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.global-header.state-dark .nav-links a {
+  color: var(--color-white);
+}
+
+.global-header.state-light .nav-links a {
+  color: var(--color-text-primary);
 }
 
 .nav-links a:hover {

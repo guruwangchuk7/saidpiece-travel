@@ -15,7 +15,7 @@ export default function Header() {
     }, []);
 
     return (
-        <>
+        <header className={`global-header ${isScrolled ? 'state-light' : 'state-dark'}`}>
             {/* 2.1 Global Header & Navigation */}
             <div className="top-utility-bar">
                 <div className="container">
@@ -25,15 +25,15 @@ export default function Header() {
                     <a href="#">Contact Us</a>
                 </div>
             </div>
-            <header className={`main-header ${isScrolled ? 'scrolled' : ''}`}>
-                <div className="container nav-container">
+            <div className="main-nav-bar">
+                <div className="container nav-container-inner">
                     <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
                         <Image
                             src="/images/logo/saidpiecetravellogo.png"
                             alt="Saidpiece Travel Logo"
-                            width={180}
-                            height={60}
-                            style={{ objectFit: 'contain', filter: 'brightness(0)' }}
+                            width={240}
+                            height={80}
+                            style={{ objectFit: 'contain', filter: isScrolled ? 'brightness(0)' : 'brightness(0) invert(1)', transition: 'filter 0.3s ease' }}
                             priority
                         />
                     </div>
@@ -94,7 +94,7 @@ export default function Header() {
                         </ul>
                     </nav>
                 </div>
-            </header>
-        </>
+            </div>
+        </header>
     );
 }
