@@ -2,7 +2,7 @@
 
 A premium, modern travel landing page showcasing the beauty and wilderness of Bhutan. Built with **Next.js 16**, **React 19**, and **Tailwind CSS 4**.
 
-![Bhutan Travel](/public/images/bhutan/main1.JPG)
+Bhutan Travel
 
 ## ✨ Features
 
