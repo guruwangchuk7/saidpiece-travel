@@ -9,7 +9,7 @@ const testimonials = [
         location: "San Francisco, CA"
     },
     {
-        quote: "Wilderness Travel exceeded every expectation. The level of detail and care in the itinerary design made for a truly immersive and stress-free journey.",
+        quote: "Saidpiece Travel exceeded every expectation. The level of detail and care in the itinerary design made for a truly immersive and stress-free journey.",
         author: "Robert Chen",
         location: "London, UK"
     },

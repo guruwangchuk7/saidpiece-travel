@@ -14,7 +14,7 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: "Wilderness Travel - Authentic Travel Experiences",
+  title: "Saidpiece Travel - Authentic Travel Experiences",
   description: "Pioneering Adventure Travel for 45 Years",
 };
 

@@ -60,4 +60,4 @@ npm run build
 
 ---
 
-*Crafted for the Wilderness Experience by guruwangchuk7.*
+*Crafted for the Saidpiece Experience by guruwangchuk7.*
