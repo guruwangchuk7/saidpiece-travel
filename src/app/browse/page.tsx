@@ -25,14 +25,14 @@ export default function BrowseTrips() {
     });
     const [sortBy, setSortBy] = useState('Default');
 
-    const handleFilterChange = (category: keyof typeof filters, value: any) => {
+    const handleFilterChange = (category: keyof typeof filters, value: string | number) => {
         setIsLoading(true);
         setFilters(prev => {
-            const current = (prev[category] as any[]);
+            const current = prev[category] as (string | number)[];
             const next = current.includes(value)
                 ? current.filter(item => item !== value)
                 : [...current, value];
-            return { ...prev, [category]: next };
+            return { ...prev, [category]: next } as typeof filters;
         });
         setTimeout(() => setIsLoading(false), 500);
     };
