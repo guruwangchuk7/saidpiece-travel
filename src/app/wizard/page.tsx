@@ -184,17 +184,7 @@ export default function TripWizard() {
                     <div className="wizard-step-content animation-slide-in lead-capture-step">
                         <h2 className="wizard-question">Let&apos;s start planning your dream trip!</h2>
                         <div className="wizard-lead-container">
-                            <div className="wizard-expert-panel">
-                                <div className="expert-avatar"></div>
-                                <div className="expert-info">
-                                    <h4>Talk to a Bhutan Travel Expert</h4>
-                                    <div className="expert-rating">
-                                        <span className="stars">★★★★★</span>
-                                        <span className="reviews">4.9/5 based on 1073 reviews</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <form className="wizard-form" onSubmit={(e) => e.preventDefault()}>
+                            <form className="wizard-form" onSubmit={(e) => e.preventDefault()} style={{ width: '100%' }}>
                                 <input
                                     type="text"
                                     placeholder="First Name"

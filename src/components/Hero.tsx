@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const heroImages = ['/images/bhutan/main1.JPG', '/images/bhutan/main2.JPG'];
 
@@ -49,7 +50,7 @@ export default function Hero() {
                 <p className="hero-sub">Experience the real rhythm of the country</p>
             </div>
 
-            <div className="trip-finder">
+            <div className="trip-finder" style={{ zIndex: 50 }}>
                 <div className="trip-finder-field trip-finder-branding">
                     <span className="trip-finder-brand-label">Find Your Trip</span>
                 </div>
@@ -81,7 +82,13 @@ export default function Hero() {
                         <option>Trekking & Hiking</option>
                     </select>
                 </div>
-                <button className="btn btn-primary trip-finder-btn">BROWSE TRIPS</button>
+                <Link
+                    href="/browse"
+                    className="btn btn-primary trip-finder-btn"
+                    style={{ position: 'relative', zIndex: 100, display: 'inline-block' }}
+                >
+                    BROWSE TRIPS
+                </Link>
             </div>
         </section>
     );
