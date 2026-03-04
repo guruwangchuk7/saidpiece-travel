@@ -32,7 +32,7 @@ export default function Footer() {
                         <h4>Quick Links</h4>
                         <div className="footer-links">
                             <a href="#">About Us</a>
-                            <a href="#">Our Story</a>
+                            <Link href="/about/our-story">Our Story</Link>
                             <a href="#">Travel Styles</a>
                             <a href="#">Destinations</a>
                             <a href="#">Contact</a>
