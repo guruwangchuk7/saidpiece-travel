@@ -5,20 +5,20 @@ import Image from 'next/image';
 
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isDestinationsOpen, setIsDestinationsOpen] = useState(false);
+    const [openMenu, setOpenMenu] = useState<string | null>(null);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = setTimeout(() => {
-            setIsDestinationsOpen(true);
+            setOpenMenu(menuId);
         }, 150);
     };
 
     const handleMouseLeave = () => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = setTimeout(() => {
-            setIsDestinationsOpen(false);
+            setOpenMenu(null);
         }, 150);
     };
 
@@ -30,58 +30,208 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Placeholder image that implies travel
+    const placeholderImg = '/images/bhutan/main1.JPG';
+
     return (
-        <header className={`global-header ${isScrolled ? 'state-light' : 'state-dark'}`}>
-            {/* 2.1 Global Header & Navigation */}
-            <div className="top-utility-bar">
-                <div className="container">
-                    <a href="#">1-800-368-2794</a>
-                    <a href="#">Catalog</a>
-                    <a href="#">Newsletter</a>
-                    <a href="#">Contact Us</a>
-                </div>
-            </div>
-            <div className="main-nav-bar">
-                <div className="container nav-container-inner">
-                    <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
-                        <Image
-                            src="/images/logo/saidpiecetravellogo.png"
-                            alt="Saidpiece Travel Logo"
-                            width={240}
-                            height={80}
-                            style={{ objectFit: 'contain', filter: isScrolled ? 'brightness(0)' : 'brightness(0) invert(1)', transition: 'filter 0.3s ease' }}
-                            priority
-                        />
+        <>
+            {/* Global Menu Overlay */}
+            <div className={`menu-overlay ${openMenu ? 'is-active' : ''}`} />
+
+            {/* Sticky Contact Button */}
+            <a href="#contact" className="sticky-contact-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Contact Us
+            </a>
+
+            <header className={`global-header ${isScrolled || openMenu ? 'state-light' : 'state-dark'}`}>
+                {/* Global Header & Navigation */}
+                <div className="top-utility-bar">
+                    <div className="container">
+                        <a href="#">1-800-368-2794</a>
+                        <a href="#">Catalog</a>
+                        <a href="#">Newsletter</a>
+                        <a href="#">Contact Us</a>
                     </div>
-                    <nav>
-                        <ul className="nav-links">
-                            <li className="nav-item" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={{ position: 'relative' }}>
-                                <button className="nav-button" aria-expanded={isDestinationsOpen} aria-controls="mega-menu-destinations">
-                                    Destinations
-                                    <svg className={`chevron ${isDestinationsOpen ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
-                                </button>
-                                <div id="mega-menu-destinations" className={`mega-menu-panel ${isDestinationsOpen ? 'is-open' : ''}`}>
-                                    <div className="mega-menu-col">
-                                        <ul>
-                                            <li><a href="#">Western Bhutan</a></li>
-                                            <li><a href="#">Eastern Bhutan</a></li>
-                                            <li><a href="#">Central Bhutan</a></li>
-                                            <li><a href="#">North Bhutan</a></li>
-                                            <li><a href="#">South Bhutan</a></li>
-                                        </ul>
+                </div>
+                <div className="main-nav-bar" style={{ position: 'relative' }}>
+                    <div className="container nav-container-inner">
+                        <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Image
+                                src="/images/logo/saidpiecetravellogo.png"
+                                alt="Saidpiece Travel Logo"
+                                width={240}
+                                height={80}
+                                style={{
+                                    objectFit: 'contain',
+                                    filter: (isScrolled || openMenu) ? 'brightness(0)' : 'brightness(0) invert(1)',
+                                    transition: 'filter 0.3s ease'
+                                }}
+                                priority
+                            />
+                        </div>
+                        <nav>
+                            <ul className="nav-links">
+                                <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('destinations')} onMouseLeave={handleMouseLeave}>
+                                    <button className={`nav-button ${openMenu === 'destinations' ? 'is-open' : ''}`} aria-expanded={openMenu === 'destinations'}>
+                                        Destinations
+                                        <svg className={`chevron ${openMenu === 'destinations' ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </button>
+                                </li>
+                                <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('browse')} onMouseLeave={handleMouseLeave}>
+                                    <button className={`nav-button ${openMenu === 'browse' ? 'is-open' : ''}`} aria-expanded={openMenu === 'browse'}>
+                                        Browse Trips
+                                        <svg className={`chevron ${openMenu === 'browse' ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </button>
+                                </li>
+                                <li><a href="#">Trip Wizard</a></li>
+                                <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
+                                    <button className={`nav-button ${openMenu === 'inspiration' ? 'is-open' : ''}`} aria-expanded={openMenu === 'inspiration'}>
+                                        Inspiration
+                                        <svg className={`chevron ${openMenu === 'inspiration' ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </button>
+                                </li>
+                                <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
+                                    <button className={`nav-button ${openMenu === 'about' ? 'is-open' : ''}`} aria-expanded={openMenu === 'about'}>
+                                        About WT
+                                        <svg className={`chevron ${openMenu === 'about' ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </button>
+                                </li>
+                                <li className="nav-search-icon">
+                                    <button aria-label="Search" className="nav-button">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    {/* A. Destinations Menu */}
+                    <div className={`mega-menu-full mega-menu-destinations ${openMenu === 'destinations' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('destinations')} onMouseLeave={handleMouseLeave}>
+                        <div className="mega-menu-container">
+                            <div className="destinations-left">
+                                <ul className="mega-list">
+                                    <li><a href="#">Africa</a></li>
+                                    <li><a href="#">Asia</a></li>
+                                    <li><a href="#">Europe</a></li>
+                                    <li><a href="#">Latin America</a></li>
+                                    <li><a href="#">North America</a></li>
+                                    <li><a href="#">Middle East</a></li>
+                                    <li><a href="#">Oceania</a></li>
+                                    <li><a href="#">Polar Regions</a></li>
+                                </ul>
+                            </div>
+                            <div className="destinations-right">
+                                <div className="feature-content">
+                                    <h3>Explore All Destinations</h3>
+                                    <a href="#" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* B. Browse Trips Menu */}
+                    <div className={`mega-menu-full mega-menu-browse ${openMenu === 'browse' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('browse')} onMouseLeave={handleMouseLeave}>
+                        <div className="mega-menu-container">
+                            <div className="browse-left three-col">
+                                <div className="mega-col">
+                                    <h5>By Trip Type</h5>
+                                    <ul className="mega-list">
+                                        <li><a href="#">Small Group Adventures</a></li>
+                                        <li><a href="#">Private Journeys</a></li>
+                                        <li><a href="#">Expedition Cruises</a></li>
+                                        <li><a href="#">Family Trips</a></li>
+                                    </ul>
+                                </div>
+                                <div className="mega-col">
+                                    <h5>By Activity</h5>
+                                    <ul className="mega-list">
+                                        <li><a href="#">Cultural</a></li>
+                                        <li><a href="#">Hiking & Trekking</a></li>
+                                        <li><a href="#">Wildlife Safaris</a></li>
+                                        <li><a href="#">Photography</a></li>
+                                    </ul>
+                                </div>
+                                <div className="mega-col mega-col-months">
+                                    <h5>By Month</h5>
+                                    <div className="month-grid">
+                                        <a href="#">January</a> <a href="#">February</a>
+                                        <a href="#">March</a> <a href="#">April</a>
+                                        <a href="#">May</a> <a href="#">June</a>
+                                        <a href="#">July</a> <a href="#">August</a>
+                                        <a href="#">September</a> <a href="#">October</a>
+                                        <a href="#">November</a> <a href="#">December</a>
                                     </div>
                                 </div>
-                            </li>
-                            <li><a href="#">Browse Trips</a></li>
-                            <li><a href="#">Trip Wizard</a></li>
-                            <li><a href="#">Inspiration</a></li>
-                            <li><a href="#">About WT</a></li>
-                        </ul>
-                    </nav>
+                            </div>
+                            <div className="destinations-right" style={{ background: `url(${placeholderImg}) center/cover no-repeat`, marginLeft: '50px' }}>
+                                <div className="feature-content" style={{ backgroundColor: 'rgba(255,255,255,0.95)', padding: '40px', borderRadius: '4px' }}>
+                                    <h3>Find Your Perfect Trip</h3>
+                                    <a href="#" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* C. Inspiration Menu */}
+                    <div className={`mega-menu-full mega-menu-inspiration ${openMenu === 'inspiration' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
+                        <div className="mega-menu-container hybrid-layout">
+                            <div className="mega-left-image">
+                                <Image src="/images/bhutan/main2.JPG" alt="Striking vertical landscape" fill style={{ objectFit: 'cover' }} />
+                            </div>
+                            <div className="mega-col mega-mid-col">
+                                <h5>Explore</h5>
+                                <ul className="mega-list">
+                                    <li><a href="#">Most Popular</a></li>
+                                    <li><a href="#">Special Offers</a></li>
+                                    <li><a href="#">Travel Blog</a></li>
+                                    <li><a href="#">New Trips</a></li>
+                                </ul>
+                            </div>
+                            <div className="mega-col mega-right-col">
+                                <h5>Top 10 Curated</h5>
+                                <ul className="mega-list-curated">
+                                    <li><a href="#">Hike the Camino de Santiago</a></li>
+                                    <li><a href="#">Galapagos Islands</a></li>
+                                    <li><a href="#">Machu Picchu Trek</a></li>
+                                    <li><a href="#">Serengeti Safari</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* D. About WT Menu */}
+                    <div className={`mega-menu-full mega-menu-about ${openMenu === 'about' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
+                        <div className="mega-menu-container about-layout">
+                            <div className="mega-about-links">
+                                <ul className="mega-list-large">
+                                    <li><a href="#">Our Story</a></li>
+                                    <li><a href="#">Community & Conservation</a></li>
+                                    <li><a href="#">Our Team</a></li>
+                                    <li><a href="#">Awards</a></li>
+                                </ul>
+                            </div>
+                            <div className="mega-about-bg">
+                                <Image src={placeholderImg} alt="Hiker on ridge" fill style={{ objectFit: 'cover' }} />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
+        </>
     );
 }
