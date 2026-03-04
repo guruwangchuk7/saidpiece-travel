@@ -35,7 +35,7 @@ export default function Testimonials() {
         <section className="testimonials-section">
             <div className="container relative">
                 <div style={{ minHeight: '300px' }}>
-                    <div className="testimonial-quote">"{testimonials[testimonialIndex].quote}"</div>
+                    <div className="testimonial-quote">&quot;{testimonials[testimonialIndex].quote}&quot;</div>
                     <div className="testimonial-author">{testimonials[testimonialIndex].author}</div>
                     <div className="testimonial-location">{testimonials[testimonialIndex].location}</div>
                 </div>

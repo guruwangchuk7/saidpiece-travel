@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-export default function Header() {
+export default function Header({ theme = 'auto' }: { theme?: 'auto' | 'light' }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const isLightState = theme === 'light' || isScrolled || openMenu !== null;
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -47,7 +49,7 @@ export default function Header() {
                 Contact Us
             </a>
 
-            <header className={`global-header ${isScrolled || openMenu ? 'state-light' : 'state-dark'}`}>
+            <header className={`global-header ${isLightState ? 'state-light' : 'state-dark'}`}>
                 {/* Global Header & Navigation */}
                 <div className="top-utility-bar">
                     <div className="container">
@@ -67,7 +69,7 @@ export default function Header() {
                                 height={80}
                                 style={{
                                     objectFit: 'contain',
-                                    filter: (isScrolled || openMenu) ? 'brightness(0)' : 'brightness(0) invert(1)',
+                                    filter: isLightState ? 'brightness(0)' : 'brightness(0) invert(1)',
                                     transition: 'filter 0.3s ease'
                                 }}
                                 priority
@@ -91,7 +93,7 @@ export default function Header() {
                                         </svg>
                                     </button>
                                 </li>
-                                <li><a href="#">Trip Wizard</a></li>
+                                <li><a href="/wizard">Trip Wizard</a></li>
                                 <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
                                     <button className={`nav-button ${openMenu === 'inspiration' ? 'is-open' : ''}`} aria-expanded={openMenu === 'inspiration'}>
                                         Inspiration
