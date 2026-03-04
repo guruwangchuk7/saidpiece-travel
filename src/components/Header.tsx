@@ -142,7 +142,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             <div className="destinations-right">
                                 <div className="feature-content">
                                     <h3>Explore All Destinations</h3>
-                                    <a href="#" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                    <a href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
                                 </div>
                             </div>
                         </div>
@@ -185,7 +185,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             <div className="destinations-right" style={{ background: `url(${placeholderImg}) center/cover no-repeat`, marginLeft: '50px' }}>
                                 <div className="feature-content" style={{ backgroundColor: 'rgba(255,255,255,0.95)', padding: '40px', borderRadius: '4px' }}>
                                     <h3>Find Your Perfect Trip</h3>
-                                    <a href="#" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                    <a href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
                                 </div>
                             </div>
                         </div>

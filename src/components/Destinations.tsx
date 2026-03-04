@@ -64,7 +64,7 @@ export default function Destinations() {
                     <div className="dest-info">
                         <h3>{destinations[activeTab as keyof typeof destinations].title}</h3>
                         <p>{destinations[activeTab as keyof typeof destinations].desc}</p>
-                        <button className="btn btn-primary">View All {activeTab} Trips</button>
+                        <a href="/browse" className="btn btn-primary">View All {activeTab} Trips</a>
                     </div>
                 </div>
             </div>

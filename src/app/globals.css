@@ -1603,14 +1603,14 @@ select.trip-finder-input {
 
 .trip-result-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .trip-card-tag {
   position: absolute;
   top: 15px;
   left: 15px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   padding: 5px 10px;
   border-radius: 2px;
   font-size: 0.7rem;
@@ -1643,14 +1643,16 @@ select.trip-finder-input {
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 3px solid rgba(0,0,0,0.1);
+  border: 3px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top-color: var(--color-brand);
   animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Trip Detail Page */
@@ -1666,7 +1668,7 @@ select.trip-finder-input {
 .trip-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
   z-index: 1;
 }
 
@@ -1681,7 +1683,7 @@ select.trip-finder-input {
 .trip-hero-content h1 {
   font-size: 4rem;
   margin-bottom: 20px;
-  text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+  text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
@@ -1783,8 +1785,15 @@ select.trip-finder-input {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .content-section h2 {
@@ -1936,9 +1945,20 @@ select.trip-finder-input {
   text-transform: uppercase;
 }
 
-.status-badge.space { background: #e6f4ea; color: #1e8e3e; }
-.status-badge.last-call { background: #fef7e0; color: #f29900; }
-.status-badge.guaranteed { background: #e8f0fe; color: #1a73e8; }
+.status-badge.space {
+  background: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.status-badge.last-call {
+  background: #fef7e0;
+  color: #f29900;
+}
+
+.status-badge.guaranteed {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
 
 .pricing-note {
   font-size: 0.9rem;
@@ -1963,7 +1983,7 @@ select.trip-finder-input {
   background: white;
   padding: 50px;
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -2041,31 +2061,56 @@ select.trip-finder-input {
   margin-bottom: 40px;
 }
 
-.text-center { text-align: center; }
-.btn.small { padding: 10px 20px; font-size: 0.75rem; }
-.large-btn { padding: 20px 50px; font-size: 1.1rem; }
+.text-center {
+  text-align: center;
+}
+
+.btn.small {
+  padding: 10px 20px;
+  font-size: 0.75rem;
+}
+
+.large-btn {
+  padding: 20px 50px;
+  font-size: 1.1rem;
+}
 
 @media (max-width: 1024px) {
-  .browse-grid, .trip-content-layout {
+
+  .browse-grid,
+  .trip-content-layout {
     grid-template-columns: 1fr;
   }
-  .filters-sidebar, .sticky-nav {
+
+  .filters-sidebar,
+  .sticky-nav {
     position: static;
   }
+
   .quick-info-grid {
     flex-direction: column;
     gap: 30px;
   }
+
   .highlights-list {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .masonry-grid { grid-template-columns: 1fr; }
-  .trip-hero-content h1 { font-size: 2.5rem; }
-  .quick-info-items { flex-wrap: wrap; }
+  .masonry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .quick-info-items {
+    flex-wrap: wrap;
+  }
 }
+
 /* ==========================================================================
    Our Story Page Styles
    ========================================================================== */
@@ -2094,7 +2139,7 @@ select.trip-finder-input {
 .story-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
   z-index: 2;
 }
 
@@ -2108,7 +2153,7 @@ select.trip-finder-input {
 .story-hero-content h1 {
   font-size: 5rem;
   letter-spacing: -0.02em;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .sticky-contact {
@@ -2127,7 +2172,7 @@ select.trip-finder-input {
   background: var(--color-brand);
   color: white;
   border-radius: 50%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, background 0.3s ease;
 }
 
@@ -2222,7 +2267,7 @@ select.trip-finder-input {
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
 }
 
 .story-gallery {
@@ -2284,10 +2329,13 @@ select.trip-finder-input {
 }
 
 @media (max-width: 1024px) {
-  .story-split, .story-split.alternate {
+
+  .story-split,
+  .story-split.alternate {
     flex-direction: column;
     gap: 50px;
   }
+
   .story-hero-content h1 {
     font-size: 3.5rem;
   }
@@ -2298,12 +2346,14 @@ select.trip-finder-input {
     grid-template-columns: 1fr;
   }
 }
+
 /* ==========================================================================
    Asymmetrical Layout - Our Story Refined
    ========================================================================== */
 
 .page-with-header {
-  padding-top: 0; /* Header is sticky/absolute */
+  padding-top: 0;
+  /* Header is sticky/absolute */
 }
 
 .serif-title {
@@ -2348,7 +2398,7 @@ select.trip-finder-input {
 .story-hero-overlay-refined {
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
   z-index: 2;
 }
 
@@ -2375,7 +2425,7 @@ select.trip-finder-input {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -2432,7 +2482,7 @@ select.trip-finder-input {
   direction: rtl;
 }
 
-.asymmetric-row.reverse > * {
+.asymmetric-row.reverse>* {
   direction: ltr;
 }
 
@@ -2490,7 +2540,7 @@ select.trip-finder-input {
   position: absolute;
   width: 250px;
   height: 320px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   border: 10px solid white;
 }
 
@@ -2585,12 +2635,32 @@ select.trip-finder-input {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .serif-title { font-size: 4rem; }
-  .column-assets { height: 400px; width: 100%; }
-  .three-col-media { grid-template-columns: 1fr; height: auto; }
-  .three-col-media .media-item { height: 300px; }
-  .award-logos-grid { flex-wrap: wrap; gap: 40px; justify-content: center; }
+
+  .serif-title {
+    font-size: 4rem;
+  }
+
+  .column-assets {
+    height: 400px;
+    width: 100%;
+  }
+
+  .three-col-media {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .three-col-media .media-item {
+    height: 300px;
+  }
+
+  .award-logos-grid {
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+  }
 }
+
 /* ==========================================================================
    Contact Page Styles
    ========================================================================== */
@@ -2609,7 +2679,7 @@ select.trip-finder-input {
 
 .contact-hero-frame {
   margin-bottom: 50px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
 }
 
 .contact-details-block {
@@ -2692,7 +2762,7 @@ select.trip-finder-input {
   color: #555;
 }
 
-.form-group input, 
+.form-group input,
 .form-group textarea {
   width: 100%;
   padding: 15px;
@@ -2703,7 +2773,7 @@ select.trip-finder-input {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.form-group input:focus, 
+.form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-brand);
@@ -2731,9 +2801,17 @@ select.trip-finder-input {
   border-radius: 8px;
 }
 
-.mb-60 { margin-bottom: 60px; }
-.z-10 { z-index: 10; }
-.relative { position: relative; }
+.mb-60 {
+  margin-bottom: 60px;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.relative {
+  position: relative;
+}
 
 /* Connect Bridge */
 .connect-bridge-section {
@@ -2751,7 +2829,7 @@ select.trip-finder-input {
 .connect-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .connect-card-grid {
@@ -2771,7 +2849,7 @@ select.trip-finder-input {
 
 .connect-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .connect-card .card-label {
@@ -2801,6 +2879,7 @@ select.trip-finder-input {
     grid-template-columns: 1fr;
     gap: 60px;
   }
+
   .connect-card-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -2811,8 +2890,484 @@ select.trip-finder-input {
     grid-template-columns: 1fr;
     gap: 20px;
   }
+
   .connect-card-grid {
     grid-template-columns: 1fr;
   }
 }
-.text-white { color: white !important; }
+
+.text-white {
+  color: white !important;
+}
+
+/* ==========================================================================
+   Trip Wizard UI Component
+   ========================================================================== */
+
+.wizard-framework {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. Progress Bar */
+.wizard-progress-track {
+  width: 100%;
+  height: 4px;
+  background-color: #EEEEEE;
+  position: relative;
+  z-index: 999;
+}
+
+.wizard-progress-fill {
+  height: 100%;
+  background-color: var(--color-brand);
+  transition: width 0.4s ease-in-out;
+}
+
+/* 2. Header Navigation */
+.wizard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 40px;
+  height: 100px;
+  position: relative;
+  z-index: 9999;
+}
+
+.wizard-header-left,
+.wizard-header-right {
+  flex: 1;
+}
+
+.wizard-header-right {
+  text-align: right;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.wizard-header-center {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.wizard-back-btn,
+.wizard-skip-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-lato);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.wizard-back-btn:hover,
+.wizard-skip-btn:hover {
+  opacity: 0.7;
+}
+
+/* 3. Main Content & Questions */
+.wizard-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.wizard-question {
+  font-size: 3.5rem;
+  font-family: var(--font-playfair);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 900px;
+}
+
+.wizard-step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.animation-slide-in {
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 4. Visual Card Grid (Regions, Styles) */
+.wizard-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  width: 100%;
+}
+
+.wizard-grid-cards.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.wizard-grid-cards.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.wizard-card {
+  position: relative;
+  height: 350px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #EEE;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.wizard-card.tall {
+  height: 400px;
+}
+
+.wizard-card.square {
+  height: 250px;
+}
+
+.wizard-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.wizard-card.selected {
+  outline: 4px solid var(--color-brand);
+  transform: scale(0.98);
+}
+
+.wizard-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease;
+}
+
+.wizard-card-overlay.split {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+.wizard-card-title {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  color: var(--color-white);
+  font-family: var(--font-playfair);
+  font-size: 1.8rem;
+  z-index: 2;
+}
+
+.wizard-card-title.block {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  margin-bottom: 8px;
+}
+
+.wizard-card-title.centered {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  color: var(--color-text-primary);
+}
+
+.wizard-card-bottom-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 30px;
+  width: 100%;
+  z-index: 2;
+}
+
+.wizard-card-desc {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.wizard-card-solid-bg {
+  background-color: var(--color-cream);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #EAEAEA;
+}
+
+.wizard-card.selected .wizard-card-solid-bg {
+  background-color: #f0f4f8;
+  border-color: var(--color-brand);
+}
+
+.wizard-card-check {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-brand);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 10;
+}
+
+/* 5. Tag/Tile Grid */
+.wizard-tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  max-width: 800px;
+}
+
+.wizard-tag-tile {
+  padding: 15px 30px;
+  border-radius: 4px;
+  border: 1px solid #DDDDDD;
+  background-color: var(--color-white);
+  font-size: 1.1rem;
+  font-family: var(--font-lato);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wizard-tag-tile:hover {
+  border-color: #BBBBBB;
+}
+
+.wizard-tag-tile.selected {
+  background-color: var(--color-brand);
+  color: var(--color-white);
+  border-color: var(--color-brand);
+}
+
+/* 6. Calendar & Duration Inputs */
+.wizard-timeline-group {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+}
+
+.wizard-sub-label {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.wizard-month-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.wizard-month-btn {
+  padding: 15px 0;
+  border: 1px solid #DDDDDD;
+  background-color: var(--color-white);
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wizard-month-btn:hover {
+  border-color: #999;
+}
+
+.wizard-month-btn.selected {
+  background-color: var(--color-brand);
+  color: var(--color-white);
+  border-color: var(--color-brand);
+}
+
+.wizard-duration-slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.wizard-duration-slider .slider {
+  width: 100%;
+  max-width: 500px;
+  cursor: pointer;
+}
+
+.duration-display {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.duration-num {
+  font-family: var(--font-playfair);
+  font-size: 3rem;
+  color: var(--color-brand);
+  font-weight: 700;
+}
+
+.duration-text {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+}
+
+/* 7. Lead Capture Step */
+.lead-capture-step .wizard-question {
+  margin-bottom: 40px;
+}
+
+.wizard-lead-container {
+  display: flex;
+  gap: 50px;
+  max-width: 800px;
+  width: 100%;
+  background: #f9f9f9;
+  padding: 50px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.wizard-expert-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid #DDDDDD;
+  padding-right: 50px;
+}
+
+.expert-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #DDDDDD;
+  background-image: url('/images/bhutan/main1.JPG');
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 20px;
+}
+
+.expert-info h4 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.expert-rating .stars {
+  color: #FFA500;
+  font-size: 1.2rem;
+  display: block;
+}
+
+.expert-rating .reviews {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.wizard-form {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.wizard-input {
+  padding: 20px;
+  border: 1px solid #DDDDDD;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-family: var(--font-lato);
+  background-color: var(--color-white);
+  outline: none;
+}
+
+.wizard-input:focus {
+  border-color: var(--color-brand);
+}
+
+.wizard-submit-btn {
+  padding: 22px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+/* 8. Footer Nav (Skip & Next) */
+.wizard-footer {
+  height: 100px;
+  border-top: 1px solid #EEEEEE;
+  background-color: var(--color-white);
+}
+
+.wizard-footer-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 30px;
+}
+
+.wizard-next-btn {
+  padding: 16px 40px;
+}
+
+.wizard-next-btn:disabled {
+  background-color: #CCCCCC;
+  border-color: #CCCCCC;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.wizard-hero-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.wizard-intro-text {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  margin-top: -40px;
+  margin-bottom: 30px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

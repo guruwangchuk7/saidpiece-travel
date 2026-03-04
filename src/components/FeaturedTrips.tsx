@@ -13,7 +13,7 @@ export default function FeaturedTrips() {
             <div className="container">
                 <div className="section-header-row">
                     <h2>Featured Trips</h2>
-                    <a href="#" className="link-btn">View All Trips</a>
+                    <a href="/browse" className="link-btn">View All Trips</a>
                 </div>
 
                 <div className="featured-grid">

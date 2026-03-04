@@ -52,7 +52,10 @@ export default function TripWizard() {
             case 1:
                 return (
                     <div className="wizard-step-content animation-slide-in">
-                        <h2 className="wizard-question">Which Bhutanese valleys are you most interested in?</h2>
+                        <section className="wizard-hero-header">
+                            <h2 className="wizard-question">Which Bhutanese valleys are you most interested in?</h2>
+                            <p className="wizard-intro-text">Select one or more regions to explore.</p>
+                        </section>
                         <div className="wizard-grid-cards">
                             {regions.map(region => (
                                 <div
@@ -228,12 +231,12 @@ export default function TripWizard() {
             <Header theme="light">
                 {/* Progress Bar under Header */}
                 <div className="wizard-progress-track">
-                    <div className="wizard-progress-fill" style={{ width: `${(currentStep / steps) * 100}%` }}></div>
+                    <div className="wizard-progress-fill" style={{ width: `${((currentStep / steps) * 100).toFixed(1)}%` }}></div>
                 </div>
             </Header>
 
             {/* Main Content Area */}
-            <main className="wizard-main" style={{ paddingTop: '150px' }}>
+            <main className="wizard-main" style={{ paddingTop: '120px' }}>
                 {renderStepContent()}
             </main>
 
