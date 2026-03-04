@@ -2591,3 +2591,228 @@ select.trip-finder-input {
   .three-col-media .media-item { height: 300px; }
   .award-logos-grid { flex-wrap: wrap; gap: 40px; justify-content: center; }
 }
+/* ==========================================================================
+   Contact Page Styles
+   ========================================================================== */
+
+.contact-content-scaffold {
+  padding: 150px 0 100px;
+  background: white;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.contact-hero-frame {
+  margin-bottom: 50px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.contact-details-block {
+  padding-right: 40px;
+}
+
+.contact-details-block .detail-item {
+  margin-bottom: 30px;
+}
+
+.contact-details-block .label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.contact-details-block p {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #111;
+}
+
+.contact-details-block a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom 0.3s;
+}
+
+.contact-details-block a:hover {
+  border-bottom-color: var(--color-brand);
+}
+
+.social-links-suite {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.social-links-suite a {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.social-links-suite a:hover {
+  color: var(--color-brand);
+}
+
+/* Contact Form */
+.contact-form {
+  background: #fdfdfd;
+  padding: 60px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.contact-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.form-group input, 
+.form-group textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.1);
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkbox-group input {
+  width: auto;
+}
+
+.checkbox-group label {
+  margin-bottom: 0;
+}
+
+.contact-success-message {
+  padding: 60px;
+  text-align: center;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.mb-60 { margin-bottom: 60px; }
+.z-10 { z-index: 10; }
+.relative { position: relative; }
+
+/* Connect Bridge */
+.connect-bridge-section {
+  position: relative;
+  padding: 150px 0;
+  overflow: hidden;
+}
+
+.connect-bridge-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.connect-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.connect-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.connect-card {
+  background: white;
+  padding: 40px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 4px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.connect-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.connect-card .card-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-brand);
+  margin-bottom: 15px;
+}
+
+.connect-card h3 {
+  font-family: var(--font-playfair);
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.connect-card p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+  .connect-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .connect-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.text-white { color: white !important; }

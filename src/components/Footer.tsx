@@ -35,7 +35,7 @@ export default function Footer() {
                             <Link href="/about/our-story">Our Story</Link>
                             <a href="#">Travel Styles</a>
                             <a href="#">Destinations</a>
-                            <a href="#">Contact</a>
+                            <Link href="/contact">Contact</Link>
                         </div>
                     </div>
                     <div className="footer-col">

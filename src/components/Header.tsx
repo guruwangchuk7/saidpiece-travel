@@ -42,13 +42,13 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
             <div className={`menu-overlay ${openMenu ? 'is-active' : ''}`} />
 
             {/* Sticky Contact Button */}
-            <a href="#contact" className="sticky-contact-btn">
+            <Link href="/contact" className="sticky-contact-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
                 Contact Us
-            </a>
+            </Link>
 
             <header className={`global-header ${isLightState ? 'state-light' : 'state-dark'}`}>
                 {/* Global Header & Navigation */}
@@ -57,7 +57,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                         <a href="#">1-800-368-2794</a>
                         <a href="#">Catalog</a>
                         <a href="#">Newsletter</a>
-                        <a href="#">Contact Us</a>
+                        <Link href="/contact">Contact Us</Link>
                     </div>
                 </div>
                 <div className="main-nav-bar" style={{ position: 'relative' }}>
