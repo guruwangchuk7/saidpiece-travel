@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Footer() {
     return (
@@ -7,13 +8,15 @@ export default function Footer() {
                 <div className="footer-top">
                     <div className="footer-col">
                         <div className="footer-logo">
-                            <Image
-                                src="/images/logo/saidpiecetravellogo.png"
-                                alt="Saidpiece Travel Logo"
-                                width={180}
-                                height={50}
-                                style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-                            />
+                            <Link href="/">
+                                <Image
+                                    src="/images/logo/saidpiecetravellogo.png"
+                                    alt="Saidpiece Travel Logo"
+                                    width={180}
+                                    height={50}
+                                    style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                                />
+                            </Link>
                         </div>
                         <address>
                             Thimphu, Bhutan<br />

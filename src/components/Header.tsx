@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 'light', children?: React.ReactNode }) {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -62,18 +63,20 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                 <div className="main-nav-bar" style={{ position: 'relative' }}>
                     <div className="container nav-container-inner">
                         <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
-                            <Image
-                                src="/images/logo/saidpiecetravellogo.png"
-                                alt="Saidpiece Travel Logo"
-                                width={240}
-                                height={80}
-                                style={{
-                                    objectFit: 'contain',
-                                    filter: isLightState ? 'brightness(0)' : 'brightness(0) invert(1)',
-                                    transition: 'filter 0.3s ease'
-                                }}
-                                priority
-                            />
+                            <Link href="/">
+                                <Image
+                                    src="/images/logo/saidpiecetravellogo.png"
+                                    alt="Saidpiece Travel Logo"
+                                    width={240}
+                                    height={80}
+                                    style={{
+                                        objectFit: 'contain',
+                                        filter: isLightState ? 'brightness(0)' : 'brightness(0) invert(1)',
+                                        transition: 'filter 0.3s ease'
+                                    }}
+                                    priority
+                                />
+                            </Link>
                         </div>
                         <nav>
                             <ul className="nav-links">
