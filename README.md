@@ -1,4 +1,4 @@
-# Saidpiece Travel - Bhutan Experience 🏔️
+# Saidpiece Travel - Bhutan Experience 
 
 A premium, modern travel landing page showcasing the beauty and wilderness of Bhutan. Built with **Next.js 16**, **React 19**, and **Tailwind CSS 4**.
 
