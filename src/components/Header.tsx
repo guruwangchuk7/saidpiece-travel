@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-export default function Header({ theme = 'auto' }: { theme?: 'auto' | 'light' }) {
+export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 'light', children?: React.ReactNode }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -233,6 +233,7 @@ export default function Header({ theme = 'auto' }: { theme?: 'auto' | 'light' })
                         </div>
                     </div>
                 </div>
+                {children}
             </header>
         </>
     );

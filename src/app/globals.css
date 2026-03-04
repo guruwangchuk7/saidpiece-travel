@@ -1457,16 +1457,10 @@ select.trip-finder-input {
    ========================================================================== */
 
 .wizard-framework {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: var(--color-white);
-  z-index: 900;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 /* 1. Progress Bar */
@@ -1543,7 +1537,6 @@ select.trip-finder-input {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  overflow-y: auto;
 }
 
 .wizard-question {

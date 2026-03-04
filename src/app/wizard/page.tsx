@@ -233,13 +233,12 @@ export default function TripWizard() {
     return (
         <div className="wizard-framework">
             {/* Header Navigation fixed to Top */}
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1000 }}>
-                <Header theme="light" />
+            <Header theme="light">
                 {/* Progress Bar under Header */}
                 <div className="wizard-progress-track">
                     <div className="wizard-progress-fill" style={{ width: `${(currentStep / steps) * 100}%` }}></div>
                 </div>
-            </div>
+            </Header>
 
             {/* Main Content Area */}
             <main className="wizard-main" style={{ paddingTop: '150px' }}>
