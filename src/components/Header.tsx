@@ -104,7 +104,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                 </li>
                                 <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
                                     <button className={`nav-button ${openMenu === 'about' ? 'is-open' : ''}`} aria-expanded={openMenu === 'about'}>
-                                        About WT
+                                        About Us
                                         <svg className={`chevron ${openMenu === 'about' ? 'rotate' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
@@ -127,14 +127,13 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                         <div className="mega-menu-container">
                             <div className="destinations-left">
                                 <ul className="mega-list">
-                                    <li><a href="#">Africa</a></li>
-                                    <li><a href="#">Asia</a></li>
-                                    <li><a href="#">Europe</a></li>
-                                    <li><a href="#">Latin America</a></li>
-                                    <li><a href="#">North America</a></li>
-                                    <li><a href="#">Middle East</a></li>
-                                    <li><a href="#">Oceania</a></li>
-                                    <li><a href="#">Polar Regions</a></li>
+                                    <li><a href="#">Paro Valley</a></li>
+                                    <li><a href="#">Thimphu</a></li>
+                                    <li><a href="#">Punakha</a></li>
+                                    <li><a href="#">Bumthang</a></li>
+                                    <li><a href="#">Gangtey & Phobjikha</a></li>
+                                    <li><a href="#">Haa Valley</a></li>
+                                    <li><a href="#">Eastern Bhutan</a></li>
                                 </ul>
                             </div>
                             <div className="destinations-right">
@@ -153,10 +152,10 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                 <div className="mega-col">
                                     <h5>By Trip Type</h5>
                                     <ul className="mega-list">
-                                        <li><a href="#">Small Group Adventures</a></li>
                                         <li><a href="#">Private Journeys</a></li>
-                                        <li><a href="#">Expedition Cruises</a></li>
-                                        <li><a href="#">Family Trips</a></li>
+                                        <li><a href="#">Family Adventures</a></li>
+                                        <li><a href="#">Festival Tours</a></li>
+                                        <li><a href="#">Romantic Escapes</a></li>
                                     </ul>
                                 </div>
                                 <div className="mega-col">
@@ -207,24 +206,24 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             <div className="mega-col mega-right-col">
                                 <h5>Top 10 Curated</h5>
                                 <ul className="mega-list-curated">
-                                    <li><a href="#">Hike the Camino de Santiago</a></li>
-                                    <li><a href="#">Galapagos Islands</a></li>
-                                    <li><a href="#">Machu Picchu Trek</a></li>
-                                    <li><a href="#">Serengeti Safari</a></li>
+                                    <li><a href="#">Bhutan Discovery</a></li>
+                                    <li><a href="#">Cultural Immersion</a></li>
+                                    <li><a href="#">Bhutan Family Adventure</a></li>
+                                    <li><a href="#">Nature Retreat</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    {/* D. About WT Menu */}
+                    {/* D. About Us Menu */}
                     <div className={`mega-menu-full mega-menu-about ${openMenu === 'about' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container about-layout">
                             <div className="mega-about-links">
                                 <ul className="mega-list-large">
                                     <li><a href="#">Our Story</a></li>
-                                    <li><a href="#">Community & Conservation</a></li>
-                                    <li><a href="#">Our Team</a></li>
-                                    <li><a href="#">Awards</a></li>
+                                    <li><a href="#">Responsible Travel</a></li>
+                                    <li><a href="#">Local Expertise</a></li>
+                                    <li><a href="#">Booking Process</a></li>
                                 </ul>
                             </div>
                             <div className="mega-about-bg">

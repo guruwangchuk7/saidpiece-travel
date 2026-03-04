@@ -9,11 +9,10 @@ export default function Catalog() {
                     <Image src="/images/bhutan/21.JPG" alt="Physical Catalogs" fill style={{ objectFit: 'cover', borderRadius: '4px' }} />
                 </div>
                 <div className="catalog-content">
-                    <h2>Request a Free Catalog</h2>
-                    <p>Immerse yourself in our world of adventure. Our beautifully printed catalogs are filled with stunning photography, detailed itineraries, and essential travel inspiration to help you plan your next journey.</p>
+                    <h2>Plan Your Bhutan Journey</h2>
+                    <p>Travel to Bhutan is carefully organised to ensure every journey is smooth, meaningful, and well supported. Tell us your travel dates, interests, and preferences, and we will prepare a personalised itinerary including hotel options and a transparent cost summary.</p>
                     <div className="catalog-buttons">
-                        <button className="btn btn-outline">Request Print Catalog</button>
-                        <button className="btn btn-primary">Digital Catalog</button>
+                        <button className="btn btn-primary">Plan Your Trip</button>
                     </div>
                 </div>
             </div>

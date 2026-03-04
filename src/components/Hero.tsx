@@ -45,8 +45,8 @@ export default function Hero() {
             </div>
 
             <div className="hero-content">
-                <h1 className="hero-h1">Authentic Travel Experiences</h1>
-                <p className="hero-sub">For Every Adventurous Spirit</p>
+                <h1 className="hero-h1">Meaningful Journeys to Bhutan</h1>
+                <p className="hero-sub">Experience the real rhythm of the country</p>
             </div>
 
             <div className="trip-finder">
@@ -56,11 +56,11 @@ export default function Hero() {
                 <div className="trip-finder-field">
                     <span className="trip-finder-label">Destination</span>
                     <select className="trip-finder-input">
-                        <option>Anywhere</option>
-                        <option>Africa</option>
-                        <option>Asia</option>
-                        <option>Europe</option>
-                        <option>Latin America</option>
+                        <option>Anywhere in Bhutan</option>
+                        <option>Paro</option>
+                        <option>Thimphu</option>
+                        <option>Punakha</option>
+                        <option>Bumthang</option>
                     </select>
                 </div>
                 <div className="trip-finder-field date-field">
@@ -75,9 +75,10 @@ export default function Hero() {
                     <span className="trip-finder-label">Activity</span>
                     <select className="trip-finder-input">
                         <option>Any activity</option>
-                        <option>Cultural</option>
-                        <option>Hiking & Trekking</option>
-                        <option>Wildlife Safaris</option>
+                        <option>Cultural Immersion</option>
+                        <option>Nature & Wellness</option>
+                        <option>Festivals & Traditions</option>
+                        <option>Trekking & Hiking</option>
                     </select>
                 </div>
                 <button className="btn btn-primary trip-finder-btn">BROWSE TRIPS</button>

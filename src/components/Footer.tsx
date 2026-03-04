@@ -16,10 +16,8 @@ export default function Footer() {
                             />
                         </div>
                         <address>
-                            1102 9th Street<br />
-                            Berkeley, CA 94710<br />
-                            saidpiece@gmail.com<br />
-                            1-800-368-2794
+                            Thimphu, Bhutan<br />
+                            saidpiece@gmail.com
                         </address>
                         <div className="footer-badges">
                             <div className="footer-badge"></div>
@@ -31,19 +29,19 @@ export default function Footer() {
                         <h4>Quick Links</h4>
                         <div className="footer-links">
                             <a href="#">About Us</a>
-                            <a href="#">Our History</a>
-                            <a href="#">Careers</a>
-                            <a href="#">Travel Agents</a>
-                            <a href="#">Press Room</a>
+                            <a href="#">Our Story</a>
+                            <a href="#">Travel Styles</a>
+                            <a href="#">Destinations</a>
+                            <a href="#">Contact</a>
                         </div>
                     </div>
                     <div className="footer-col">
                         <h4>Resources</h4>
                         <div className="footer-links">
-                            <a href="#">Travel Insurance</a>
+                            <a href="#">Booking Process</a>
+                            <a href="#">Travel Tips</a>
                             <a href="#">Terms & Conditions</a>
-                            <a href="#">Before You Go</a>
-                            <a href="#">Guest Portal</a>
+                            <a href="#">Trip Wizard</a>
                             <a href="#">FAQ</a>
                         </div>
                     </div>

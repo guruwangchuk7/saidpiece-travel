@@ -1,12 +1,12 @@
 import Image from 'next/image';
 
 const travelStyles = [
-    { name: 'Safari', image: 'bhutan/7.JPG' },
-    { name: 'Snorkeling', image: 'bhutan/8.JPG' },
-    { name: 'Cultural', image: 'bhutan/9.JPG' },
-    { name: 'Trekking', image: 'bhutan/10.JPG' },
-    { name: 'Expedition', image: 'bhutan/11.JPG' },
-    { name: 'Family', image: 'bhutan/12.JPG' }
+    { name: 'Discovery', image: 'bhutan/7.JPG' },
+    { name: 'Cultural Immersion', image: 'bhutan/8.JPG' },
+    { name: 'Family Adventure', image: 'bhutan/9.JPG' },
+    { name: 'Festival Tours', image: 'bhutan/10.JPG' },
+    { name: 'Nature Retreat', image: 'bhutan/11.JPG' },
+    { name: 'Romantic Escape', image: 'bhutan/12.JPG' }
 ];
 
 export default function TravelStyles() {

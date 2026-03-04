@@ -8,11 +8,11 @@ export default function CTA() {
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
             </div>
             <div className="container cta-content">
-                <h2>Talk to an Expert</h2>
-                <p>Ready to start planning your dream adventure? Our experienced Travel Specialists are here to help you craft the perfect itinerary tailored to your unique interests.</p>
+                <h2>Talk to a Bhutan Expert</h2>
+                <p>If you prefer to discuss your trip in person, you can schedule a short video call with our team. We can explain how travel works in Bhutan, walk through your itinerary, and answer any questions.</p>
                 <div className="cta-buttons">
-                    <button className="btn btn-outline">Contact Us</button>
-                    <button className="btn btn-primary">Choose A Trip</button>
+                    <button className="btn btn-outline">Schedule Video Call</button>
+                    <button className="btn btn-primary">Enquire Now</button>
                 </div>
             </div>
         </section>

@@ -19,19 +19,21 @@ export default function TripWizard() {
     const [email, setEmail] = useState('');
 
     const regions = [
-        { id: 'africa', name: 'Africa', img: '/images/bhutan/main1.JPG' },
-        { id: 'asia', name: 'Asia', img: '/images/bhutan/main2.JPG' },
-        { id: 'europe', name: 'Europe', img: '/images/bhutan/main1.JPG' },
-        { id: 'latam', name: 'Latin America', img: '/images/bhutan/main2.JPG' },
+        { id: 'paro', name: 'Paro Valley', img: '/images/bhutan/13.JPG' },
+        { id: 'thimphu', name: 'Thimphu City', img: '/images/bhutan/14.JPG' },
+        { id: 'punakha', name: 'Punakha Valley', img: '/images/bhutan/15.JPG' },
+        { id: 'bumthang', name: 'Bumthang Heartland', img: '/images/bhutan/16.JPG' },
+        { id: 'phobjikha', name: 'Phobjikha & Gangtey', img: '/images/bhutan/17.JPG' },
     ];
 
     const styles = [
-        { id: 'classic', name: 'Classic Sites', img: '/images/bhutan/main1.JPG', desc: 'The iconic must-sees.' },
-        { id: 'active', name: 'Active Explorer', img: '/images/bhutan/main2.JPG', desc: 'Hiking, biking, moving.' },
-        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main1.JPG', desc: 'Off the beaten path.' },
+        { id: 'discovery', name: 'Discovery', img: '/images/bhutan/main4.JPG', desc: 'First-time iconic highlights.' },
+        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main5.JPG', desc: 'Monasteries & heritage.' },
+        { id: 'nature', name: 'Nature Retreat', img: '/images/bhutan/11.JPG', desc: 'Gentle scenic escapes.' },
+        { id: 'romance', name: 'Romantic Escape', img: '/images/bhutan/12.JPG', desc: 'Honeymoons & wellness.' },
     ];
 
-    const tags = ['Safari', 'Beach', 'Hiking', 'Honeymoon', 'Family', 'Food & Wine', 'History', 'Wellness'];
+    const tags = ['Tiger\'s Nest Hike', 'Archery', 'Hot Stone Bath', 'Monastery Visit', 'River Rafting', 'Birdwatching', 'Festivals (Tshechu)', 'Farmhouse Dinner'];
 
     const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, steps));
     const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -50,7 +52,7 @@ export default function TripWizard() {
             case 1:
                 return (
                     <div className="wizard-step-content animation-slide-in">
-                        <h2 className="wizard-question">Do you know where you want to go?</h2>
+                        <h2 className="wizard-question">Which Bhutanese valleys are you most interested in?</h2>
                         <div className="wizard-grid-cards">
                             {regions.map(region => (
                                 <div
@@ -185,7 +187,7 @@ export default function TripWizard() {
                             <div className="wizard-expert-panel">
                                 <div className="expert-avatar"></div>
                                 <div className="expert-info">
-                                    <h4>Talk to a Travel Expert</h4>
+                                    <h4>Talk to a Bhutan Travel Expert</h4>
                                     <div className="expert-rating">
                                         <span className="stars">★★★★★</span>
                                         <span className="reviews">4.9/5 based on 1073 reviews</span>
@@ -210,7 +212,7 @@ export default function TripWizard() {
                                     required
                                 />
                                 <button className="btn btn-primary wizard-submit-btn" type="submit">
-                                    SEE MY TRIP IDEAS
+                                    PLAN MY BHUTAN JOURNEY
                                 </button>
                             </form>
                         </div>

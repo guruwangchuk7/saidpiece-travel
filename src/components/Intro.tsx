@@ -9,9 +9,10 @@ export default function Intro() {
                         <Image src="/images/bhutan/main3.JPG" alt="Bhutan Landscape" fill style={{ objectFit: 'cover', borderRadius: '4px' }} />
                     </div>
                     <div className="intro-content">
-                        <h2>Pioneering Adventure Travel for 3 Years</h2>
-                        <p>We believe in the transformative power of travel. From our first expedition in 1978 to our current portfolio of over 200 trips, we have remained true to our founding principles: crafting immersive, authentic itineraries that bring travelers closer to the heart of a destination.</p>
-                        <a href="#" className="link-btn">Why WT?</a>
+                        <h2>A Journey Created with Heart</h2>
+                        <p>At Saidpiece Travelers, we believe travel to Bhutan should feel personal, meaningful, and unhurried. Every journey we design is crafted to help you experience the real rhythm of the country— its quiet monasteries, mountain valleys, living traditions, and warm hospitality.</p>
+                        <p style={{ marginTop: '1rem' }}>Rather than rushing through a checklist of sights, we focus on thoughtful travel experiences that allow you to slow down and connect with Bhutan’s culture and landscapes. Our goal is simple: to help you experience Bhutan in a way that stays with you long after the journey ends.</p>
+                        <a href="#" className="link-btn" style={{ marginTop: '1.5rem', display: 'inline-block' }}>Our Story</a>
                     </div>
                 </div>
 

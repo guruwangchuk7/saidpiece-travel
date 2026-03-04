@@ -1,10 +1,10 @@
 import Image from 'next/image';
 
 const featuredTrips = [
-    { title: 'Ultimate Bhutan', duration: '10 Days', price: 'From $8,295', image: 'bhutan/main4.JPG' },
-    { title: 'Tigers Nest Trek', duration: '8 Days', price: 'From $5,595', image: 'bhutan/main5.JPG' },
-    { title: 'Paro Festival Safari', duration: '9 Days', price: 'From $7,995', image: 'bhutan/main6.JPG' },
-    { title: 'Snowman Trek Hiking', duration: '12 Days', price: 'From $6,895', image: 'bhutan/9.JPG' }
+    { title: 'Bhutan Discovery', duration: '8 Days', price: 'From $2,400', image: 'bhutan/main4.JPG' },
+    { title: 'Bhutan Cultural Immersion', duration: '12 Days', price: 'Price on Request', image: 'bhutan/main5.JPG' },
+    { title: 'Bhutan Nature Retreat', duration: '10 Days', price: 'From $6,500', image: 'bhutan/main6.JPG' },
+    { title: 'Bhutan Romantic Escape', duration: '10 Days', price: 'From $8,900', image: 'bhutan/9.JPG' }
 ];
 
 export default function FeaturedTrips() {
