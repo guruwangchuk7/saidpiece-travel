@@ -200,19 +200,19 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             <div className="mega-col mega-mid-col">
                                 <h5>Explore</h5>
                                 <ul className="mega-list">
-                                    <li><a href="#">Most Popular</a></li>
-                                    <li><a href="#">Special Offers</a></li>
-                                    <li><a href="#">Travel Blog</a></li>
-                                    <li><a href="#">New Trips</a></li>
+                                    <li><Link href="/browse?filter=popular">Most Popular</Link></li>
+                                    <li><Link href="/browse?filter=offers">Special Offers</Link></li>
+                                    <li><Link href="#">Travel Blog</Link></li>
+                                    <li><Link href="/browse?filter=new">New Trips</Link></li>
                                 </ul>
                             </div>
                             <div className="mega-col mega-right-col">
                                 <h5>Top 10 Curated</h5>
                                 <ul className="mega-list-curated">
-                                    <li><a href="#">Bhutan Discovery</a></li>
-                                    <li><a href="#">Cultural Immersion</a></li>
-                                    <li><a href="#">Bhutan Family Adventure</a></li>
-                                    <li><a href="#">Nature Retreat</a></li>
+                                    <li><Link href="/trips/bhutan-discovery">Bhutan Discovery</Link></li>
+                                    <li><Link href="/trips/cultural-immersion">Cultural Immersion</Link></li>
+                                    <li><Link href="/trips/bhutan-family-adventure">Bhutan Family Adventure</Link></li>
+                                    <li><Link href="/trips/nature-retreat">Nature Retreat</Link></li>
                                 </ul>
                             </div>
                         </div>
