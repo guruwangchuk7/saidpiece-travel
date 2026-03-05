@@ -111,7 +111,7 @@ export default function LocalExpertise() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/22.JPG" alt="Hidden Valley" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/18.JPG" alt="Hidden Valley" fill style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 
