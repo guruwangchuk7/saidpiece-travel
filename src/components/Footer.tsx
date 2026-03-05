@@ -22,11 +22,6 @@ export default function Footer() {
                             Thimphu, Bhutan<br />
                             saidpiece@gmail.com
                         </address>
-                        <div className="footer-badges">
-                            <div className="footer-badge"></div>
-                            <div className="footer-badge"></div>
-                            <div className="footer-badge"></div>
-                        </div>
                     </div>
                     <div className="footer-col">
                         <h4>Quick Links</h4>
