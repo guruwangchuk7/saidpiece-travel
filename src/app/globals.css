@@ -789,13 +789,14 @@ select.trip-finder-input {
 
 .styles-carousel {
   display: flex;
-  gap: 30px;
+  gap: 15px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 20px;
   /* hide scrollbar */
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .styles-carousel::-webkit-scrollbar {
@@ -803,23 +804,33 @@ select.trip-finder-input {
 }
 
 .style-card {
-  flex: 0 0 320px;
-  height: 480px;
+  flex: 0 0 calc(20vw - 15px);
+  min-width: 250px;
+  max-width: 400px;
+  height: 550px;
   position: relative;
   scroll-snap-align: start;
-  border-radius: 4px;
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0), opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+  opacity: 0.95;
+}
+
+.styles-carousel:hover .style-card {
+  opacity: 0.8;
+}
+
+.styles-carousel .style-card:hover {
+  opacity: 1;
+  transform: scale(1.03);
+  z-index: 10;
 }
 
 .style-card .image-placeholder {
   width: 100%;
   height: 100%;
-  transition: transform 0.8s ease;
-}
-
-.style-card:hover .image-placeholder {
-  transform: scale(1.05);
 }
 
 .style-overlay {
@@ -827,7 +838,7 @@ select.trip-finder-input {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50%;
+  height: 33%;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
   display: flex;
   align-items: flex-end;
@@ -837,8 +848,41 @@ select.trip-finder-input {
 
 .style-title {
   color: var(--color-white);
-  font-size: 2rem;
+  font-family: var(--font-playfair);
+  font-size: 1.8rem;
   margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+  background: white;
+  color: #1a4a6e;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.carousel-nav-btn:hover {
+  background: #f0f0f0;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-nav-btn.prev {
+  left: 0;
+}
+
+.carousel-nav-btn.next {
+  right: 0;
 }
 
 /* Top Destinations */
@@ -1391,6 +1435,10 @@ select.trip-finder-input {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .style-card {
+    flex: 0 0 calc(50% - 15px);
+  }
+
   .footer-top {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1434,6 +1482,10 @@ select.trip-finder-input {
   .featured-grid,
   .footer-top {
     grid-template-columns: 1fr;
+  }
+
+  .style-card {
+    flex: 0 0 calc(66.66% - 15px);
   }
 
   .cta-buttons,
