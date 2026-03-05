@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const travelStyles = [
     { name: 'Discovery', image: 'bhutan/7.JPG' },
@@ -15,7 +16,7 @@ export default function TravelStyles() {
             <div className="container">
                 <div className="section-header-row">
                     <h2>Crafting Trips for Every Travel Style</h2>
-                    <a href="#" className="link-btn">Browse All Trips</a>
+                    <Link href="/browse" className="link-btn">Browse All Trips</Link>
                 </div>
 
                 <div className="styles-carousel">

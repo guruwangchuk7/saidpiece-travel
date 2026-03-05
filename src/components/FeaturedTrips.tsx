@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const featuredTrips = [
     { title: 'Bhutan Discovery', duration: '8 Days', price: 'From $2,400', image: 'bhutan/main4.JPG' },
@@ -13,7 +14,7 @@ export default function FeaturedTrips() {
             <div className="container">
                 <div className="section-header-row">
                     <h2>Featured Trips</h2>
-                    <a href="/browse" className="link-btn">View All Trips</a>
+                    <Link href="/browse" className="link-btn">View All Trips</Link>
                 </div>
 
                 <div className="featured-grid">
