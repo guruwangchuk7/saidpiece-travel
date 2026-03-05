@@ -227,6 +227,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                     <li><Link href="/about/responsible-travel">Responsible Travel</Link></li>
                                     <li><Link href="/about/local-expertise">Local Expertise</Link></li>
                                     <li><Link href="/about/booking-process">Booking Process</Link></li>
+                                    <li><Link href="/about/meet-our-team">Meet Our Team</Link></li>
                                 </ul>
                             </div>
                             <div className="mega-about-bg">

@@ -55,7 +55,7 @@ export default function BookingProcess() {
                     <div className="column-assets portrait-frame">
                         <div className="bw-image-wrapper">
                             <Image
-                                src="/images/bhutan/23.JPG"
+                                src="/images/bhutan/13.JPG"
                                 alt="Consultation"
                                 fill
                                 className="grayscale-historical"
@@ -80,10 +80,10 @@ export default function BookingProcess() {
                     <div className="column-assets stacks">
                         <div className="mini-photo-stack">
                             <div className="mini-photo p1">
-                                <Image src="/images/bhutan/24.JPG" alt="Planning Details" fill />
+                                <Image src="/images/bhutan/14.JPG" alt="Planning Details" fill />
                             </div>
                             <div className="mini-photo p2">
-                                <Image src="/images/bhutan/25.JPG" alt="Document Prep" fill />
+                                <Image src="/images/bhutan/15.JPG" alt="Document Prep" fill />
                             </div>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ export default function BookingProcess() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/26.JPG" alt="Arriving in Bhutan" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/16.JPG" alt="Arriving in Bhutan" fill style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 
