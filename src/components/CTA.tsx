@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function CTA() {
     return (
@@ -11,8 +12,7 @@ export default function CTA() {
                 <h2>Talk to a Bhutan Expert</h2>
                 <p>If you prefer to discuss your trip in person, you can schedule a short video call with our team. We can explain how travel works in Bhutan, walk through your itinerary, and answer any questions.</p>
                 <div className="cta-buttons">
-                    <button className="btn btn-outline">Schedule Video Call</button>
-                    <button className="btn btn-primary">Enquire Now</button>
+                    <Link href="/contact" className="btn btn-primary">Enquire Now</Link>
                 </div>
             </div>
         </section>
