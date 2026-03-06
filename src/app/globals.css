@@ -1253,12 +1253,12 @@ select.trip-finder-input {
   gap: 30px;
 }
 
-.cta-buttons .btn-outline {
+.cta-section .cta-buttons .btn-outline {
   color: var(--color-white);
   border-color: var(--color-white);
 }
 
-.cta-buttons .btn-outline:hover {
+.cta-section .cta-buttons .btn-outline:hover {
   background-color: var(--color-white);
   color: #333333;
 }
