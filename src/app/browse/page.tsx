@@ -26,6 +26,8 @@ export default function BrowseTrips() {
     });
     const [sortBy, setSortBy] = useState('Default');
 
+    const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
     const handleFilterChange = (category: keyof typeof filters, value: string | number) => {
         setIsLoading(true);
         setFilters(prev => {
@@ -63,6 +65,17 @@ export default function BrowseTrips() {
         return 'Level 4 - Strenuous';
     };
 
+    const removeFilter = (category: keyof typeof filters, value: string | number) => {
+        setIsLoading(true);
+        setFilters(prev => ({
+            ...prev,
+            [category]: (prev[category] as (string | number)[]).filter(item => item !== value)
+        }));
+        setTimeout(() => setIsLoading(false), 500);
+    };
+
+    const activeFilterCount = Object.values(filters).flat().length;
+
     return (
         <main>
             <Header theme="light" />
@@ -74,86 +87,122 @@ export default function BrowseTrips() {
                     </div>
                 </div>
 
+                {/* Mobile Filter Trigger Bar (Compact Search + Filter) */}
+                <div className="mobile-filter-trigger-bar">
+                    <div className="search-bar-mini">
+                        <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" placeholder="Search trips..." className="mini-search-input" />
+                    </div>
+                    <button className="mobile-filter-icon-btn" onClick={() => setIsFilterDrawerOpen(true)}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        {activeFilterCount > 0 && <span className="filter-badge">{activeFilterCount}</span>}
+                    </button>
+                </div>
+
+                {/* Backdrop with Blur */}
+                <div className={`drawer-backdrop ${isFilterDrawerOpen ? 'is-active' : ''}`} onClick={() => setIsFilterDrawerOpen(false)} />
+
                 <div className="container browse-grid">
-                    <aside className="filters-sidebar">
-                        <div className="filter-header">
-                            <h3>Filters</h3>
-                            <button className="clear-filters" onClick={clearFilters}>Clear All</button>
+                    <aside className={`filters-sidebar ${isFilterDrawerOpen ? 'is-open' : ''}`}>
+                        <div className="drawer-handle" />
+                        <div className="filter-drawer-header">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                <span className="drawer-title">Filters</span>
+                                <button className="clear-filters-mobile" onClick={clearFilters}>Clear All</button>
+                            </div>
+                            <button className="close-drawer-btn" onClick={() => setIsFilterDrawerOpen(false)}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
                         </div>
+                        
+                        <div className="filter-inner">
+                            <div className="filter-header">
+                                <h3>Filters</h3>
+                                <button className="clear-filters" onClick={clearFilters}>Clear All</button>
+                            </div>
 
-                        <div className="filter-group">
-                            <h4 className="filter-title">Trip Type</h4>
-                            <div className="filter-options">
-                                {['Small Group Adventure', 'Private Journey', 'Family Trips', 'Nature & Wellness', 'Honeymoon', 'Festival Tours'].map(type => (
-                                    <label key={type}>
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.types.includes(type === 'Family Trips' ? 'Family Adventure' : type)}
-                                            onChange={() => handleFilterChange('types', type === 'Family Trips' ? 'Family Adventure' : type)}
-                                        /> {type}
-                                    </label>
-                                ))}
+                            <div className="filter-group">
+                                <h4 className="filter-title">Trip Type</h4>
+                                <div className="filter-options">
+                                    {['Small Group Adventure', 'Private Journey', 'Family Trips', 'Nature & Wellness', 'Honeymoon', 'Festival Tours'].map(type => (
+                                        <label key={type}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.types.includes(type === 'Family Trips' ? 'Family Adventure' : type)}
+                                                onChange={() => handleFilterChange('types', type === 'Family Trips' ? 'Family Adventure' : type)}
+                                            /> {type}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <h4 className="filter-title">Destination</h4>
+                                <div className="filter-options">
+                                    {['Bhutan', 'Paro', 'Thimphu', 'Punakha'].map(dest => (
+                                        <label key={dest}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.destinations.includes(dest)}
+                                                onChange={() => handleFilterChange('destinations', dest)}
+                                            /> {dest}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <h4 className="filter-title">Activity</h4>
+                                <div className="filter-options">
+                                    {['Cultural Immersion', 'Nature & Wellness', 'Trekking & Hiking', 'Festivals & Traditions'].map(act => (
+                                        <label key={act}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.activities.includes(act)}
+                                                onChange={() => handleFilterChange('activities', act)}
+                                            /> {act}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <h4 className="filter-title">Trip Level</h4>
+                                <div className="filter-options">
+                                    {[1, 2, 3, 4].map(lvl => (
+                                        <label key={lvl}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.levels.includes(lvl)}
+                                                onChange={() => handleFilterChange('levels', lvl)}
+                                            /> {getLevelLabel(lvl)}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <h4 className="filter-title">Date Range</h4>
+                                <div className="date-inputs">
+                                    <input type="date" className="filter-input-date" onChange={() => handleFilterChange('types', 'dummy')} />
+                                    <span>to</span>
+                                    <input type="date" className="filter-input-date" onChange={() => handleFilterChange('types', 'dummy')} />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="filter-group">
-                            <h4 className="filter-title">Destination</h4>
-                            <div className="filter-options">
-                                {['Bhutan', 'Paro', 'Thimphu', 'Punakha'].map(dest => (
-                                    <label key={dest}>
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.destinations.includes(dest)}
-                                            onChange={() => handleFilterChange('destinations', dest)}
-                                        /> {dest}
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="filter-group">
-                            <h4 className="filter-title">Activity</h4>
-                            <div className="filter-options">
-                                {['Cultural Immersion', 'Nature & Wellness', 'Trekking & Hiking', 'Festivals & Traditions'].map(act => (
-                                    <label key={act}>
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.activities.includes(act)}
-                                            onChange={() => handleFilterChange('activities', act)}
-                                        /> {act}
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="filter-group">
-                            <h4 className="filter-title">Trip Level</h4>
-                            <div className="filter-options">
-                                {[1, 2, 3, 4].map(lvl => (
-                                    <label key={lvl}>
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.levels.includes(lvl)}
-                                            onChange={() => handleFilterChange('levels', lvl)}
-                                        /> {getLevelLabel(lvl)}
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="filter-group">
-                            <h4 className="filter-title">Date Range</h4>
-                            <div className="date-inputs">
-                                <input type="date" className="filter-input-date" onChange={() => handleFilterChange('types', 'dummy')} />
-                                <span>to</span>
-                                <input type="date" className="filter-input-date" onChange={() => handleFilterChange('types', 'dummy')} />
-                            </div>
+                        <div className="filter-drawer-footer">
+                            <button className="btn btn-primary full-width" onClick={() => setIsFilterDrawerOpen(false)}>
+                                SHOW {filteredTrips.length} RESULTS
+                            </button>
                         </div>
                     </aside>
 
                     <div className="results-area">
                         <div className="results-header">
-                            <h2>Showing {filteredTrips.length} Trip Results</h2>
+                            <h2>Showing {filteredTrips.length} Results</h2>
                             <div className="sort-dropdown">
                                 <span style={{ fontSize: '0.875rem', marginRight: '10px', color: '#666' }}>Sort by:</span>
                                 <select
@@ -172,6 +221,23 @@ export default function BrowseTrips() {
                                 </select>
                             </div>
                         </div>
+
+                        {/* Active Filter Chips */}
+                        {Object.entries(filters).some(([_, vals]) => vals.length > 0) && (
+                            <div className="active-filters-row">
+                                {Object.entries(filters).map(([cat, vals]) => (
+                                    (vals as (string | number)[]).map(val => (
+                                        <span key={`${cat}-${val}`} className="filter-chip">
+                                            {cat === 'levels' ? getLevelLabel(val as number) : val}
+                                            <button onClick={() => removeFilter(cat as keyof typeof filters, val)}>
+                                                &times;
+                                            </button>
+                                        </span>
+                                    ))
+                                ))}
+                                <button className="clear-all-chip-btn" onClick={clearFilters}>Clear All</button>
+                            </div>
+                        )}
 
                         {isLoading ? (
                             <div className="loading-spinner-container">

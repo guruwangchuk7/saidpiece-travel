@@ -9,9 +9,10 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
     const { user, signInWithGoogle, signOut } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const isLightState = theme === 'light' || isScrolled || openMenu !== null;
+    const isLightState = theme === 'light' || isScrolled || openMenu !== null || isMobileMenuOpen;
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -35,6 +36,15 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close mobile menu on orientation change or large screen
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) setIsMobileMenuOpen(false);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // Placeholder image that implies travel
     const placeholderImg = '/images/bhutan/main1.JPG';
 
@@ -42,6 +52,25 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
         <>
             {/* Global Menu Overlay */}
             <div className={`menu-overlay ${openMenu ? 'is-active' : ''}`} />
+
+            {/* Mobile Nav Drawer */}
+            <div className={`mobile-nav-drawer ${isMobileMenuOpen ? 'is-open' : ''}`}>
+                <nav className="mobile-nav-links">
+                    <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Destinations</Link>
+                    <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Browse Trips</Link>
+                    <Link href="/wizard" onClick={() => setIsMobileMenuOpen(false)}>Trip Wizard</Link>
+                    <Link href="/about/our-story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
+                    <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
+                </nav>
+                <div className="mobile-nav-bottom">
+                    <a href="tel:1-800-368-2794">1-800-368-2794</a>
+                    {user ? (
+                        <button onClick={() => signOut()} className="nav-button">Logout</button>
+                    ) : (
+                        <button onClick={() => signInWithGoogle()} className="nav-button">Login</button>
+                    )}
+                </div>
+            </div>
 
             {/* Sticky Contact Button */}
             <Link href="/contact" className="sticky-contact-btn">
@@ -71,6 +100,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                     alt="Saidpiece Travel Logo"
                                     width={240}
                                     height={80}
+                                    className="header-logo-img"
                                     style={{
                                         objectFit: 'contain',
                                         filter: isLightState ? 'brightness(0)' : 'brightness(0) invert(1)',
@@ -81,6 +111,25 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             </Link>
                         </div>
                         <nav>
+                            <button
+                                className="mobile-menu-btn"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                aria-label="Toggle Menu"
+                                aria-expanded={isMobileMenuOpen}
+                            >
+                                {isMobileMenuOpen ? (
+                                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                ) : (
+                                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                                    </svg>
+                                )}
+                            </button>
                             <ul className="nav-links">
                                 <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('destinations')} onMouseLeave={handleMouseLeave}>
                                     <button className={`nav-button ${openMenu === 'destinations' ? 'is-open' : ''}`} aria-expanded={openMenu === 'destinations'}>
