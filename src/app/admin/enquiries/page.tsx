@@ -34,7 +34,7 @@ export default function EnquiryManager() {
             <div style={{ padding: '100px', textAlign: 'center' }}>
                 <h2 className="serif-title">Access Denied</h2>
                 <p>You are not authorized to access this dashboard. Please log in with a staff Gmail account.</p>
-                <button className="btn btn-primary" style={{ marginTop: '20px' }} onClick={signInWithGoogle}>Sign in with Staff Gmail</button>
+                <button className="btn btn-primary" style={{ marginTop: '20px' }} onClick={() => signInWithGoogle('/admin/enquiries')}>Sign in with Staff Gmail</button>
             </div>
         );
     }

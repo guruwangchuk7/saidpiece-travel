@@ -32,7 +32,7 @@ export function useAuth() {
         };
     }, []);
 
-    const signInWithGoogle = async () => {
+    const signInWithGoogle = async (redirectTo?: string) => {
         if (!supabase) {
             alert("Auth connection not configured. Please add Supabase details to your .env file.");
             return;
@@ -40,7 +40,7 @@ export function useAuth() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + '/confirm-pay'
+                redirectTo: window.location.origin + (redirectTo || '/confirm-pay')
             }
         });
         if (error) console.error('Error logging in with Google:', error);
