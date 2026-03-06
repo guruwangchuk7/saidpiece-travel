@@ -10,9 +10,10 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const isLightState = theme === 'light' || isScrolled || openMenu !== null || isMobileMenuOpen;
+    const isLightState = theme === 'light' || isScrolled || openMenu !== null || (isMobileMenuOpen && isMounted);
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -38,6 +39,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
 
     // Close mobile menu on orientation change or large screen
     useEffect(() => {
+        setIsMounted(true);
         const handleResize = () => {
             if (window.innerWidth > 768) setIsMobileMenuOpen(false);
         };
@@ -51,10 +53,10 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
     return (
         <>
             {/* Global Menu Overlay */}
-            <div className={`menu-overlay ${openMenu ? 'is-active' : ''}`} />
+            <div className={`menu-overlay ${openMenu && isMounted ? 'is-active' : ''}`} />
 
             {/* Mobile Nav Drawer */}
-            <div className={`mobile-nav-drawer ${isMobileMenuOpen ? 'is-open' : ''}`}>
+            <div className={`mobile-nav-drawer ${isMobileMenuOpen && isMounted ? 'is-open' : ''}`}>
                 <nav className="mobile-nav-links">
                     <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Destinations</Link>
                     <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Browse Trips</Link>
@@ -188,7 +190,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     </div>
 
                     {/* A. Destinations Menu */}
-                    <div className={`mega-menu-full mega-menu-destinations ${openMenu === 'destinations' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('destinations')} onMouseLeave={handleMouseLeave}>
+                    <div className={`mega-menu-full mega-menu-destinations ${openMenu === 'destinations' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('destinations')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container">
                             <div className="destinations-left">
                                 <ul className="mega-list">
@@ -211,7 +213,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     </div>
 
                     {/* B. Browse Trips Menu */}
-                    <div className={`mega-menu-full mega-menu-browse ${openMenu === 'browse' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('browse')} onMouseLeave={handleMouseLeave}>
+                    <div className={`mega-menu-full mega-menu-browse ${openMenu === 'browse' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('browse')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container">
                             <div className="browse-left three-col">
                                 <div className="mega-col">
@@ -254,7 +256,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     </div>
 
                     {/* C. Inspiration Menu */}
-                    <div className={`mega-menu-full mega-menu-inspiration ${openMenu === 'inspiration' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
+                    <div className={`mega-menu-full mega-menu-inspiration ${openMenu === 'inspiration' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container hybrid-layout">
                             <div className="mega-left-image">
                                 <Image src="/images/bhutan/main2.JPG" alt="Striking vertical landscape" fill style={{ objectFit: 'cover' }} />
@@ -281,7 +283,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     </div>
 
                     {/* D. About Us Menu */}
-                    <div className={`mega-menu-full mega-menu-about ${openMenu === 'about' ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
+                    <div className={`mega-menu-full mega-menu-about ${openMenu === 'about' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container about-layout">
                             <div className="mega-about-links">
                                 <ul className="mega-list-large">

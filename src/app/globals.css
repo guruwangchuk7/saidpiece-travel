@@ -1845,10 +1845,12 @@ select.trip-finder-input {
 }
 
 /* Sidebar Filters */
-.filters-sidebar {
-  position: sticky;
-  top: 120px;
-  height: fit-content;
+@media (min-width: 1025px) {
+  .filters-sidebar {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+  }
 }
 
 .filter-header {

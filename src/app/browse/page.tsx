@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -25,6 +25,10 @@ export default function BrowseTrips() {
         levels: [] as number[],
     });
     const [sortBy, setSortBy] = useState('Default');
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
@@ -102,10 +106,10 @@ export default function BrowseTrips() {
                 </div>
 
                 {/* Backdrop with Blur */}
-                <div className={`drawer-backdrop ${isFilterDrawerOpen ? 'is-active' : ''}`} onClick={() => setIsFilterDrawerOpen(false)} />
+                <div className={`drawer-backdrop ${isFilterDrawerOpen && isMounted ? 'is-active' : ''}`} onClick={() => setIsFilterDrawerOpen(false)} />
 
                 <div className="container browse-grid">
-                    <aside className={`filters-sidebar ${isFilterDrawerOpen ? 'is-open' : ''}`}>
+                    <aside className={`filters-sidebar ${isFilterDrawerOpen && isMounted ? 'is-open' : ''}`}>
                         <div className="drawer-handle" />
                         <div className="filter-drawer-header">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
