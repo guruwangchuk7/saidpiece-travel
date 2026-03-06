@@ -126,3 +126,28 @@ CREATE POLICY "Public read trip departures" ON public.trip_departures FOR SELECT
 -- Enquiries: Users can view/create their own. Staff/Admin can view/edit all.
 CREATE POLICY "Users can create enquiries" ON public.enquiries FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 CREATE POLICY "Users can view own enquiries" ON public.enquiries FOR SELECT USING (auth.uid() = user_id);
+
+-- 8. Auto-Create Profile on Signup
+-- This function automatically inserts a row into public.profiles 
+-- whenever a new user signs up via Supabase Auth (e.g., Google login).
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, role)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    -- Extract full name from Google metadata if available
+    NEW.raw_user_meta_data->>'full_name',
+    -- Default everyone to 'customer'. 
+    -- You can manually change your admin emails to 'staff' or 'admin' in the database later.
+    'customer'::public.user_role
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create the trigger that fires the function every time a user is created
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
