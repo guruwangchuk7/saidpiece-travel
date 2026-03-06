@@ -125,11 +125,11 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                 </li>
                                 <li className="nav-auth-item" style={{ marginLeft: '10px' }}>
                                     {user ? (
-                                        <button onClick={signOut} className="nav-button text-xs" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
+                                        <button onClick={() => signOut()} className="nav-button text-xs" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
                                             Logout ({user.email?.split('@')[0]})
                                         </button>
                                     ) : (
-                                        <button onClick={signInWithGoogle} className="nav-button" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
+                                        <button onClick={() => signInWithGoogle()} className="nav-button" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
                                             Login
                                         </button>
                                     )}
