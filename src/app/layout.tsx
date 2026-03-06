@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lato } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -25,7 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lato.className} ${playfair.variable} ${lato.variable}`}>{children}</body>
+      <body className={`${lato.className} ${playfair.variable} ${lato.variable}`}>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

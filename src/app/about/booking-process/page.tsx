@@ -123,7 +123,7 @@ export default function BookingProcess() {
                         Ready to begin the process? Use our interactive Trip Wizard or browse our flagship itineraries to find your starting point. Our experts are standing by to guide you through every step.
                     </p>
                     <div className="divider-line"></div>
-                    <div className="cta-buttons" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+                    <div className="cta-buttons">
                         <Link href="/wizard" className="btn btn-primary large-btn">Start Trip Wizard</Link>
                         <Link href="/browse" className="btn btn-outline large-btn">Browse Itineraries</Link>
                     </div>

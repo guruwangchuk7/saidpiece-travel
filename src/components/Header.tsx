@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 'light', children?: React.ReactNode }) {
+    const { user, signInWithGoogle, signOut } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -120,6 +122,17 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                         </svg>
                                     </button>
+                                </li>
+                                <li className="nav-auth-item" style={{ marginLeft: '10px' }}>
+                                    {user ? (
+                                        <button onClick={signOut} className="nav-button text-xs" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
+                                            Logout ({user.email?.split('@')[0]})
+                                        </button>
+                                    ) : (
+                                        <button onClick={signInWithGoogle} className="nav-button" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.7 }}>
+                                            Login
+                                        </button>
+                                    )}
                                 </li>
                             </ul>
                         </nav>

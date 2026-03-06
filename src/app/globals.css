@@ -2645,6 +2645,12 @@ select.trip-finder-input {
   font-weight: 500;
 }
 
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
 /* Trust Bar */
 .trust-bar {
   border-top: 1px solid #eee;
@@ -2679,18 +2685,31 @@ select.trip-finder-input {
 }
 
 @media (max-width: 1024px) {
-  .asymmetric-row {
-    grid-template-columns: 1fr;
-    gap: 40px;
+  .story-hero-refined {
+    height: 70vh;
   }
 
   .serif-title {
-    font-size: 4rem;
+    font-size: 3.5rem;
+  }
+
+  .asymmetric-row {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    margin-bottom: 120px;
+  }
+
+  .asymmetric-row.reverse {
+    direction: ltr;
+  }
+
+  .column-text {
+    padding: 0;
   }
 
   .column-assets {
-    height: 400px;
-    width: 100%;
+    height: 500px;
+    width: 100% !important;
   }
 
   .three-col-media {
@@ -2706,6 +2725,102 @@ select.trip-finder-input {
     flex-wrap: wrap;
     gap: 40px;
     justify-content: center;
+  }
+
+  .mini-photo-stack {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .story-hero-refined {
+    height: 60vh;
+  }
+
+  .serif-title {
+    font-size: 2.8rem;
+  }
+
+  .endorsement-block {
+    padding: 80px 20px;
+  }
+
+  .endorsement-block h2 {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .forbes-quote blockquote {
+    font-size: 1.8rem;
+  }
+
+  .narrative-grid {
+    padding-bottom: 80px;
+  }
+
+  .asymmetric-row {
+    margin-bottom: 80px;
+    gap: 40px;
+  }
+
+  .column-assets {
+    height: 350px;
+  }
+
+  .portrait-frame,
+  .landscape-frame {
+    height: 320px;
+  }
+
+  .bw-image-wrapper {
+    box-shadow: 15px 15px 0 #f9f9f9;
+  }
+
+  .column-text p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .mini-photo {
+    width: 160px;
+    height: 220px;
+  }
+
+  .mini-photo.p1 {
+    transform: rotate(-5deg) translate(-20px, -15px);
+  }
+
+  .mini-photo.p2 {
+    transform: rotate(3deg) translate(20px, 15px);
+  }
+
+  .family-ownership-centered {
+    margin: 80px auto;
+    padding: 40px 20px;
+  }
+
+  .centered-paragraph {
+    font-size: 1.2rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 15px !important;
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .floating-contact {
+    bottom: 25px;
+    right: 25px;
+  }
+
+  .floating-mail-btn {
+    width: 55px;
+    height: 55px;
   }
 }
 

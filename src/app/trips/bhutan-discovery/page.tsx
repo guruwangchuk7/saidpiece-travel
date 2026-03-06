@@ -1,13 +1,33 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function BhutanDiscoveryTrip() {
+    const router = useRouter();
+    const { user, signInWithGoogle } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1); // 1 = days 1-3
+
+    const tripData = {
+        name: "Bhutan Discovery",
+        price: "2400",
+        image: "/images/bhutan/main4.JPG"
+    };
+
+    const handleBookOnline = () => {
+        if (!user) {
+            const destination = `/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=${tripData.price}`;
+            localStorage.setItem('booking_redirect', destination);
+            signInWithGoogle();
+        } else {
+            router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=${tripData.price}`);
+        }
+    };
 
     const toggleAccordion = (day: number) => {
         setOpenDay(openDay === day ? null : day);
@@ -48,7 +68,7 @@ export default function BhutanDiscoveryTrip() {
                         </div>
                         <div className="quick-info-ctas">
                             <button className="btn btn-outline" style={{ borderColor: 'white', color: 'white', marginRight: '15px' }}>DOWNLOAD ITINERARY</button>
-                            <button className="btn btn-primary" style={{ backgroundColor: '#fff', color: '#111' }}>BOOK ONLINE</button>
+                            <button className="btn btn-primary" style={{ backgroundColor: '#fff', color: '#111' }} onClick={handleBookOnline}>BOOK ONLINE</button>
                         </div>
                     </div>
                 </div>
@@ -164,21 +184,21 @@ export default function BhutanDiscoveryTrip() {
                                         <td>Mar 19, 2026</td>
                                         <td><span className="status-badge space">Space Available</span></td>
                                         <td>$2,400</td>
-                                        <td><button className="btn btn-outline small">Book Now</button></td>
+                                        <td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>Apr 05, 2026</td>
                                         <td>Apr 12, 2026</td>
                                         <td><span className="status-badge last-call">Limited Space</span></td>
                                         <td>$2,650</td>
-                                        <td><button className="btn btn-outline small">Book Now</button></td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=2650`)}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>Oct 10, 2026</td>
                                         <td>Oct 17, 2026</td>
                                         <td><span className="status-badge guaranteed">Guaranteed</span></td>
                                         <td>$3,100</td>
-                                        <td><button className="btn btn-outline small">Book Now</button></td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3100`)}>Book Now</button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -238,7 +258,7 @@ export default function BhutanDiscoveryTrip() {
                     <div className="container text-center">
                         <h2>Ready to experience the true rhythm of Bhutan?</h2>
                         <p>Our travel experts are ready to personalize this itinerary for you.</p>
-                        <button className="btn btn-primary large-btn">Book Your Trip Today</button>
+                        <button className="btn btn-primary large-btn" onClick={handleBookOnline}>Book Your Trip Today</button>
                     </div>
                 </section>
             </div>
