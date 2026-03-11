@@ -37,6 +37,7 @@ function ConfirmPayContent() {
     const [quotedCryptoAmount, setQuotedCryptoAmount] = useState<string | null>(null);
     const [quoteExpiresAt, setQuoteExpiresAt] = useState<string | null>(null);
     const [isPreparingCrypto, setIsPreparingCrypto] = useState(false);
+    const [intentRequestKey, setIntentRequestKey] = useState<string | null>(null);
 
     const { isLoading: isConfirmingCrypto } = useWaitForTransactionReceipt({
         hash: pendingCryptoHash,
@@ -73,13 +74,19 @@ function ConfirmPayContent() {
     const isCryptoBusy = isPreparingCrypto || isSwitchingChain || isSendingCrypto || isConfirmingCrypto;
 
     useEffect(() => {
-        if (!user || !session?.access_token || !isCryptoConfigured) {
+        if (paymentMethod !== 'crypto' || !user || !session?.access_token || !isCryptoConfigured) {
+            return;
+        }
+
+        const requestKey = [tripName, travelerName, normalizedFiatAmount, currency, cryptoAmountFromUrl || ''].join('|');
+        if (intentRequestKey === requestKey && cryptoIntentId) {
             return;
         }
 
         let active = true;
         setIsPreparingCrypto(true);
         setCryptoError(null);
+        setIntentRequestKey(requestKey);
 
         fetch('/api/crypto-payment-intents', {
             method: 'POST',
@@ -118,6 +125,7 @@ function ConfirmPayContent() {
 
                 const message = error instanceof Error ? error.message : 'Failed to prepare crypto payment.';
                 setCryptoError(message);
+                setIntentRequestKey(null);
             })
             .finally(() => {
                 if (active) {
@@ -128,7 +136,7 @@ function ConfirmPayContent() {
         return () => {
             active = false;
         };
-    }, [user, session?.access_token, tripName, travelerName, normalizedFiatAmount, currency, cryptoAmountFromUrl]);
+    }, [paymentMethod, user, session?.access_token, tripName, travelerName, normalizedFiatAmount, currency, cryptoAmountFromUrl, cryptoIntentId, intentRequestKey]);
 
     const handleStripePayment = (e: React.FormEvent) => {
         e.preventDefault();

@@ -37,6 +37,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!user.email) {
+      return NextResponse.json(
+        { ok: false, error: 'Authenticated user is missing an email address.' },
+        { status: 400 },
+      );
+    }
+
     const config = getCryptoPaymentConfig();
     const expectedTokenAmount = getExpectedTokenAmount({
       fiatAmount,
@@ -48,6 +55,38 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + config.quoteLifetimeMinutes * 60_000).toISOString();
 
     const supabase = createSupabaseAdminClient();
+    const { data: existingIntent, error: existingIntentError } = await supabase
+      .from('crypto_payment_intents')
+      .select('id, trip_name, fiat_currency, fiat_amount, token_symbol, expected_token_amount, chain_id, recipient_address, quote_expires_at, status')
+      .eq('user_id', user.id)
+      .eq('trip_name', tripName)
+      .eq('fiat_currency', currency)
+      .eq('fiat_amount', fiatAmount)
+      .eq('token_symbol', config.tokenSymbol)
+      .eq('status', 'pending')
+      .gte('quote_expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingIntentError) {
+      console.error('Failed to look up existing crypto payment intent', {
+        error: existingIntentError,
+        userId: user.id,
+        tripName,
+        fiatAmount,
+        currency,
+      });
+      return NextResponse.json({ ok: false, error: existingIntentError.message }, { status: 500 });
+    }
+
+    if (existingIntent) {
+      return NextResponse.json({
+        ok: true,
+        intent: existingIntent,
+      });
+    }
+
     const { data, error } = await supabase
       .from('crypto_payment_intents')
       .insert({
@@ -71,6 +110,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      console.error('Failed to insert crypto payment intent', {
+        error,
+        userId: user.id,
+        tripName,
+        fiatAmount,
+        currency,
+      });
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
@@ -80,6 +126,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to create crypto payment intent.';
+    console.error('Crypto payment intent route failed', error);
     const status = message === 'Unauthorized' ? 401 : 500;
     return NextResponse.json({ ok: false, error: message }, { status });
   }
