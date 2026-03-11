@@ -27,7 +27,7 @@ function ConfirmPayContent() {
     const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
     const { writeContractAsync, isPending: isSendingCrypto } = useWriteContract();
 
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | 'wire'>('card');
+    const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | 'wire' | 'binance'>('card');
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [cryptoTxId, setCryptoTxId] = useState<string | null>(null);
@@ -38,6 +38,9 @@ function ConfirmPayContent() {
     const [quoteExpiresAt, setQuoteExpiresAt] = useState<string | null>(null);
     const [isPreparingCrypto, setIsPreparingCrypto] = useState(false);
     const [intentRequestKey, setIntentRequestKey] = useState<string | null>(null);
+    const [isBinancePayLoading, setIsBinancePayLoading] = useState(false);
+    const [binancePayError, setBinancePayError] = useState<string | null>(null);
+    const [binanceCheckoutUrl, setBinanceCheckoutUrl] = useState<string | null>(null);
 
     const { isLoading: isConfirmingCrypto } = useWaitForTransactionReceipt({
         hash: pendingCryptoHash,
@@ -149,6 +152,48 @@ function ConfirmPayContent() {
         }, 2000);
     };
 
+    const handleBinancePayment = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+
+        if (!session?.access_token) {
+            setBinancePayError('Your session is missing an access token. Please sign in again and retry.');
+            return;
+        }
+
+        setIsBinancePayLoading(true);
+        setBinancePayError(null);
+        setBinanceCheckoutUrl(null);
+        try {
+            const response = await fetch('/api/binance-pay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({
+                    tripName,
+                    travelerName,
+                    fiatAmount: normalizedFiatAmount,
+                    currency,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.ok) {
+                throw new Error(data.error || 'Failed to create Binance Pay order.');
+            }
+
+            setBinanceCheckoutUrl(data.checkoutUrl);
+            window.location.href = data.checkoutUrl;
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred.';
+            setBinancePayError(message);
+        } finally {
+            setIsBinancePayLoading(false);
+        }
+    };
+
     const handleCryptoPayment = async () => {
         if (!isConnected) {
             alert('Please connect your wallet to pay with crypto.');
@@ -254,8 +299,17 @@ function ConfirmPayContent() {
         const isStripe = paymentMethod === 'card';
         const isCrypto = paymentMethod === 'crypto';
         const isWire = paymentMethod === 'wire';
+        const isBinance = paymentMethod === 'binance';
 
-        const icon = isCrypto ? '🪙' : isWire ? '🏦' : '💳';
+        const icon = isCrypto ? (
+            <Image src="/crypto.svg" alt="Crypto" width={32} height={32} />
+        ) : isBinance ? (
+            <Image src="/binance.svg" alt="Binance" width={32} height={32} />
+        ) : isWire ? (
+            '🏦'
+        ) : (
+            '💳'
+        );
         const title = isCrypto
             ? 'Crypto Payment Initiated'
             : isWire
@@ -353,7 +407,7 @@ function ConfirmPayContent() {
                 {/* Right Column: Payment Options */}
                 <div className="payment-options-card">
                     <h3 className="serif-h2" style={{ fontSize: '28px', marginBottom: '15px' }}>Secure Checkout</h3>
-                    <p className="payment-note">Complete your booking using our global secure payment gateway. We accept all major international cards, and now crypto payments via Rainbow Wallet.</p>
+                    <p className="payment-note">Complete your booking using our global secure payment gateway. We accept major international cards, Rainbow Wallet crypto payments, Binance Pay, and wire transfer.</p>
 
                     <div className="method-selector">
                         <button
@@ -376,6 +430,19 @@ function ConfirmPayContent() {
                             <div className="method-info">
                                 <strong>Crypto Wallet</strong>
                                 <span>Pay using Rainbow Wallet (web3 wallet connect).</span>
+                            </div>
+                        </button>
+                        <button
+                            type="button"
+                            className={`method-btn ${paymentMethod === 'binance' ? 'active' : ''}`}
+                            onClick={() => setPaymentMethod('binance')}
+                        >
+                            <span className="method-icon">
+                                <Image src="/binance.svg" alt="Binance" width={24} height={24} />
+                            </span>
+                            <div className="method-info">
+                                <strong>Binance Pay</strong>
+                                <span>Pay with Binance Pay using your Binance wallet balance.</span>
                             </div>
                         </button>
                         <button
@@ -500,6 +567,63 @@ function ConfirmPayContent() {
                                 </div>
                             )}
                         </div>
+                    )}
+
+                    {paymentMethod === 'binance' && (
+                        <form className="confirmation-form" style={{ marginTop: '20px' }} onSubmit={handleBinancePayment}>
+                            <div className="crypto-payment" style={{ marginBottom: '20px' }}>
+                                <p className="crypto-intro" style={{ marginBottom: '12px' }}>
+                                    Binance Pay creates a hosted checkout order for this booking amount and redirects you to Binance to finish payment securely.
+                                </p>
+                                <div className="crypto-meta-grid" style={{ marginBottom: 0 }}>
+                                    <div className="crypto-meta-item">
+                                        <span className="crypto-meta-label">Amount</span>
+                                        <strong>{currency} {amount}</strong>
+                                    </div>
+                                    <div className="crypto-meta-item">
+                                        <span className="crypto-meta-label">Traveler</span>
+                                        <strong>{travelerName}</strong>
+                                    </div>
+                                    <div className="crypto-meta-item">
+                                        <span className="crypto-meta-label">Settlement</span>
+                                        <strong>Binance Pay Checkout</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="checkbox-group" style={{ display: 'flex', gap: '12px', marginBottom: '30px', fontSize: '14px' }}>
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    checked={acceptedTerms}
+                                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                                />
+                                <label htmlFor="terms" style={{ color: '#666' }}>
+                                    I agree to the <a href="/terms" style={{ color: 'var(--color-brand)', fontWeight: 600 }}>Booking Terms</a> & <a href="/cancellation" style={{ color: 'var(--color-brand)', fontWeight: 600 }}>Cancellation Policy</a>.
+                                </label>
+                            </div>
+                            <button
+                                type="submit"
+                                className="btn btn-primary full-width-btn"
+                                style={{ padding: '22px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#000000', width: '100%', border: 'none', color: '#FFFFFF', cursor: 'pointer' }}
+                                disabled={!acceptedTerms || isBinancePayLoading}
+                            >
+                                <span style={{ fontWeight: 700, letterSpacing: '1px' }}>
+                                    {isBinancePayLoading ? 'CREATING ORDER...' : 'PROCEED TO BINANCE PAY'}
+                                </span>
+                            </button>
+                            {binancePayError && (
+                                <div className="crypto-feedback-box" style={{ marginTop: '16px' }}>
+                                    <p className="crypto-error">{binancePayError}</p>
+                                </div>
+                            )}
+                            {binanceCheckoutUrl && !binancePayError && (
+                                <div className="crypto-feedback-box" style={{ marginTop: '16px' }}>
+                                    <p className="crypto-feedback">
+                                        If the redirect does not start, continue here: <a href={binanceCheckoutUrl} style={{ color: 'var(--color-brand)', fontWeight: 600 }}>Open Binance Pay checkout</a>
+                                    </p>
+                                </div>
+                            )}
+                        </form>
                     )}
 
                     {paymentMethod === 'wire' && (
