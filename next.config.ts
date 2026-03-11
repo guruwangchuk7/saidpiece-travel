@@ -2,11 +2,12 @@ import type { NextConfig } from "next";
 
 const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https:;
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://*.supabase.co wss:;
+    connect-src 'self' https://*.supabase.co https://*.walletconnect.com wss://*.walletconnect.com https://rpc.walletconnect.com https://*.vercel.app https://mainnet.base.org https://base-mainnet.g.alchemy.com https://base.llamarpc.com;
+    frame-src 'self' https://verify.walletconnect.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
@@ -56,6 +57,36 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+          },
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Cross-Origin-Resource-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Origin-Agent-Cluster",
+            value: "?1",
+          },
+        ],
+      },
+      {
+        source: "/admin/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, max-age=0",
+          },
+        ],
+      },
+      {
+        source: "/confirm-pay",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, max-age=0",
           },
         ],
       },

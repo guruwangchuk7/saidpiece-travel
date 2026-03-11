@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient, ensureProfile, getAuthenticatedUser } from '@/lib/supabaseAdmin';
 import { getCryptoPaymentConfig, getExpectedTokenAmount, toTokenBaseUnits } from '@/lib/cryptoPayments';
+import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
 
 type CreateIntentBody = {
   tripName?: string;
@@ -21,6 +22,22 @@ function getBearerToken(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const clientIp = getClientIp(request);
+    const rateLimit = enforceRateLimit({
+      key: `crypto-intent:${clientIp}`,
+      limit: 10,
+      windowMs: 60_000,
+    });
+
+    if (rateLimit) {
+      const response = jsonNoStore(
+        { ok: false, error: 'Too many payment intent requests. Please wait and try again.' },
+        { status: 429 },
+      );
+      response.headers.set('Retry-After', String(rateLimit.retryAfterSeconds));
+      return response;
+    }
+
     const accessToken = getBearerToken(request);
     const user = await getAuthenticatedUser(accessToken);
     const body = (await request.json()) as CreateIntentBody;
@@ -83,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (existingIntent) {
-      return NextResponse.json({
+      return jsonNoStore({
         ok: true,
         intent: existingIntent,
       });
@@ -119,10 +136,10 @@ export async function POST(request: NextRequest) {
         fiatAmount,
         currency,
       });
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      return jsonNoStore({ ok: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({
+    return jsonNoStore({
       ok: true,
       intent: data,
     });
@@ -130,6 +147,6 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : 'Failed to create crypto payment intent.';
     console.error('Crypto payment intent route failed', error);
     const status = message === 'Unauthorized' ? 401 : 500;
-    return NextResponse.json({ ok: false, error: message }, { status });
+    return jsonNoStore({ ok: false, error: message }, { status });
   }
 }
