@@ -57,9 +57,12 @@ export function useAuth() {
       return;
     }
 
-    // NOTE: If you deploy this app to a hosted domain, you can set NEXT_PUBLIC_APP_URL
-    // to ensure the OAuth redirect always returns to that domain instead of localhost.
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+    // Use the current browser origin at runtime so deployed preview builds don't
+    // hardcode a localhost origin from a build-time env var.
+    const baseUrl =
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL ?? '';
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
