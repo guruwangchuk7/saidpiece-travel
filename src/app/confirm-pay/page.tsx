@@ -72,8 +72,9 @@ function ConfirmPayContent() {
         (currency.toUpperCase() === 'USD' && ['USDC', 'USDT'].includes(cryptoTokenSymbol.toUpperCase())
             ? normalizedFiatAmount
             : null);
+    const cryptoAmountValue = cryptoAmount == null ? null : String(cryptoAmount).trim();
     const isCorrectCryptoChain = chainId === cryptoPaymentChainId;
-    const canSubmitCryptoPayment = isConnected && isCryptoConfigured && Boolean(cryptoAmount) && isCorrectCryptoChain && Boolean(cryptoIntentId);
+    const canSubmitCryptoPayment = isConnected && isCryptoConfigured && Boolean(cryptoAmountValue) && Boolean(cryptoIntentId);
     const isCryptoBusy = isPreparingCrypto || isSwitchingChain || isSendingCrypto || isConfirmingCrypto;
 
     useEffect(() => {
@@ -205,8 +206,13 @@ function ConfirmPayContent() {
             return;
         }
 
-        if (!cryptoAmount) {
+        if (!cryptoAmountValue) {
             setCryptoError(`Missing crypto amount. Add a cryptoAmount query param, or use USD with ${cryptoTokenSymbol}.`);
+            return;
+        }
+
+        if (!cryptoIntentId) {
+            setCryptoError('Your crypto payment quote is still being prepared. Please wait a moment and try again.');
             return;
         }
 
@@ -221,7 +227,7 @@ function ConfirmPayContent() {
                 address: cryptoTokenAddress,
                 abi: erc20Abi,
                 functionName: 'transfer',
-                args: [cryptoRecipient, parseUnits(cryptoAmount, cryptoTokenDecimals)],
+                args: [cryptoRecipient, parseUnits(cryptoAmountValue, cryptoTokenDecimals)],
             });
 
             setPendingCryptoHash(hash);
@@ -518,7 +524,7 @@ function ConfirmPayContent() {
                                 </div>
                                 <div className="crypto-meta-item">
                                     <span className="crypto-meta-label">Amount</span>
-                                    <strong>{cryptoAmount ? `${cryptoAmount} ${cryptoTokenSymbol}` : 'Unavailable'}</strong>
+                                    <strong>{cryptoAmountValue ? `${cryptoAmountValue} ${cryptoTokenSymbol}` : 'Unavailable'}</strong>
                                 </div>
                                 <div className="crypto-meta-item">
                                     <span className="crypto-meta-label">Chain</span>
@@ -552,7 +558,17 @@ function ConfirmPayContent() {
                                 onClick={handleCryptoPayment}
                             >
                                 <span style={{ fontWeight: 700, letterSpacing: '1px' }}>
-                                    {isSwitchingChain ? 'SWITCHING NETWORK...' : isSendingCrypto ? `CONFIRM ${cryptoTokenSymbol} TRANSFER...` : isConfirmingCrypto ? 'WAITING FOR CONFIRMATION...' : `PAY ${cryptoAmount || amount} ${cryptoTokenSymbol}`}
+                                    {isPreparingCrypto
+                                        ? 'PREPARING PAYMENT...'
+                                        : isSwitchingChain
+                                        ? 'SWITCHING TO BASE...'
+                                        : isSendingCrypto
+                                        ? `CONFIRM ${cryptoTokenSymbol} TRANSFER...`
+                                        : isConfirmingCrypto
+                                        ? 'WAITING FOR CONFIRMATION...'
+                                        : !isCorrectCryptoChain
+                                        ? 'SWITCH TO BASE TO PAY'
+                                        : `PAY ${cryptoAmountValue || amount} ${cryptoTokenSymbol}`}
                                 </span>
                             </button>
 
