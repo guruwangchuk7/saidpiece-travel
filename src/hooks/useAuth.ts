@@ -57,10 +57,14 @@ export function useAuth() {
       return;
     }
 
+    // NOTE: If you deploy this app to a hosted domain, you can set NEXT_PUBLIC_APP_URL
+    // to ensure the OAuth redirect always returns to that domain instead of localhost.
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + (redirectTo || '/confirm-pay'),
+        redirectTo: baseUrl + (redirectTo || '/confirm-pay'),
       },
     });
 
