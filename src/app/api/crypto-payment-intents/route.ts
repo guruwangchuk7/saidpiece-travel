@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseAdminClient, getAuthenticatedUser } from '@/lib/supabaseAdmin';
+import { createSupabaseAdminClient, ensureProfile, getAuthenticatedUser } from '@/lib/supabaseAdmin';
 import { getCryptoPaymentConfig, getExpectedTokenAmount, toTokenBaseUnits } from '@/lib/cryptoPayments';
 
 type CreateIntentBody = {
@@ -43,6 +43,8 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    await ensureProfile(user);
 
     const config = getCryptoPaymentConfig();
     const expectedTokenAmount = getExpectedTokenAmount({

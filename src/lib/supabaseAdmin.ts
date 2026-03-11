@@ -49,3 +49,34 @@ export async function getAuthenticatedUser(accessToken: string): Promise<User> {
 
   return data.user;
 }
+
+export async function ensureProfile(user: User) {
+  if (!user.email) {
+    throw new Error('Authenticated user is missing an email address.');
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const fullName =
+    typeof user.user_metadata?.full_name === 'string'
+      ? user.user_metadata.full_name
+      : typeof user.user_metadata?.name === 'string'
+        ? user.user_metadata.name
+        : null;
+
+  const { error } = await supabase
+    .from('profiles')
+    .upsert(
+      {
+        id: user.id,
+        email: user.email,
+        full_name: fullName,
+      },
+      {
+        onConflict: 'id',
+      },
+    );
+
+  if (error) {
+    throw new Error(`Failed to ensure profile: ${error.message}`);
+  }
+}
