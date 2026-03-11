@@ -64,10 +64,13 @@ export function useAuth() {
         ? window.location.origin
         : process.env.NEXT_PUBLIC_APP_URL ?? '';
 
+    const redirectUrl = baseUrl + (redirectTo || '/confirm-pay');
+    console.log('[useAuth] signInWithGoogle redirectUrl:', redirectUrl);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: baseUrl + (redirectTo || '/confirm-pay'),
+        redirectTo: redirectUrl,
       },
     });
 
