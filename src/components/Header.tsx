@@ -39,12 +39,15 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
 
     // Close mobile menu on orientation change or large screen
     useEffect(() => {
-        setIsMounted(true);
+        const raf = requestAnimationFrame(() => setIsMounted(true));
         const handleResize = () => {
             if (window.innerWidth > 768) setIsMobileMenuOpen(false);
         };
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     // Placeholder image that implies travel

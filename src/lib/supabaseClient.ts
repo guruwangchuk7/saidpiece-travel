@@ -1,13 +1,21 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Only create if we have the variables, otherwise export a dummy or handle it in the hook
-export const supabase = (supabaseUrl && supabaseAnonKey)
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null as any;
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
-if (!supabase && typeof window !== 'undefined') {
-    console.warn('Supabase URL or Anon Key is missing. Please add them to your .env file to enable authentication.');
+/**
+ * The Supabase client is only created when both required env vars are set.
+ * If they are missing, `supabase` will be null and calling code should handle it.
+ */
+export const supabase: SupabaseClient | null =
+  isSupabaseConfigured
+    ? createClient(supabaseUrl as string, supabaseAnonKey as string)
+    : null;
+
+if (!isSupabaseConfigured && typeof window !== 'undefined') {
+  console.warn(
+    'Supabase is not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.'
+  );
 }

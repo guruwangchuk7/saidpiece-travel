@@ -18,7 +18,19 @@ Bhutan Travel
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 
-## 📂 Project Structure
+## � Environment Variables
+
+This project uses Supabase for authentication. Copy `.env.example` to `.env` and provide values for:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+You can optionally configure staff access by setting:
+
+- `NEXT_PUBLIC_STAFF_EMAILS` (comma-separated emails used in the client)
+- `STAFF_EMAILS` (comma-separated emails used by server APIs)
+
+## �📂 Project Structure
 
 ```text
 src/

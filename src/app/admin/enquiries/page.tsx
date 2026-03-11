@@ -15,8 +15,10 @@ const initialEnquiries = [
 export default function EnquiryManager() {
     const { user, loading, isStaff, signOut, signInWithGoogle } = useAuth();
     const router = useRouter();
-    const [enquiries, setEnquiries] = useState(initialEnquiries);
-    const [selectedEnquiry, setSelectedEnquiry] = useState<any>(null);
+    type Enquiry = typeof initialEnquiries[number];
+
+    const [enquiries, setEnquiries] = useState<Enquiry[]>(initialEnquiries);
+    const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
     const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
 
     useEffect(() => {
@@ -40,6 +42,10 @@ export default function EnquiryManager() {
     }
 
     const handleSendEmail = (templateName: string) => {
+        if (!selectedEnquiry) {
+            return;
+        }
+
         alert(`Email sent to ${selectedEnquiry.firstName} using "${templateName}" template.`);
         if (templateName === 'Proposal') {
             setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: 'proposed' } : e));
@@ -47,14 +53,6 @@ export default function EnquiryManager() {
             setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: 'awaiting-payment' } : e));
         }
         setActiveTemplate(null);
-    };
-
-    const getLink = (type: string) => {
-        const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.saidpiecetravels.com';
-        if (type === 'confirm') {
-            return `${baseUrl}/confirm-pay?name=${selectedEnquiry.firstName}&email=${selectedEnquiry.email}&amount=4250&trip=${encodeURIComponent(selectedEnquiry.trip)}`;
-        }
-        return '#';
     };
 
     const handleSignOut = async () => {

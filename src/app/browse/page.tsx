@@ -27,7 +27,8 @@ export default function BrowseTrips() {
     const [sortBy, setSortBy] = useState('Default');
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
-        setIsMounted(true);
+        const raf = requestAnimationFrame(() => setIsMounted(true));
+        return () => cancelAnimationFrame(raf);
     }, []);
 
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);

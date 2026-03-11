@@ -6,6 +6,7 @@ CREATE TYPE user_role AS ENUM ('customer', 'staff', 'admin');
 CREATE TYPE enquiry_status AS ENUM ('new', 'proposed', 'awaiting_payment', 'confirmed', 'cancelled');
 CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'refunded');
 CREATE TYPE departure_status AS ENUM ('available', 'guaranteed', 'limited_space', 'sold_out');
+CREATE TYPE crypto_payment_status AS ENUM ('pending', 'paid', 'failed', 'expired', 'underpaid');
 
 -- 2. Profiles Table (Extending default auth.users)
 CREATE TABLE public.profiles (
@@ -83,6 +84,41 @@ CREATE INDEX idx_enquiries_email ON public.enquiries(email);
 CREATE INDEX idx_enquiries_status ON public.enquiries(status);
 CREATE INDEX idx_enquiries_stripe_session ON public.enquiries(stripe_session_id);
 
+-- 5b. Crypto Payment Intents
+CREATE TABLE public.crypto_payment_intents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    enquiry_id UUID REFERENCES public.enquiries(id) ON DELETE SET NULL,
+    user_email VARCHAR(255) NOT NULL,
+    traveler_name VARCHAR(255) NOT NULL,
+    trip_name VARCHAR(255) NOT NULL,
+    fiat_currency VARCHAR(16) NOT NULL,
+    fiat_amount DECIMAL(12, 2) NOT NULL CHECK (fiat_amount >= 0),
+    token_symbol VARCHAR(32) NOT NULL,
+    token_address VARCHAR(255) NOT NULL,
+    token_decimals INTEGER NOT NULL CHECK (token_decimals >= 0),
+    expected_token_amount DECIMAL(24, 8) NOT NULL CHECK (expected_token_amount >= 0),
+    expected_token_amount_base_units VARCHAR(255) NOT NULL,
+    received_token_amount DECIMAL(24, 8),
+    received_token_amount_base_units VARCHAR(255),
+    chain_id BIGINT NOT NULL,
+    recipient_address VARCHAR(255) NOT NULL,
+    sender_address VARCHAR(255),
+    tx_hash VARCHAR(255) UNIQUE,
+    status crypto_payment_status DEFAULT 'pending'::crypto_payment_status NOT NULL,
+    quote_expires_at TIMESTAMPTZ NOT NULL,
+    verified_at TIMESTAMPTZ,
+    failure_code VARCHAR(100),
+    failure_reason TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_crypto_payment_intents_user_id ON public.crypto_payment_intents(user_id);
+CREATE INDEX idx_crypto_payment_intents_status ON public.crypto_payment_intents(status);
+CREATE INDEX idx_crypto_payment_intents_quote_expires_at ON public.crypto_payment_intents(quote_expires_at);
+CREATE INDEX idx_crypto_payment_intents_tx_hash ON public.crypto_payment_intents(tx_hash);
+
 -- 6. Functions & Triggers for updated_at Auto-Update
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -108,11 +144,16 @@ CREATE TRIGGER update_enquiries_updated_at
     BEFORE UPDATE ON public.enquiries
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_crypto_payment_intents_updated_at
+    BEFORE UPDATE ON public.crypto_payment_intents
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- 7. Row Level Security (RLS) Policies (Examples)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trips ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trip_departures ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.crypto_payment_intents ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Users can read their own profile. Staff/Admin can read all.
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -126,6 +167,7 @@ CREATE POLICY "Public read trip departures" ON public.trip_departures FOR SELECT
 -- Enquiries: Users can view/create their own. Staff/Admin can view/edit all.
 CREATE POLICY "Users can create enquiries" ON public.enquiries FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 CREATE POLICY "Users can view own enquiries" ON public.enquiries FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can view own crypto payment intents" ON public.crypto_payment_intents FOR SELECT USING (auth.uid() = user_id);
 
 -- 8. Auto-Create Profile on Signup
 -- This function automatically inserts a row into public.profiles 

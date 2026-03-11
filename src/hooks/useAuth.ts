@@ -1,61 +1,89 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '@/lib/supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
 
+function getStaffEmails(): string[] {
+  // Comma-separated list of staff emails (client-visible).
+  // If not set, fallback to the previous hardcoded list.
+  const env = process.env.NEXT_PUBLIC_STAFF_EMAILS;
+  if (!env?.trim()) {
+    return ['saidpiecebhutan@gmail.com', 'guruwangchuk7@gmail.com'];
+  }
+  return env
+    .split(',')
+    .map((email) => email.trim())
+    .filter(Boolean);
+}
+
 export function useAuth() {
-    const [user, setUser] = useState<User | null>(null);
-    const [session, setSession] = useState<Session | null>(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(!isSupabaseConfigured);
 
-    useEffect(() => {
-        if (!supabase) {
-            setLoading(false);
-            return;
-        }
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+    const client = supabase;
 
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }: any) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
+    let mounted = true;
 
-        // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
-
-        return () => {
-            subscription.unsubscribe();
-        };
-    }, []);
-
-    const signInWithGoogle = async (redirectTo?: string) => {
-        if (!supabase) {
-            alert("Auth connection not configured. Please add Supabase details to your .env file.");
-            return;
-        }
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + (redirectTo || '/confirm-pay')
-            }
-        });
-        if (error) console.error('Error logging in with Google:', error);
+    const loadSession = async () => {
+      const { data } = await client.auth.getSession();
+      if (!mounted) return;
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      setLoading(false);
     };
 
-    const signOut = async () => {
-        if (!supabase) return;
-        const { error } = await supabase.auth.signOut();
-        if (error) console.error('Error signing out:', error);
+    loadSession();
+
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
     };
+  }, []);
 
-    const isStaff = user?.email ? [
-        "saidpiecebhutan@gmail.com",
-        "guruwangchuk7@gmail.com"
-    ].includes(user.email) : false;
+  const signInWithGoogle = async (redirectTo?: string) => {
+    if (!isSupabaseConfigured || !supabase) {
+      alert(
+        'Authentication is not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.'
+      );
+      return;
+    }
 
-    return { user, session, loading, signInWithGoogle, signOut, isStaff };
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + (redirectTo || '/confirm-pay'),
+      },
+    });
+
+    if (error) console.error('Error logging in with Google:', error);
+  };
+
+  const signOut = async () => {
+    if (!supabase) return;
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('Error signing out:', error);
+  };
+
+  const staffEmails = getStaffEmails();
+  const isStaff = !!user?.email && staffEmails.includes(user.email);
+
+  return {
+    user,
+    session,
+    loading,
+    signInWithGoogle,
+    signOut,
+    isStaff,
+    supabaseConfigured: isSupabaseConfigured,
+    staffEmails,
+  };
 }
