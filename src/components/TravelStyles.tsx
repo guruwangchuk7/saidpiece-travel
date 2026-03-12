@@ -55,7 +55,7 @@ export default function TravelStyles() {
                     {[...travelStyles, ...travelStyles].map((style, i) => (
                         <Link href={`/browse?type=${style.name.toLowerCase().replace(/ /g, '-')}`} className="style-card" key={i} aria-label={`Browse ${style.name} trips`}>
                             <div className="image-placeholder">
-                                <Image src={`/images/${style.image}`} alt={style.name} fill style={{ objectFit: 'cover' }} />
+                                <Image src={`/images/${style.image}`} alt={style.name} fill sizes="(max-width: 768px) 80vw, 320px" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="style-overlay">
                                 <h3 className="style-title">{style.name}</h3>

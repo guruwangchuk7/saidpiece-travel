@@ -253,7 +253,7 @@ export default function BrowseTrips() {
                                 {filteredTrips.map((trip) => (
                                     <div className="trip-result-card" key={trip.id}>
                                         <div className="trip-image-container" style={{ position: 'relative', height: '220px' }}>
-                                            <Image src={trip.image} alt={trip.title} fill style={{ objectFit: 'cover', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }} />
+                                            <Image src={trip.image} alt={trip.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }} />
                                             <span className="trip-card-tag">{trip.type}</span>
                                         </div>
                                         <div className="trip-card-content">

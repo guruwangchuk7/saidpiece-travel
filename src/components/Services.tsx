@@ -16,7 +16,7 @@ export default function Services() {
                     {services.map((service, i) => (
                         <div className="service-item" key={i}>
                             <div className="image-placeholder" style={{ position: 'relative', background: 'transparent' }}>
-                                <Image src={`/images/${service.image}`} alt={service.title} fill style={{ objectFit: 'cover', borderRadius: '4px' }} />
+                                <Image src={`/images/${service.image}`} alt={service.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover', borderRadius: '4px' }} />
                             </div>
                             <h3>{service.title}</h3>
                             <p>{service.desc}</p>

@@ -63,7 +63,7 @@ export default function TripWizard() {
                                     className={`wizard-card ${selectedRegions.includes(region.id) ? 'selected' : ''}`}
                                     onClick={() => toggleRegion(region.id)}
                                 >
-                                    <Image src={region.img} alt={region.name} fill style={{ objectFit: 'cover' }} />
+                                    <Image src={region.img} alt={region.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
                                     <div className="wizard-card-overlay"></div>
                                     <span className="wizard-card-title">{region.name}</span>
                                     {selectedRegions.includes(region.id) && (
@@ -89,7 +89,7 @@ export default function TripWizard() {
                                     className={`wizard-card tall ${selectedStyle === style.id ? 'selected' : ''}`}
                                     onClick={() => setSelectedStyle(style.id)}
                                 >
-                                    <Image src={style.img} alt={style.name} fill style={{ objectFit: 'cover' }} />
+                                    <Image src={style.img} alt={style.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
                                     <div className="wizard-card-overlay split"></div>
                                     <div className="wizard-card-bottom-text">
                                         <span className="wizard-card-title block">{style.name}</span>

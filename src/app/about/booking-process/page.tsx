@@ -17,6 +17,7 @@ export default function BookingProcess() {
                         src="/images/bhutan/main2.JPG"
                         alt="Planning Your Trip"
                         fill
+                        sizes="100vw"
                         style={{ objectFit: 'cover' }}
                         priority
                     />
@@ -72,10 +73,10 @@ export default function BookingProcess() {
                     <div className="column-assets stacks">
                         <div className="mini-photo-stack">
                             <div className="mini-photo p1">
-                                <Image src="/images/bhutan/14.JPG" alt="Planning Details" fill />
+                                <Image src="/images/bhutan/14.JPG" alt="Planning Details" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                             <div className="mini-photo p2">
-                                <Image src="/images/bhutan/15.JPG" alt="Document Prep" fill />
+                                <Image src="/images/bhutan/15.JPG" alt="Document Prep" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                         </div>
                     </div>
@@ -103,7 +104,7 @@ export default function BookingProcess() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/16.JPG" alt="Arriving in Bhutan" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/16.JPG" alt="Arriving in Bhutan" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 

@@ -38,7 +38,7 @@ export default function BhutanDiscoveryTrip() {
             <Header theme="light" />
 
             <div className="trip-hero">
-                <Image src="/images/bhutan/main4.JPG" alt="Bhutan Discovery" fill style={{ objectFit: 'cover' }} priority />
+                <Image src="/images/bhutan/main4.JPG" alt="Bhutan Discovery" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
 
                 <div className="trip-hero-content container">
@@ -116,7 +116,7 @@ export default function BhutanDiscoveryTrip() {
 
                         {/* Fake Map implementation to match design spec */}
                         <div className="interactive-map-placeholder" style={{ position: 'relative', height: '300px', backgroundColor: '#e9ecef', borderRadius: '8px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Image src="/images/bhutan/main2.JPG" alt="Route Map" fill style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
+                            <Image src="/images/bhutan/main2.JPG" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
                             <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha</div>
                         </div>
 

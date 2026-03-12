@@ -36,7 +36,7 @@ export default function BookingModal({ isOpen, onClose, tripName, tripPrice, tri
                     <div className="modal-content-split">
                         <div className="modal-info-side">
                             <div className="modal-trip-preview">
-                                <Image src={tripImage} alt={tripName} fill style={{ objectFit: 'cover' }} />
+                                <Image src={tripImage} alt={tripName} fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="modal-text-content">
                                 <span className="modal-label">Your Selection</span>

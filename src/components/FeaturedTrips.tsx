@@ -21,7 +21,7 @@ export default function FeaturedTrips() {
                     {featuredTrips.map((trip, i) => (
                         <div className="trip-card" key={i}>
                             <div className="image-placeholder" style={{ position: 'relative', background: 'transparent' }}>
-                                <Image src={`/images/${trip.image}`} alt={trip.title} fill style={{ objectFit: 'cover' }} />
+                                <Image src={`/images/${trip.image}`} alt={trip.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="trip-card-content">
                                 <h3 className="trip-card-title">{trip.title}</h3>

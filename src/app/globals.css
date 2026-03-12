@@ -89,6 +89,8 @@ ul {
 /* Image Placeholder */
 .image-placeholder {
   background-color: #DDDDDD;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;

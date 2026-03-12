@@ -7,7 +7,7 @@ export default function Catalog() {
             <div className="catalog-pattern"></div>
             <div className="container catalog-container">
                 <div className="catalog-image" style={{ position: 'relative' }}>
-                    <Image src="/images/bhutan/21.JPG" alt="Physical Catalogs" fill style={{ objectFit: 'cover', borderRadius: '4px' }} />
+                    <Image src="/images/bhutan/21.JPG" alt="Physical Catalogs" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', borderRadius: '4px' }} />
                 </div>
                 <div className="catalog-content">
                     <h2>Plan Your Bhutan Journey</h2>

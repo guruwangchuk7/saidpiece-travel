@@ -370,7 +370,7 @@ function ConfirmPayContent() {
 
                     <div className="trip-preview-box">
                         <div className="trip-image">
-                            <Image src="/images/bhutan/11.JPG" alt="Bhutan" fill style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/11.JPG" alt="Bhutan" fill sizes="120px" style={{ objectFit: 'cover' }} />
                         </div>
                         <div className="trip-details">
                             <h3 className="serif-title" style={{ fontSize: '24px' }}>{tripName}</h3>

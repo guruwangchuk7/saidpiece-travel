@@ -17,6 +17,7 @@ export default function ResponsibleTravel() {
                         src="/images/bhutan/main5.JPG"
                         alt="Sustainable Bhutan"
                         fill
+                        sizes="100vw"
                         style={{ objectFit: 'cover' }}
                         priority
                     />
@@ -72,10 +73,10 @@ export default function ResponsibleTravel() {
                     <div className="column-assets stacks">
                         <div className="mini-photo-stack">
                             <div className="mini-photo p1">
-                                <Image src="/images/bhutan/16.JPG" alt="Local Community" fill />
+                                <Image src="/images/bhutan/16.JPG" alt="Local Community" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                             <div className="mini-photo p2">
-                                <Image src="/images/bhutan/17.JPG" alt="Traditional Crafts" fill />
+                                <Image src="/images/bhutan/17.JPG" alt="Traditional Crafts" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                         </div>
                     </div>
@@ -103,7 +104,7 @@ export default function ResponsibleTravel() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/18.JPG" alt="Reforestation" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/18.JPG" alt="Reforestation" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 

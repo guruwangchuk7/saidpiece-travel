@@ -31,7 +31,7 @@ export default function Hero() {
                             transition: 'opacity 2s ease-in-out'
                         }}
                     >
-                        <Image src={src} alt={`Hero Image ${i + 1}`} fill style={{ objectFit: 'cover' }} priority={i === 0} />
+                        <Image src={src} alt={`Hero Image ${i + 1}`} fill sizes="100vw" style={{ objectFit: 'cover' }} priority={i === 0} />
                     </div>
                 ))}
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.3)', zIndex: 1 }} />
