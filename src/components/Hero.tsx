@@ -8,6 +8,8 @@ const heroImages = ['/images/bhutan/main1.JPG', '/images/bhutan/main2.JPG'];
 
 export default function Hero() {
     const [heroIndex, setHeroIndex] = useState(0);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     useEffect(() => {
         const heroInterval = setInterval(() => {
@@ -67,9 +69,23 @@ export default function Hero() {
                 <div className="trip-finder-field date-field">
                     <span className="trip-finder-label">Date</span>
                     <div className="trip-finder-dates">
-                        <input type="text" className="trip-finder-input small-input" placeholder="Start Date" />
+                        <input
+                            type="date"
+                            className="trip-finder-input small-input"
+                            aria-label="Start date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            onFocus={(e) => e.currentTarget.showPicker?.()}
+                        />
                         <span className="date-separator">-</span>
-                        <input type="text" className="trip-finder-input small-input" placeholder="End Date" />
+                        <input
+                            type="date"
+                            className="trip-finder-input small-input"
+                            aria-label="End date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            onFocus={(e) => e.currentTarget.showPicker?.()}
+                        />
                     </div>
                 </div>
                 <div className="trip-finder-field">

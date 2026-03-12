@@ -27,10 +27,10 @@ export default function TripWizard() {
     ];
 
     const styles = [
-        { id: 'discovery', name: 'Discovery', img: '/images/bhutan/main4.JPG', desc: 'First-time iconic highlights.' },
-        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main5.JPG', desc: 'Monasteries & heritage.' },
-        { id: 'nature', name: 'Nature Retreat', img: '/images/bhutan/11.JPG', desc: 'Gentle scenic escapes.' },
-        { id: 'romance', name: 'Romantic Escape', img: '/images/bhutan/12.JPG', desc: 'Honeymoons & wellness.' },
+        { id: 'discovery', name: 'Discovery', img: '/images/bhutan/main4.JPG' },
+        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main5.JPG' },
+        { id: 'nature', name: 'Nature Retreat', img: '/images/bhutan/11.JPG' },
+        { id: 'romance', name: 'Romantic Escape', img: '/images/bhutan/12.JPG' },
     ];
 
     const tags = ['Tiger\'s Nest Hike', 'Archery', 'Hot Stone Bath', 'Monastery Visit', 'River Rafting', 'Birdwatching', 'Festivals (Tshechu)', 'Farmhouse Dinner'];
@@ -93,7 +93,6 @@ export default function TripWizard() {
                                     <div className="wizard-card-overlay split"></div>
                                     <div className="wizard-card-bottom-text">
                                         <span className="wizard-card-title block">{style.name}</span>
-                                        <span className="wizard-card-desc">{style.desc}</span>
                                     </div>
                                     {selectedStyle === style.id && (
                                         <div className="wizard-card-check">

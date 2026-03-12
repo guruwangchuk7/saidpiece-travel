@@ -651,6 +651,15 @@ select.trip-finder-input {
   font-size: 1rem;
 }
 
+.trip-finder-input.small-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+.trip-finder-input.small-input::-webkit-clear-button {
+  display: none;
+}
+
 .date-separator {
   color: #CCCCCC;
   font-weight: 700;
@@ -2274,6 +2283,10 @@ select.trip-finder-input {
   left: 0;
   color: var(--color-brand);
   font-weight: bold;
+}
+
+.highlights-list li::before {
+  content: '✓';
 }
 
 /* Accordion */
