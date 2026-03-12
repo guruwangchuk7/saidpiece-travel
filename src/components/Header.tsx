@@ -299,6 +299,20 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                 </div>
                 {children}
             </header>
+            <style jsx>{`
+                .global-header :global(.top-utility-bar a:hover),
+                .global-header :global(.nav-links > li > a:hover),
+                .global-header :global(.nav-links > li > .nav-button:hover),
+                .global-header :global(.nav-links > li > .nav-button.is-open) {
+                    color: #0f2742 !important;
+                }
+
+                .global-header :global(.nav-links > li > a),
+                .global-header :global(.nav-links > li > .nav-button),
+                .global-header :global(.top-utility-bar a) {
+                    transition: color 0.25s ease, opacity 0.25s ease;
+                }
+            `}</style>
         </>
     );
 }
