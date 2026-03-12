@@ -138,7 +138,7 @@ export default function ContactPage() {
                             <h3>Request a Catalog</h3>
                             <p>Explore our latest expedition guide.</p>
                         </Link>
-                        <Link href="#" className="connect-card">
+                        <Link href="/travel-blog" className="connect-card">
                             <span className="card-label">Community</span>
                             <h3>Travel Blog</h3>
                             <p>Stories from the hidden valleys.</p>

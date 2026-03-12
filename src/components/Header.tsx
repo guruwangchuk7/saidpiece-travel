@@ -29,6 +29,11 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
         }, 150);
     };
 
+    const handleMenuLinkClick = () => {
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        setOpenMenu(null);
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
@@ -218,35 +223,24 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     {/* B. Browse Trips Menu */}
                     <div className={`mega-menu-full mega-menu-browse ${openMenu === 'browse' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('browse')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container">
-                            <div className="browse-left three-col">
+                            <div className="browse-left" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '40px' }}>
                                 <div className="mega-col">
                                     <h5>By Trip Type</h5>
                                     <ul className="mega-list">
-                                        <li><a href="#">Private Journeys</a></li>
-                                        <li><a href="#">Family Adventures</a></li>
-                                        <li><a href="#">Festival Tours</a></li>
-                                        <li><a href="#">Romantic Escapes</a></li>
+                                        <li><Link href="/browse?type=Private%20Journey" onClick={handleMenuLinkClick}>Private Journeys</Link></li>
+                                        <li><Link href="/browse?type=Family%20Adventure" onClick={handleMenuLinkClick}>Family Adventures</Link></li>
+                                        <li><Link href="/browse?type=Festival%20Tours" onClick={handleMenuLinkClick}>Festival Tours</Link></li>
+                                        <li><Link href="/browse?type=Honeymoon" onClick={handleMenuLinkClick}>Romantic Escapes</Link></li>
                                     </ul>
                                 </div>
                                 <div className="mega-col">
                                     <h5>By Activity</h5>
                                     <ul className="mega-list">
-                                        <li><a href="#">Cultural</a></li>
-                                        <li><a href="#">Hiking & Trekking</a></li>
-                                        <li><a href="#">Wildlife Safaris</a></li>
-                                        <li><a href="#">Photography</a></li>
+                                        <li><Link href="/browse?activity=Cultural%20Immersion" onClick={handleMenuLinkClick}>Cultural</Link></li>
+                                        <li><Link href="/browse?activity=Trekking%20%26%20Hiking" onClick={handleMenuLinkClick}>Hiking & Trekking</Link></li>
+                                        <li><Link href="/browse?activity=Wildlife%20Safaris" onClick={handleMenuLinkClick}>Wildlife Safaris</Link></li>
+                                        <li><Link href="/browse?activity=Photography" onClick={handleMenuLinkClick}>Photography</Link></li>
                                     </ul>
-                                </div>
-                                <div className="mega-col mega-col-months">
-                                    <h5>By Month</h5>
-                                    <div className="month-grid">
-                                        <a href="#">January</a> <a href="#">February</a>
-                                        <a href="#">March</a> <a href="#">April</a>
-                                        <a href="#">May</a> <a href="#">June</a>
-                                        <a href="#">July</a> <a href="#">August</a>
-                                        <a href="#">September</a> <a href="#">October</a>
-                                        <a href="#">November</a> <a href="#">December</a>
-                                    </div>
                                 </div>
                             </div>
                             <div className="destinations-right" style={{ background: `url(${placeholderImg}) center/cover no-repeat`, marginLeft: '50px' }}>
@@ -269,7 +263,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                 <ul className="mega-list">
                                     <li><Link href="/browse?filter=popular">Most Popular</Link></li>
                                     <li><Link href="/browse?filter=offers">Special Offers</Link></li>
-                                    <li><Link href="#">Travel Blog</Link></li>
+                                    <li><Link href="/travel-blog">Travel Blog</Link></li>
                                     <li><Link href="/browse?filter=new">New Trips</Link></li>
                                 </ul>
                             </div>
