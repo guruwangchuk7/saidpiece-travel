@@ -13,7 +13,7 @@ export default function MeetOurTeam() {
             <section className="story-hero-refined">
                 <div className="story-hero-bg">
                     <Image
-                        src="/images/bhutan/main6.JPG"
+                        src="/images/bhutan/main6.webp"
                         alt="Saidpiece Travel team in Bhutan"
                         fill
                         sizes="100vw"
@@ -42,7 +42,7 @@ export default function MeetOurTeam() {
                     <div className="column-assets portrait-frame">
                         <div className="bw-image-wrapper">
                             <Image
-                                src="/images/bhutan/19.JPG"
+                                src="/images/bhutan/19.webp"
                                 alt="Bhutan travel specialist"
                                 fill
                                 className="grayscale-historical"
@@ -66,10 +66,10 @@ export default function MeetOurTeam() {
                     <div className="column-assets stacks">
                         <div className="mini-photo-stack">
                             <div className="mini-photo p1">
-                                <Image src="/images/bhutan/20.JPG" alt="Bhutanese guide" fill sizes="(max-width: 768px) 50vw, 220px" />
+                                <Image src="/images/bhutan/20.webp" alt="Bhutanese guide" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                             <div className="mini-photo p2">
-                                <Image src="/images/bhutan/21.JPG" alt="Driver and local host" fill sizes="(max-width: 768px) 50vw, 220px" />
+                                <Image src="/images/bhutan/21.webp" alt="Driver and local host" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@ export default function MeetOurTeam() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/18.JPG" alt="Saidpiece team preparing a journey" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/18.webp" alt="Saidpiece team preparing a journey" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 

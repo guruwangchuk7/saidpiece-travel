@@ -56,7 +56,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
     }, []);
 
     // Placeholder image that implies travel
-    const placeholderImg = '/images/bhutan/main1.JPG';
+    const placeholderImg = '/images/bhutan/main1.webp';
 
     return (
         <>
@@ -256,7 +256,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                     <div className={`mega-menu-full mega-menu-inspiration ${openMenu === 'inspiration' && isMounted ? 'is-open' : ''}`} onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
                         <div className="mega-menu-container hybrid-layout">
                             <div className="mega-left-image">
-                                <Image src="/images/bhutan/main2.JPG" alt="Striking vertical landscape" fill sizes="33vw" style={{ objectFit: 'cover' }} />
+                                <Image src="/images/bhutan/main2.webp" alt="Striking vertical landscape" fill sizes="33vw" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="mega-col mega-mid-col">
                                 <h5>Explore</h5>

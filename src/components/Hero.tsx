@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const heroImages = ['/images/bhutan/main1.JPG', '/images/bhutan/main2.JPG'];
+const heroImages = ['/images/bhutan/main1.webp', '/images/bhutan/main2.webp'];
 
 export default function Hero() {
     const [heroIndex, setHeroIndex] = useState(0);

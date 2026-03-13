@@ -7,12 +7,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 const tripsData = [
-    { id: 1, title: 'Bhutan Discovery', duration: 8, level: 2, price: 2400, priceDisplay: 'From $2,400', image: '/images/bhutan/main4.JPG', type: 'Small Group Adventure', destination: 'Bhutan', activity: 'Photography', tags: ['popular', 'offers'] },
-    { id: 2, title: 'Bhutan Cultural Immersion', duration: 12, level: 3, price: 0, priceDisplay: 'Price on Request', image: '/images/bhutan/main5.JPG', type: 'Private Journey', destination: 'Bhutan', activity: 'Cultural Immersion', tags: ['popular'] },
-    { id: 3, title: 'Bhutan Nature Retreat', duration: 10, level: 1, price: 6500, priceDisplay: 'From $6,500', image: '/images/bhutan/main6.JPG', type: 'Nature & Wellness', destination: 'Bhutan', activity: 'Wildlife Safaris', tags: ['offers'] },
-    { id: 4, title: 'Bhutan Romantic Escape', duration: 10, level: 1, price: 8900, priceDisplay: 'From $8,900', image: '/images/bhutan/9.JPG', type: 'Honeymoon', destination: 'Bhutan', activity: 'Nature & Wellness', tags: ['new'] },
-    { id: 5, title: 'Bhutan Family Adventure', duration: 7, level: 2, price: 1900, priceDisplay: 'From $1,900', image: '/images/bhutan/10.JPG', type: 'Family Adventure', destination: 'Bhutan', activity: 'Cultural Immersion', tags: ['popular', 'new'] },
-    { id: 6, title: 'Paro Festival Safari', duration: 9, level: 2, price: 2700, priceDisplay: 'From $2,700', image: '/images/bhutan/11.JPG', type: 'Festival Tours', destination: 'Paro', activity: 'Trekking & Hiking', tags: ['new', 'offers'] }
+    { id: 1, title: 'Bhutan Discovery', duration: 8, level: 2, price: 2400, priceDisplay: 'From $2,400', image: '/images/bhutan/main4.webp', type: 'Small Group Adventure', destination: 'Bhutan', activity: 'Photography', tags: ['popular', 'offers'] },
+    { id: 2, title: 'Bhutan Cultural Immersion', duration: 12, level: 3, price: 0, priceDisplay: 'Price on Request', image: '/images/bhutan/main5.webp', type: 'Private Journey', destination: 'Bhutan', activity: 'Cultural Immersion', tags: ['popular'] },
+    { id: 3, title: 'Bhutan Nature Retreat', duration: 10, level: 1, price: 6500, priceDisplay: 'From $6,500', image: '/images/bhutan/main6.webp', type: 'Nature & Wellness', destination: 'Bhutan', activity: 'Wildlife Safaris', tags: ['offers'] },
+    { id: 4, title: 'Bhutan Romantic Escape', duration: 10, level: 1, price: 8900, priceDisplay: 'From $8,900', image: '/images/bhutan/9.webp', type: 'Honeymoon', destination: 'Bhutan', activity: 'Nature & Wellness', tags: ['new'] },
+    { id: 5, title: 'Bhutan Family Adventure', duration: 7, level: 2, price: 1900, priceDisplay: 'From $1,900', image: '/images/bhutan/10.webp', type: 'Family Adventure', destination: 'Bhutan', activity: 'Cultural Immersion', tags: ['popular', 'new'] },
+    { id: 6, title: 'Paro Festival Safari', duration: 9, level: 2, price: 2700, priceDisplay: 'From $2,700', image: '/images/bhutan/11.webp', type: 'Festival Tours', destination: 'Paro', activity: 'Trekking & Hiking', tags: ['new', 'offers'] }
 ];
 
 export default function BrowseTripsClient({

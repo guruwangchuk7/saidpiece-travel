@@ -10,19 +10,19 @@ const featuredPosts = [
         title: 'Five Quiet Valleys to Experience Bhutan Beyond the Main Route',
         category: 'Field Notes',
         excerpt: 'A slower circuit through forest monasteries, farmhouse stays, and ridge trails where the pace of the journey becomes the point.',
-        image: '/images/bhutan/main3.JPG'
+        image: '/images/bhutan/main3.webp'
     },
     {
         title: 'How to Plan a First Bhutan Journey Without Overpacking the Itinerary',
         category: 'Planning',
         excerpt: 'Why fewer hotel changes, more local encounters, and one strong thematic thread usually create the best first impression.',
-        image: '/images/bhutan/18.JPG'
+        image: '/images/bhutan/18.webp'
     },
     {
         title: 'Festival Travel Done Well: Timing, Etiquette, and Where to Linger',
         category: 'Culture',
         excerpt: 'What matters before you go, how to move respectfully through festival spaces, and how to avoid turning the trip into a checklist.',
-        image: '/images/bhutan/21.JPG'
+        image: '/images/bhutan/21.webp'
     }
 ];
 
@@ -34,7 +34,7 @@ export default function TravelBlogPage() {
             <section className="story-hero-refined">
                 <div className="story-hero-bg">
                     <Image
-                        src="/images/bhutan/main2.JPG"
+                        src="/images/bhutan/main2.webp"
                         alt="Travel journal from Bhutan"
                         fill
                         sizes="100vw"
@@ -68,7 +68,7 @@ export default function TravelBlogPage() {
                     <div className="column-assets portrait-frame">
                         <div className="bw-image-wrapper">
                             <Image
-                                src="/images/bhutan/12.JPG"
+                                src="/images/bhutan/12.webp"
                                 alt="Writer overlooking the valley"
                                 fill
                                 className="grayscale-historical"

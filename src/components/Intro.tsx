@@ -7,7 +7,7 @@ export default function Intro() {
             <div className="container">
                 <div className="intro-block">
                     <div className="intro-image" style={{ position: 'relative' }}>
-                        <Image src="/images/bhutan/main3.JPG" alt="Bhutan Landscape" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', borderRadius: '4px' }} />
+                        <Image src="/images/bhutan/main3.webp" alt="Bhutan Landscape" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', borderRadius: '4px' }} />
                     </div>
                     <div className="intro-content">
                         <h2>A Journey Created with Heart</h2>

@@ -7,27 +7,27 @@ const destinations = {
     'Paro': {
         title: 'Paro Valley',
         desc: 'Begin your journey gently in this historic valley, home to the iconic Tiger’s Nest monastery and quiet riverside paths.',
-        image: 'bhutan/13.JPG'
+        image: 'bhutan/13.webp'
     },
     'Thimphu': {
         title: 'Capital City of Thimphu',
         desc: 'Explore Bhutan’s vibrant capital through local markets, arts schools, and serene monasteries overlooking the valley.',
-        image: 'bhutan/14.JPG'
+        image: 'bhutan/14.webp'
     },
     'Punakha': {
         title: 'Punakha Valley',
         desc: 'Descend into a warmer valley of rice fields and rivers, home to Bhutan’s most beautiful dzong.',
-        image: 'bhutan/15.JPG'
+        image: 'bhutan/15.webp'
     },
     'Bumthang': {
         title: 'The Heartland of Bumthang',
         desc: 'Journey to central Bhutan to discover living spiritual heritage, ancient temples, and deep cultural roots.',
-        image: 'bhutan/16.JPG'
+        image: 'bhutan/16.webp'
     },
     'Gangtey': {
         title: 'Phobjikha Valley',
         desc: 'Find peace in this wide glacial valley, famous for its dramatic landscapes and quiet, relaxing atmosphere.',
-        image: 'bhutan/17.JPG'
+        image: 'bhutan/17.webp'
     }
 };
 

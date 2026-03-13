@@ -16,7 +16,7 @@ export default function BhutanDiscoveryTrip() {
     const tripData = {
         name: "Bhutan Discovery",
         price: "2400",
-        image: "/images/bhutan/main4.JPG"
+        image: "/images/bhutan/main4.webp"
     };
 
     const handleBookOnline = () => {
@@ -38,7 +38,7 @@ export default function BhutanDiscoveryTrip() {
             <Header theme="light" />
 
             <div className="trip-hero">
-                <Image src="/images/bhutan/main4.JPG" alt="Bhutan Discovery" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
+                <Image src="/images/bhutan/main4.webp" alt="Bhutan Discovery" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
 
                 <div className="trip-hero-content container">
@@ -116,7 +116,7 @@ export default function BhutanDiscoveryTrip() {
 
                         {/* Fake Map implementation to match design spec */}
                         <div className="interactive-map-placeholder" style={{ position: 'relative', height: '300px', backgroundColor: '#e9ecef', borderRadius: '8px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Image src="/images/bhutan/main2.JPG" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
+                            <Image src="/images/bhutan/main2.webp" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
                             <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha</div>
                         </div>
 
@@ -230,21 +230,21 @@ export default function BhutanDiscoveryTrip() {
                     <h2 className="text-center">Other Trips You Might Like</h2>
                     <div className="related-carousel">
                         <div className="trip-result-card small-card">
-                            <Image src="/images/bhutan/main5.JPG" alt="Cultural Immersion" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/main5.webp" alt="Cultural Immersion" width={300} height={200} style={{ objectFit: 'cover' }} />
                             <div className="card-padding">
                                 <h4>Bhutan Cultural Immersion</h4>
                                 <span>12 Days</span>
                             </div>
                         </div>
                         <div className="trip-result-card small-card">
-                            <Image src="/images/bhutan/main6.JPG" alt="Nature Retreat" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/main6.webp" alt="Nature Retreat" width={300} height={200} style={{ objectFit: 'cover' }} />
                             <div className="card-padding">
                                 <h4>Bhutan Nature Retreat</h4>
                                 <span>10 Days</span>
                             </div>
                         </div>
                         <div className="trip-result-card small-card">
-                            <Image src="/images/bhutan/9.JPG" alt="Romantic Escape" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/9.webp" alt="Romantic Escape" width={300} height={200} style={{ objectFit: 'cover' }} />
                             <div className="card-padding">
                                 <h4>Romantic Escape</h4>
                                 <span>10 Days</span>

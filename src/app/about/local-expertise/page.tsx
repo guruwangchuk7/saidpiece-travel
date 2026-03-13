@@ -14,7 +14,7 @@ export default function LocalExpertise() {
             <section className="story-hero-refined">
                 <div className="story-hero-bg">
                     <Image
-                        src="/images/bhutan/main4.JPG"
+                        src="/images/bhutan/main4.webp"
                         alt="Local Wisdom"
                         fill
                         sizes="100vw"
@@ -48,7 +48,7 @@ export default function LocalExpertise() {
                     <div className="column-assets portrait-frame">
                         <div className="bw-image-wrapper">
                             <Image
-                                src="/images/bhutan/19.JPG"
+                                src="/images/bhutan/19.webp"
                                 alt="Local Village"
                                 fill
                                 className="grayscale-historical"
@@ -73,10 +73,10 @@ export default function LocalExpertise() {
                     <div className="column-assets stacks">
                         <div className="mini-photo-stack">
                             <div className="mini-photo p1">
-                                <Image src="/images/bhutan/20.JPG" alt="Wisdom Keeper" fill sizes="(max-width: 768px) 50vw, 220px" />
+                                <Image src="/images/bhutan/20.webp" alt="Wisdom Keeper" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                             <div className="mini-photo p2">
-                                <Image src="/images/bhutan/21.JPG" alt="Expert Guide" fill sizes="(max-width: 768px) 50vw, 220px" />
+                                <Image src="/images/bhutan/21.webp" alt="Expert Guide" fill sizes="(max-width: 768px) 50vw, 220px" />
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ export default function LocalExpertise() {
                         </p>
                     </div>
                     <div className="column-assets landscape-frame">
-                        <Image src="/images/bhutan/18.JPG" alt="Hidden Valley" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
+                        <Image src="/images/bhutan/18.webp" alt="Hidden Valley" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
                     </div>
                 </section>
 

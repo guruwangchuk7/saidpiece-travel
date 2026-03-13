@@ -31,7 +31,7 @@ export default function ContactPage() {
                         <div className="contact-info-col">
                             <div className="contact-hero-frame">
                                 <Image
-                                    src="/images/bhutan/main5.JPG"
+                                    src="/images/bhutan/main5.webp"
                                     alt="Our Team"
                                     width={600}
                                     height={400}
@@ -123,7 +123,7 @@ export default function ContactPage() {
             <section className="connect-bridge-section">
                 <div className="connect-bridge-bg">
                     <Image
-                        src="/images/bhutan/main6.JPG"
+                        src="/images/bhutan/main6.webp"
                         alt="Join the adventure"
                         fill
                         style={{ objectFit: 'cover' }}

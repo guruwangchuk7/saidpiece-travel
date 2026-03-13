@@ -14,7 +14,7 @@ export default function OurStory() {
             <section className="story-hero">
                 <div className="story-hero-bg">
                     <Image
-                        src="/images/bhutan/main2.JPG"
+                        src="/images/bhutan/main2.webp"
                         alt="Bhutan Landscape"
                         fill
                         sizes="100vw"
@@ -65,7 +65,7 @@ export default function OurStory() {
                     <div className="split-media">
                         <div className="media-frame">
                             <Image
-                                src="/images/bhutan/13.JPG"
+                                src="/images/bhutan/13.webp"
                                 alt="Historic Bhutan"
                                 width={600}
                                 height={400}
@@ -88,7 +88,7 @@ export default function OurStory() {
                     <div className="split-media">
                         <div className="media-frame">
                             <Image
-                                src="/images/bhutan/14.JPG"
+                                src="/images/bhutan/14.webp"
                                 alt="Bhutan Tradition"
                                 width={600}
                                 height={400}
@@ -106,13 +106,13 @@ export default function OurStory() {
                     </div>
                     <div className="image-grid-story">
                         <div className="grid-item">
-                            <Image src="/images/bhutan/main5.JPG" alt="Expedition 1" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/main5.webp" alt="Expedition 1" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
                         </div>
                         <div className="grid-item">
-                            <Image src="/images/bhutan/main6.JPG" alt="Expedition 2" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/main6.webp" alt="Expedition 2" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
                         </div>
                         <div className="grid-item">
-                            <Image src="/images/bhutan/17.JPG" alt="Expedition 3" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
+                            <Image src="/images/bhutan/17.webp" alt="Expedition 3" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
                         </div>
                     </div>
                 </section>

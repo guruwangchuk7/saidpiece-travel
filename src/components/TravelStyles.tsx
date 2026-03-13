@@ -5,12 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const travelStyles = [
-    { name: 'Discovery', image: 'bhutan/7.JPG' },
-    { name: 'Cultural Immersion', image: 'bhutan/8.JPG' },
-    { name: 'Family Adventure', image: 'bhutan/9.JPG' },
-    { name: 'Festival Tours', image: 'bhutan/10.JPG' },
-    { name: 'Nature Retreat', image: 'bhutan/11.JPG' },
-    { name: 'Romantic Escape', image: 'bhutan/12.JPG' }
+    { name: 'Discovery', image: 'bhutan/7.webp' },
+    { name: 'Cultural Immersion', image: 'bhutan/8.webp' },
+    { name: 'Family Adventure', image: 'bhutan/9.webp' },
+    { name: 'Festival Tours', image: 'bhutan/10.webp' },
+    { name: 'Nature Retreat', image: 'bhutan/11.webp' },
+    { name: 'Romantic Escape', image: 'bhutan/12.webp' }
 ];
 
 export default function TravelStyles() {

@@ -17,7 +17,7 @@ export default function CulturalImmersionTrip() {
     const tripData = {
         name: "Cultural Immersion",
         price: "3800",
-        image: "/images/bhutan/main5.JPG"
+        image: "/images/bhutan/main5.webp"
     };
 
     const handleBookOnline = () => {
@@ -39,7 +39,7 @@ export default function CulturalImmersionTrip() {
             <Header theme="light" />
 
             <div className="trip-hero">
-                <Image src="/images/bhutan/main5.JPG" alt="Cultural Immersion" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
+                <Image src="/images/bhutan/main5.webp" alt="Cultural Immersion" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
 
                 <div className="trip-hero-content container">
@@ -117,7 +117,7 @@ export default function CulturalImmersionTrip() {
 
                         {/* Fake Map implementation to match design spec */}
                         <div className="interactive-map-placeholder" style={{ position: 'relative', height: '300px', backgroundColor: '#e9ecef', borderRadius: '8px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Image src="/images/bhutan/main5.JPG" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
+                            <Image src="/images/bhutan/main5.webp" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
                             <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha → Bumthang</div>
                         </div>
 

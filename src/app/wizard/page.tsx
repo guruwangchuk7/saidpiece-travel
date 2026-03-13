@@ -19,18 +19,18 @@ export default function TripWizard() {
     const [email, setEmail] = useState('');
 
     const regions = [
-        { id: 'paro', name: 'Paro Valley', img: '/images/bhutan/13.JPG' },
-        { id: 'thimphu', name: 'Thimphu City', img: '/images/bhutan/14.JPG' },
-        { id: 'punakha', name: 'Punakha Valley', img: '/images/bhutan/15.JPG' },
-        { id: 'bumthang', name: 'Bumthang Heartland', img: '/images/bhutan/16.JPG' },
-        { id: 'phobjikha', name: 'Phobjikha & Gangtey', img: '/images/bhutan/17.JPG' },
+        { id: 'paro', name: 'Paro Valley', img: '/images/bhutan/13.webp' },
+        { id: 'thimphu', name: 'Thimphu City', img: '/images/bhutan/14.webp' },
+        { id: 'punakha', name: 'Punakha Valley', img: '/images/bhutan/15.webp' },
+        { id: 'bumthang', name: 'Bumthang Heartland', img: '/images/bhutan/16.webp' },
+        { id: 'phobjikha', name: 'Phobjikha & Gangtey', img: '/images/bhutan/17.webp' },
     ];
 
     const styles = [
-        { id: 'discovery', name: 'Discovery', img: '/images/bhutan/main4.JPG' },
-        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main5.JPG' },
-        { id: 'nature', name: 'Nature Retreat', img: '/images/bhutan/11.JPG' },
-        { id: 'romance', name: 'Romantic Escape', img: '/images/bhutan/12.JPG' },
+        { id: 'discovery', name: 'Discovery', img: '/images/bhutan/main4.webp' },
+        { id: 'culture', name: 'Deep Culture', img: '/images/bhutan/main5.webp' },
+        { id: 'nature', name: 'Nature Retreat', img: '/images/bhutan/11.webp' },
+        { id: 'romance', name: 'Romantic Escape', img: '/images/bhutan/12.webp' },
     ];
 
     const tags = ['Tiger\'s Nest Hike', 'Archery', 'Hot Stone Bath', 'Monastery Visit', 'River Rafting', 'Birdwatching', 'Festivals (Tshechu)', 'Farmhouse Dinner'];
