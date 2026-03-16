@@ -7,6 +7,7 @@ CREATE TYPE enquiry_status AS ENUM ('new', 'proposed', 'awaiting_payment', 'conf
 CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'refunded');
 CREATE TYPE departure_status AS ENUM ('available', 'guaranteed', 'limited_space', 'sold_out');
 CREATE TYPE crypto_payment_status AS ENUM ('pending', 'paid', 'failed', 'expired', 'underpaid');
+CREATE TYPE blockchain_booking_status AS ENUM ('draft', 'created', 'deposited', 'confirmed', 'refunded', 'cancelled');
 
 -- 2. Profiles Table (Extending default auth.users)
 CREATE TABLE public.profiles (
@@ -119,6 +120,45 @@ CREATE INDEX idx_crypto_payment_intents_status ON public.crypto_payment_intents(
 CREATE INDEX idx_crypto_payment_intents_quote_expires_at ON public.crypto_payment_intents(quote_expires_at);
 CREATE INDEX idx_crypto_payment_intents_tx_hash ON public.crypto_payment_intents(tx_hash);
 
+-- 5c. Blockchain booking read model
+CREATE TABLE public.blockchain_bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    payment_intent_id UUID UNIQUE REFERENCES public.crypto_payment_intents(id) ON DELETE SET NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    booking_id VARCHAR(66) NOT NULL UNIQUE,
+    payer_address VARCHAR(255),
+    token_address VARCHAR(255),
+    token_symbol VARCHAR(32),
+    expected_amount_base_units VARCHAR(255),
+    deposited_amount_base_units VARCHAR(255),
+    chain_id BIGINT NOT NULL,
+    booking_manager_address VARCHAR(255) NOT NULL,
+    escrow_vault_address VARCHAR(255),
+    tx_hash VARCHAR(255),
+    block_number BIGINT,
+    event_log_index INTEGER,
+    status blockchain_booking_status DEFAULT 'draft'::blockchain_booking_status NOT NULL,
+    last_event_name VARCHAR(100),
+    metadata JSONB DEFAULT '{}'::jsonb NOT NULL,
+    confirmed_at TIMESTAMPTZ,
+    refunded_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_blockchain_bookings_user_id ON public.blockchain_bookings(user_id);
+CREATE INDEX idx_blockchain_bookings_status ON public.blockchain_bookings(status);
+CREATE INDEX idx_blockchain_bookings_chain ON public.blockchain_bookings(chain_id);
+CREATE INDEX idx_blockchain_bookings_tx_hash ON public.blockchain_bookings(tx_hash);
+
+-- 5d. Indexer checkpoints for reliable replay
+CREATE TABLE public.blockchain_indexer_checkpoints (
+    chain_id BIGINT PRIMARY KEY,
+    contract_address VARCHAR(255) NOT NULL,
+    last_scanned_block BIGINT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
 -- 6. Functions & Triggers for updated_at Auto-Update
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -148,12 +188,17 @@ CREATE TRIGGER update_crypto_payment_intents_updated_at
     BEFORE UPDATE ON public.crypto_payment_intents
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_blockchain_bookings_updated_at
+    BEFORE UPDATE ON public.blockchain_bookings
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- 7. Row Level Security (RLS) Policies (Examples)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trips ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trip_departures ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enquiries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.crypto_payment_intents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blockchain_bookings ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Users can read their own profile. Staff/Admin can read all.
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -168,6 +213,7 @@ CREATE POLICY "Public read trip departures" ON public.trip_departures FOR SELECT
 CREATE POLICY "Users can create enquiries" ON public.enquiries FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 CREATE POLICY "Users can view own enquiries" ON public.enquiries FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can view own crypto payment intents" ON public.crypto_payment_intents FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can view own blockchain bookings" ON public.blockchain_bookings FOR SELECT USING (auth.uid() = user_id);
 
 -- 8. Auto-Create Profile on Signup
 -- This function automatically inserts a row into public.profiles 

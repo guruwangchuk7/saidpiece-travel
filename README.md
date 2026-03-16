@@ -472,6 +472,118 @@ Minimum recommended coverage:
 - Binance Pay request signing and error handling
 - Admin route authorization
 
+## Convert to Blockchain-Based Architecture
+
+This project already supports wallet-based crypto transfer verification. To convert it into a blockchain-first booking platform, migrate in phases.
+
+### Phase 1: Define onchain scope
+
+Keep onchain:
+
+- Booking escrow or deposit records
+- Payment status and settlement state
+- Refund approval events
+
+Keep offchain:
+
+- Personal traveler data (PII)
+- Trip content, images, CMS data
+- Internal operations and support notes
+
+### Phase 2: Add smart contracts
+
+Create contracts:
+
+- `BookingManager`: creates booking IDs, stores booking state, links payer wallet
+- `EscrowVault`: receives stablecoin payments and controls release/refund rules
+- `RefundManager` (optional): role-gated refund approvals and execution
+
+Recommended standards:
+
+- ERC-20 for settlement token (USDC/USDT)
+- OpenZeppelin `AccessControl` for role management
+- UUPS or Transparent Proxy if upgradeability is required
+
+### Phase 3: Introduce contract event indexing
+
+Add an indexer to consume contract events:
+
+- Option A: The Graph subgraph
+- Option B: Custom worker using Viem + RPC + PostgreSQL
+
+Index at minimum:
+
+- `BookingCreated`
+- `PaymentDeposited`
+- `BookingConfirmed`
+- `RefundIssued`
+
+### Phase 4: Refactor backend APIs
+
+Update Next.js API routes:
+
+- Replace payment-intent status as source of truth with contract state
+- Keep Supabase for auth/profile and offchain operational data
+- Add signature-based wallet ownership checks for sensitive actions
+
+### Phase 5: Hardening and operations
+
+- Add multi-sig ownership for admin roles and treasury controls
+- Add pause/emergency withdrawal pattern
+- Add webhook + event replay reconciliation jobs
+- Add monitoring for RPC failures, chain reorg handling, and delayed finality
+
+### Minimal migration checklist
+
+1. Deploy testnet contracts.
+2. Wire `src/lib/cryptoPayments.ts` to call contracts instead of transfer-only verification.
+3. Add event indexer and mirrored booking state tables.
+4. Update `/confirm-pay` flow to create onchain booking escrow.
+5. Roll out mainnet only after testnet reconciliation and audit.
+
+## System Design (Blockchain Version)
+
+### High-level components
+
+- Next.js frontend: trip browsing, booking creation, wallet signing, payment UX
+- Next.js API layer: auth, booking orchestration, server-side validation
+- Smart contracts: booking lifecycle and fund custody
+- Indexer service: onchain event ingestion to query-friendly DB
+- Supabase/Postgres: users, trip catalog, analytics, indexed booking read model
+- Admin dashboard: staff tools for confirmation, refunds, and exception handling
+
+### Request and settlement flow
+
+1. User signs in (Supabase) and connects wallet.
+2. User creates booking request through API.
+3. API creates offchain booking draft and prepares contract call params.
+4. User submits onchain transaction to `BookingManager`/`EscrowVault`.
+5. Indexer captures event and updates booking read model.
+6. UI polls/subscribes to indexed state and shows confirmed payment.
+7. Ops/admin can trigger release or refund per contract rules.
+
+### Suggested data ownership
+
+- Onchain: immutable booking payment events, settlement status, refund state
+- Offchain DB: customer profile, itinerary metadata, CRM fields, derived reporting
+
+### Text architecture diagram
+
+```text
+[Web App (Next.js)] --wallet tx--> [BookingManager + EscrowVault]
+        |                                  |
+        | REST/Auth                         | Events
+        v                                  v
+[Next.js API + Supabase Auth]        [Indexer Worker/Subgraph]
+        |                                  |
+        | writes                            | writes
+        v                                  v
+           [Postgres Read Model (Supabase)]
+                         |
+                         v
+                 [Admin/Operations UI]
+```
+
 ## File References
 
 - [package.json](D:\My Files\Projects\saidpiece-travel\package.json)

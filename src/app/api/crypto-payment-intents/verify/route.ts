@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAddress, isAddress } from 'viem';
-import { getExplorerUrl, getCryptoPaymentConfig, verifyErc20Transfer, fromTokenBaseUnits } from '@/lib/cryptoPayments';
+import { getExplorerUrl, getCryptoPaymentConfig, fromTokenBaseUnits } from '@/lib/cryptoPayments';
 import { createSupabaseAdminClient, getAuthenticatedUser } from '@/lib/supabaseAdmin';
 import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
+import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId, verifyBookingPaymentEvent } from '@/lib/onchainBooking';
 
 type VerifyIntentBody = {
   intentId?: string;
@@ -45,7 +46,15 @@ export async function POST(request: NextRequest) {
       return jsonNoStore({ ok: false, error: 'Missing or invalid verification payload.' }, { status: 400 });
     }
 
+    if (!isOnchainBookingConfigured()) {
+      return jsonNoStore(
+        { ok: false, error: 'Onchain booking contract is not configured. Add NEXT_PUBLIC_BOOKING_MANAGER_ADDRESS.' },
+        { status: 500 },
+      );
+    }
+
     const config = getCryptoPaymentConfig();
+    const onchainConfig = getOnchainBookingConfig();
     const senderAddress = getAddress(body.senderAddress);
     const txHash = body.txHash as `0x${string}`;
     const supabase = createSupabaseAdminClient();
@@ -112,106 +121,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (intent.chain_id !== config.chainId) {
+    if (intent.chain_id !== config.chainId || intent.chain_id !== onchainConfig.chainId) {
       return jsonNoStore(
         { ok: false, error: 'Server chain configuration does not match the active payment chain.', code: 'wrong_chain' },
         { status: 400 },
       );
     }
 
-    const verification = await verifyErc20Transfer({
+    const expectedAmount = BigInt(intent.expected_token_amount_base_units);
+    const bookingId = toBookingId(intent.id);
+
+    const verification = await verifyBookingPaymentEvent({
       chainId: intent.chain_id,
       txHash,
-      expectedTokenAddress: getAddress(intent.token_address),
-      expectedRecipient: getAddress(intent.recipient_address),
+      expectedBookingId: bookingId,
+      expectedPayer: senderAddress,
+      expectedToken: getAddress(intent.token_address),
+      minimumAmount: expectedAmount,
+      bookingManagerAddress: onchainConfig.bookingManagerAddress,
     });
 
-    if (verification.receipt.status !== 'success') {
+    if (!verification.ok) {
+      const failureCode = verification.reason;
+      const failureReasonMap: Record<string, string> = {
+        failed_receipt: 'The transaction was mined but failed onchain.',
+        wrong_token: 'The deposited token does not match the quoted token.',
+        underpayment: 'The transaction amount is below the quoted amount.',
+        event_not_found: 'No matching PaymentDeposited event was found for this booking.',
+      };
+
       await supabase
         .from('crypto_payment_intents')
         .update({
           tx_hash: txHash,
           sender_address: senderAddress,
-          status: 'failed',
-          failure_code: 'failed_receipt',
-          failure_reason: 'The transaction was mined but failed onchain.',
+          status: failureCode === 'underpayment' ? 'underpaid' : 'failed',
+          failure_code: failureCode,
+          failure_reason: failureReasonMap[failureCode] || 'Onchain payment verification failed.',
+          received_token_amount_base_units:
+            'amount' in verification && verification.amount != null ? verification.amount.toString() : null,
+          received_token_amount:
+            'amount' in verification && verification.amount != null
+              ? fromTokenBaseUnits(verification.amount, intent.token_decimals)
+              : null,
         })
         .eq('id', intent.id);
 
       return jsonNoStore(
-        { ok: false, error: 'The transaction failed onchain.', code: 'failed_receipt' },
+        { ok: false, error: failureReasonMap[failureCode] || 'Onchain payment verification failed.', code: failureCode },
         { status: 400 },
       );
     }
 
-    if (!verification.transaction.to || getAddress(verification.transaction.to) !== getAddress(intent.token_address)) {
-      await supabase
-        .from('crypto_payment_intents')
-        .update({
-          tx_hash: txHash,
-          sender_address: senderAddress,
-          status: 'failed',
-          failure_code: 'wrong_token',
-          failure_reason: 'The transaction target token contract does not match the quoted token.',
-        })
-        .eq('id', intent.id);
-
-      return jsonNoStore(
-        { ok: false, error: 'The transaction did not target the expected token contract.', code: 'wrong_token' },
-        { status: 400 },
-      );
-    }
-
-    const matchingTransfer = verification.matchingTransfers.find(
-      (transfer) => transfer.from === senderAddress,
-    );
-
-    if (!matchingTransfer) {
-      await supabase
-        .from('crypto_payment_intents')
-        .update({
-          tx_hash: txHash,
-          sender_address: senderAddress,
-          status: 'failed',
-          failure_code: 'wrong_recipient',
-          failure_reason: 'No matching transfer to the business wallet was found from this sender.',
-        })
-        .eq('id', intent.id);
-
-      return jsonNoStore(
-        { ok: false, error: 'No matching transfer to the business wallet was found in this transaction.', code: 'wrong_recipient' },
-        { status: 400 },
-      );
-    }
-
-    const expectedBaseUnits = BigInt(intent.expected_token_amount_base_units);
-    const receivedAmount = fromTokenBaseUnits(matchingTransfer.value, intent.token_decimals);
-    if (matchingTransfer.value < expectedBaseUnits) {
-      await supabase
-        .from('crypto_payment_intents')
-        .update({
-          tx_hash: txHash,
-          sender_address: senderAddress,
-          received_token_amount_base_units: matchingTransfer.value.toString(),
-          received_token_amount: receivedAmount,
-          status: 'underpaid',
-          failure_code: 'underpayment',
-          failure_reason: 'The transaction amount is below the quoted amount.',
-        })
-        .eq('id', intent.id);
-
-      return jsonNoStore(
-        { ok: false, error: 'The transaction amount is below the quoted payment amount.', code: 'underpayment' },
-        { status: 400 },
-      );
-    }
-
+    const receivedAmount = fromTokenBaseUnits(verification.amount, intent.token_decimals);
     const { error: updateError } = await supabase
       .from('crypto_payment_intents')
       .update({
         tx_hash: txHash,
         sender_address: senderAddress,
-        received_token_amount_base_units: matchingTransfer.value.toString(),
+        received_token_amount_base_units: verification.amount.toString(),
         received_token_amount: receivedAmount,
         status: 'paid',
         verified_at: new Date().toISOString(),

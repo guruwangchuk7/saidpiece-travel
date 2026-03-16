@@ -10,14 +10,19 @@ import { useAuth } from '@/hooks/useAuth';
 import { WalletProvider } from '@/lib/wallet';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { erc20Abi, parseUnits } from 'viem';
+import { Address } from 'viem';
+import { bookingManagerAbi } from '@/lib/onchainBooking';
 
-const cryptoRecipient = process.env.NEXT_PUBLIC_CRYPTO_RECIPIENT_ADDRESS as `0x${string}` | undefined;
-const cryptoTokenAddress = process.env.NEXT_PUBLIC_CRYPTO_TOKEN_ADDRESS as `0x${string}` | undefined;
 const cryptoTokenSymbol = process.env.NEXT_PUBLIC_CRYPTO_TOKEN_SYMBOL || 'USDC';
-const cryptoTokenDecimals = Number(process.env.NEXT_PUBLIC_CRYPTO_TOKEN_DECIMALS || '6');
-const cryptoPaymentChainId = Number(process.env.NEXT_PUBLIC_CRYPTO_PAYMENT_CHAIN_ID || '8453');
-const isCryptoConfigured = Boolean(cryptoRecipient && cryptoTokenAddress);
+const fallbackPaymentChainId = Number(process.env.NEXT_PUBLIC_CRYPTO_PAYMENT_CHAIN_ID || '8453');
+
+type ContractCallConfig = {
+    chainId: number;
+    bookingManagerAddress: Address;
+    bookingId: string;
+    tokenAddress: Address;
+    amountBaseUnits: string;
+};
 
 function ConfirmPayContent() {
     const searchParams = useSearchParams();
@@ -36,6 +41,7 @@ function ConfirmPayContent() {
     const [cryptoIntentId, setCryptoIntentId] = useState<string | null>(null);
     const [quotedCryptoAmount, setQuotedCryptoAmount] = useState<string | null>(null);
     const [quoteExpiresAt, setQuoteExpiresAt] = useState<string | null>(null);
+    const [contractCall, setContractCall] = useState<ContractCallConfig | null>(null);
     const [isPreparingCrypto, setIsPreparingCrypto] = useState(false);
     const [intentRequestKey, setIntentRequestKey] = useState<string | null>(null);
     const [isBinancePayLoading, setIsBinancePayLoading] = useState(false);
@@ -73,12 +79,13 @@ function ConfirmPayContent() {
             ? normalizedFiatAmount
             : null);
     const cryptoAmountValue = cryptoAmount == null ? null : String(cryptoAmount).trim();
-    const isCorrectCryptoChain = chainId === cryptoPaymentChainId;
-    const canSubmitCryptoPayment = isConnected && isCryptoConfigured && Boolean(cryptoAmountValue) && Boolean(cryptoIntentId);
+    const activePaymentChainId = contractCall?.chainId || fallbackPaymentChainId;
+    const isCorrectCryptoChain = chainId === activePaymentChainId;
+    const canSubmitCryptoPayment = isConnected && Boolean(contractCall) && Boolean(cryptoAmountValue) && Boolean(cryptoIntentId);
     const isCryptoBusy = isPreparingCrypto || isSwitchingChain || isSendingCrypto || isConfirmingCrypto;
 
     useEffect(() => {
-        if (paymentMethod !== 'crypto' || !user || !session?.access_token || !isCryptoConfigured) {
+        if (paymentMethod !== 'crypto' || !user || !session?.access_token) {
             return;
         }
 
@@ -111,16 +118,18 @@ function ConfirmPayContent() {
                 if (!response.ok || !payload.ok) {
                     throw new Error(payload.error || 'Failed to prepare crypto payment.');
                 }
-                return payload.intent;
+                return payload;
             })
-            .then((intent) => {
+            .then((result) => {
                 if (!active) {
                     return;
                 }
 
+                const intent = result.intent;
                 setCryptoIntentId(intent.id);
                 setQuotedCryptoAmount(intent.expected_token_amount);
                 setQuoteExpiresAt(intent.quote_expires_at);
+                setContractCall(result.contractCall || null);
             })
             .catch((error) => {
                 if (!active) {
@@ -201,8 +210,8 @@ function ConfirmPayContent() {
             return;
         }
 
-        if (!isCryptoConfigured || !cryptoRecipient || !cryptoTokenAddress) {
-            setCryptoError('Crypto payments are not configured yet. Add the business wallet and token env vars first.');
+        if (!contractCall) {
+            setCryptoError('Onchain booking contract is not configured yet. Please contact support.');
             return;
         }
 
@@ -220,14 +229,14 @@ function ConfirmPayContent() {
 
         try {
             if (!isCorrectCryptoChain) {
-                await switchChainAsync({ chainId: cryptoPaymentChainId });
+                await switchChainAsync({ chainId: activePaymentChainId });
             }
 
             const hash = await writeContractAsync({
-                address: cryptoTokenAddress,
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [cryptoRecipient, parseUnits(cryptoAmountValue, cryptoTokenDecimals)],
+                address: contractCall.bookingManagerAddress,
+                abi: bookingManagerAbi,
+                functionName: 'payBooking',
+                args: [contractCall.bookingId as `0x${string}`, contractCall.tokenAddress, BigInt(contractCall.amountBaseUnits)],
             });
 
             setPendingCryptoHash(hash);
@@ -528,7 +537,7 @@ function ConfirmPayContent() {
                                 </div>
                                 <div className="crypto-meta-item">
                                     <span className="crypto-meta-label">Chain</span>
-                                    <strong>{cryptoPaymentChainId === 8453 ? 'Base' : cryptoPaymentChainId === 1 ? 'Ethereum' : cryptoPaymentChainId}</strong>
+                                    <strong>{activePaymentChainId === 8453 ? 'Base' : activePaymentChainId === 1 ? 'Ethereum' : activePaymentChainId}</strong>
                                 </div>
                             </div>
 
@@ -544,7 +553,7 @@ function ConfirmPayContent() {
                                 </p>
                             )}
 
-                            {!isCryptoConfigured && (
+                            {!contractCall && (
                                 <p className="crypto-error">
                                     Crypto payments are disabled until the business wallet and token contract are configured.
                                 </p>
@@ -1027,3 +1036,12 @@ export default function ConfirmPayPage() {
         </main>
     );
 }
+
+
+
+
+
+
+
+
+

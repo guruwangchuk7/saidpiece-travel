@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient, ensureProfile, getAuthenticatedUser } from '@/lib/supabaseAdmin';
 import { getCryptoPaymentConfig, getExpectedTokenAmount, toTokenBaseUnits } from '@/lib/cryptoPayments';
 import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
+import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId } from '@/lib/onchainBooking';
 
 type CreateIntentBody = {
   tripName?: string;
@@ -100,9 +101,37 @@ export async function POST(request: NextRequest) {
     }
 
     if (existingIntent) {
+      const onchain = isOnchainBookingConfigured() ? getOnchainBookingConfig() : null;
+      if (onchain) {
+        await supabase.from('blockchain_bookings').upsert(
+          {
+            payment_intent_id: existingIntent.id,
+            user_id: user.id,
+            booking_id: toBookingId(existingIntent.id),
+            token_address: config.tokenAddress,
+            token_symbol: config.tokenSymbol,
+            expected_amount_base_units: expectedTokenAmountBaseUnits,
+            chain_id: onchain.chainId,
+            booking_manager_address: onchain.bookingManagerAddress,
+            status: 'draft',
+          },
+          { onConflict: 'booking_id' },
+        );
+      }
+
       return jsonNoStore({
         ok: true,
         intent: existingIntent,
+        contractCall: onchain
+          ? {
+              chainId: onchain.chainId,
+              bookingManagerAddress: onchain.bookingManagerAddress,
+              functionName: 'payBooking',
+              bookingId: toBookingId(existingIntent.id),
+              tokenAddress: config.tokenAddress,
+              amountBaseUnits: expectedTokenAmountBaseUnits,
+            }
+          : null,
       });
     }
 
@@ -139,9 +168,37 @@ export async function POST(request: NextRequest) {
       return jsonNoStore({ ok: false, error: error.message }, { status: 500 });
     }
 
+    const onchain = isOnchainBookingConfigured() ? getOnchainBookingConfig() : null;
+    if (onchain) {
+      await supabase.from('blockchain_bookings').upsert(
+        {
+          payment_intent_id: data.id,
+          user_id: user.id,
+          booking_id: toBookingId(data.id),
+          token_address: config.tokenAddress,
+          token_symbol: config.tokenSymbol,
+          expected_amount_base_units: expectedTokenAmountBaseUnits,
+          chain_id: onchain.chainId,
+          booking_manager_address: onchain.bookingManagerAddress,
+          status: 'draft',
+        },
+        { onConflict: 'booking_id' },
+      );
+    }
+
     return jsonNoStore({
       ok: true,
       intent: data,
+      contractCall: onchain
+        ? {
+            chainId: onchain.chainId,
+            bookingManagerAddress: onchain.bookingManagerAddress,
+            functionName: 'payBooking',
+            bookingId: toBookingId(data.id),
+            tokenAddress: config.tokenAddress,
+            amountBaseUnits: expectedTokenAmountBaseUnits,
+          }
+        : null,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to create crypto payment intent.';
