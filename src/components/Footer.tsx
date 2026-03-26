@@ -127,7 +127,6 @@ export default function Footer() {
                     <div className="footer-bottom-links">
                         <a href="#">Privacy Policy</a>
                         <a href="#">Terms of Use</a>
-                        <Link href="/admin/enquiries">Staff Access</Link>
                         <a href="#">Sitemap</a>
                     </div>
                     <div className="social-icons">

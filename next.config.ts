@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: cspHeader.replace(/\n/g, ""),
+            value: cspHeader.replace(/\s{2,}/g, " ").trim(),
           },
           {
             key: "X-Content-Type-Options",
@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "X-XSS-Protection",
-            value: "0",
+            value: "1; mode=block",
           },
           {
             key: "Strict-Transport-Security",
@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+            value: "camera=(), microphone=(), geolocation=(), browsing-topics=(), interest-cohort=()",
           },
           {
             key: "Cross-Origin-Opener-Policy",
@@ -65,6 +65,10 @@ const nextConfig: NextConfig = {
           {
             key: "Cross-Origin-Resource-Policy",
             value: "same-origin",
+          },
+          {
+            key: "X-Permitted-Cross-Domain-Policies",
+            value: "none",
           },
           {
             key: "Origin-Agent-Cluster",
