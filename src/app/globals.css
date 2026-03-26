@@ -1426,6 +1426,10 @@ select.trip-finder-input {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.page-with-header {
+  padding-top: 130px;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .service-grid {
@@ -1847,7 +1851,8 @@ select.trip-finder-input {
   }
 
   .filters-sidebar .filter-header {
-    display: none !important; /* Hide redundant header on mobile */
+    display: none !important;
+    /* Hide redundant header on mobile */
   }
 
   .results-header h2 {
@@ -2525,6 +2530,7 @@ select.trip-finder-input {
 }
 
 @media (max-width: 1024px) {
+
   .browse-grid,
   .trip-content-layout {
     grid-template-columns: 1fr;
@@ -2667,7 +2673,8 @@ select.trip-finder-input {
   }
 
   .dates-pricing-table {
-    min-width: 600px; /* Allow table to scroll internally */
+    min-width: 600px;
+    /* Allow table to scroll internally */
     margin-bottom: 0;
   }
 }
@@ -3405,7 +3412,8 @@ select.trip-finder-input {
     height: 300px;
   }
 
-  .portrait-frame, .landscape-frame {
+  .portrait-frame,
+  .landscape-frame {
     height: 280px;
   }
 
@@ -3416,7 +3424,7 @@ select.trip-finder-input {
   .centered-paragraph {
     font-size: 1.1rem;
   }
-  
+
   .mini-photo {
     width: 140px;
     height: 190px;
@@ -3729,7 +3737,8 @@ select.trip-finder-input {
 /* 1. Progress Bar */
 .wizard-progress-track {
   width: 100%;
-  height: 4px;  background-color: #EEEEEE;
+  height: 4px;
+  background-color: #EEEEEE;
   position: relative;
   z-index: 999;
 }
@@ -4189,6 +4198,7 @@ select.trip-finder-input {
 
 /* Wizard Responsive Refinements */
 @media (max-width: 1024px) {
+
   .wizard-grid-cards,
   .wizard-grid-cards.cols-3,
   .wizard-grid-cards.cols-4 {
@@ -4258,14 +4268,15 @@ select.trip-finder-input {
   }
 
   .wizard-skip-btn {
-    display: none; /* Hide on small screens for cleaner UI */
+    display: none;
+    /* Hide on small screens for cleaner UI */
   }
 
   .wizard-next-btn {
     flex: 1;
     padding: 16px 20px;
   }
-  
+
   .wizard-intro-text {
     font-size: 0.9rem;
     margin-top: -20px;
@@ -4276,9 +4287,8 @@ select.trip-finder-input {
   .wizard-question {
     font-size: 1.75rem;
   }
-  
+
   .duration-num {
     font-size: 2.5rem;
   }
 }
-

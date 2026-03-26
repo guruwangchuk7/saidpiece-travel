@@ -13,7 +13,8 @@ export default function Catalog() {
                     <h2>Plan Your Bhutan Journey</h2>
                     <p>Travel to Bhutan is carefully organised to ensure every journey is smooth, meaningful, and well supported. Tell us your travel dates, interests, and preferences, and we will prepare a personalised itinerary including hotel options and a transparent cost summary.</p>
                     <div className="catalog-buttons">
-                        <Link href="/wizard" className="btn btn-primary">Plan Your Trip</Link>
+                        <Link href="/wizard" className="btn btn-primary" style={{ marginRight: '15px' }}>Plan Your Trip</Link>
+                        <Link href="/catalog" className="btn btn-outline">Request Catalog</Link>
                     </div>
                 </div>
             </div>

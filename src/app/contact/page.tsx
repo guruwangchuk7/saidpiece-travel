@@ -133,7 +133,7 @@ export default function ContactPage() {
                 <div className="container relative z-10">
                     <h2 className="serif-h2 text-center text-white mb-60">More Ways to Connect</h2>
                     <div className="connect-card-grid">
-                        <Link href="#" className="connect-card">
+                        <Link href="/catalog" className="connect-card">
                             <span className="card-label">Catalog</span>
                             <h3>Request a Catalog</h3>
                             <p>Explore our latest expedition guide.</p>
@@ -143,7 +143,7 @@ export default function ContactPage() {
                             <h3>Travel Blog</h3>
                             <p>Stories from the hidden valleys.</p>
                         </Link>
-                        <Link href="#" className="connect-card">
+                        <Link href="/newsletter" className="connect-card">
                             <span className="card-label">Updates</span>
                             <h3>E-Newsletter</h3>
                             <p>Monthly insights delivered to you.</p>

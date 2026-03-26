@@ -1,7 +1,44 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setStatus('loading');
+
+        try {
+            if (!supabase) throw new Error('Supabase not configured');
+
+            const { error: insertError } = await supabase
+                .from('enquiries')
+                .insert([{
+                    first_name: firstName,
+                    email: email,
+                    message: `Newsletter Subscription: ${firstName} ${lastName}`,
+                    status: 'new' as any
+                }]);
+
+            if (insertError) throw insertError;
+
+            setStatus('success');
+            setEmail('');
+            setFirstName('');
+            setLastName('');
+        } catch (err) {
+            console.error('Newsletter submission error:', err);
+            setStatus('error');
+        }
+    };
+
     return (
         <footer className="main-footer">
             <div className="container">
@@ -39,19 +76,49 @@ export default function Footer() {
                             <a href="#">Booking Process</a>
                             <a href="#">Travel Tips</a>
                             <a href="#">Terms & Conditions</a>
-                            <a href="#">Trip Wizard</a>
+                            <Link href="/wizard">Trip Wizard</Link>
                             <a href="#">FAQ</a>
                         </div>
                     </div>
                     <div className="footer-col">
                         <h4>Stay Inspired</h4>
-                        <p style={{ marginBottom: '15px', color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', lineHeight: '1.6' }}>Subscribe to our newsletter to receive the latest travel news and exclusive offers.</p>
-                        <form className="newsletter-form">
-                            <input type="text" className="newsletter-input" placeholder="First Name" />
-                            <input type="text" className="newsletter-input" placeholder="Last Name" />
-                            <input type="email" className="newsletter-input" placeholder="Email Address" />
-                            <button type="submit" className="newsletter-btn">Subscribe</button>
-                        </form>
+                        <p style={{ marginBottom: '15px', color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', lineHeight: '1.6' }}>
+                            {status === 'success' 
+                                ? "You're subscribed! Thank you for joining." 
+                                : "Subscribe to our newsletter to receive the latest travel news and exclusive offers."}
+                        </p>
+                        
+                        {status !== 'success' && (
+                            <form className="newsletter-form" onSubmit={handleSubmit}>
+                                <input 
+                                    type="text" 
+                                    className="newsletter-input" 
+                                    placeholder="First Name" 
+                                    required
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
+                                <input 
+                                    type="text" 
+                                    className="newsletter-input" 
+                                    placeholder="Last Name" 
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                                <input 
+                                    type="email" 
+                                    className="newsletter-input" 
+                                    placeholder="Email Address" 
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                <button type="submit" className="newsletter-btn" disabled={status === 'loading'}>
+                                    {status === 'loading' ? 'Joining...' : 'Subscribe'}
+                                </button>
+                                {status === 'error' && <p style={{ color: '#ff4444', fontSize: '0.75rem', marginTop: '5px' }}>Error. Please try again.</p>}
+                            </form>
+                        )}
                     </div>
                 </div>
 

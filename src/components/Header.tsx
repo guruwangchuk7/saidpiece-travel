@@ -95,9 +95,9 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                 {/* Global Header & Navigation */}
                 <div className="top-utility-bar">
                     <div className="container">
-                        <a href="#">1-800-368-2794</a>
-                        <a href="#">Catalog</a>
-                        <a href="#">Newsletter</a>
+                        <a href="tel:1-800-368-2794">1-800-368-2794</a>
+                        <Link href="/catalog">Catalog</Link>
+                        <Link href="/newsletter">Newsletter</Link>
                         <Link href="/contact">Contact Us</Link>
                     </div>
                 </div>
