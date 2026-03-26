@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Header from '@/components/Header';
+import { supabase } from '@/lib/supabaseClient';
 
 const steps = 6;
 
@@ -17,6 +18,8 @@ export default function TripWizard() {
     // User Form state
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const regions = [
         { id: 'paro', name: 'Paro Valley', img: '/images/bhutan/13.webp' },
@@ -45,6 +48,40 @@ export default function TripWizard() {
 
     const toggleTag = (tag: string) => {
         setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!supabase) return;
+
+        setStatus('loading');
+        setErrorMessage('');
+
+        const message = `Wizard Trip Request:
+Regions: ${selectedRegions.join(', ')}
+Style: ${selectedStyle}
+Month: ${selectedMonth}
+Duration: ${duration} days
+Interests: ${selectedTags.join(', ')}`;
+
+        try {
+            const { error } = await supabase
+                .from('enquiries')
+                .insert([{
+                    first_name: firstName,
+                    email: email,
+                    message: message,
+                    trip_name_fallback: `Wizard: ${selectedStyle} in ${selectedMonth}`,
+                    status: 'new'
+                }]);
+
+            if (error) throw error;
+            setStatus('success');
+        } catch (err: any) {
+            console.error('Wizard submission error:', err);
+            setStatus('error');
+            setErrorMessage(err.message || 'Failed to submit journey request. Please try again.');
+        }
     };
 
     const renderStepContent = () => {
@@ -186,27 +223,36 @@ export default function TripWizard() {
                     <div className="wizard-step-content animation-slide-in lead-capture-step">
                         <h2 className="wizard-question">Let&apos;s start planning your dream trip!</h2>
                         <div className="wizard-lead-container">
-                            <form className="wizard-form" onSubmit={(e) => e.preventDefault()} style={{ width: '100%' }}>
-                                <input
-                                    type="text"
-                                    placeholder="First Name"
-                                    className="wizard-input"
-                                    value={firstName}
-                                    onChange={e => setFirstName(e.target.value)}
-                                    required
-                                />
-                                <input
-                                    type="email"
-                                    placeholder="Email Address"
-                                    className="wizard-input"
-                                    value={email}
-                                    onChange={e => setEmail(e.target.value)}
-                                    required
-                                />
-                                <button className="btn btn-primary wizard-submit-btn" type="submit">
-                                    PLAN MY BHUTAN JOURNEY
-                                </button>
-                            </form>
+                            {status === 'success' ? (
+                                <div className="wizard-success-message" style={{ textAlign: 'center', width: '100%' }}>
+                                    <h3 className="serif-title" style={{ fontSize: '2rem', marginBottom: '20px' }}>Adventure Awaits!</h3>
+                                    <p style={{ color: '#555', marginBottom: '30px' }}>Your Bhutan journey profile has been sent to our travel experts. We will be in touch within 24-48 hours with a personalized proposal.</p>
+                                    <button onClick={() => window.location.href = '/'} className="btn btn-primary">Return Home</button>
+                                </div>
+                            ) : (
+                                <form className="wizard-form" onSubmit={handleSubmit} style={{ width: '100%' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="First Name"
+                                        className="wizard-input"
+                                        value={firstName}
+                                        onChange={e => setFirstName(e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="email"
+                                        placeholder="Email Address"
+                                        className="wizard-input"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        required
+                                    />
+                                    {status === 'error' && <p style={{ color: '#d32f2f', fontSize: '0.9rem', marginBottom: '10px' }}>{errorMessage}</p>}
+                                    <button className="btn btn-primary wizard-submit-btn" type="submit" disabled={status === 'loading'}>
+                                        {status === 'loading' ? 'PREPARING YOUR JOURNEY...' : 'PLAN MY BHUTAN JOURNEY'}
+                                    </button>
+                                </form>
+                            )}
                         </div>
                     </div>
                 );

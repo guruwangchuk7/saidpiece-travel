@@ -31,6 +31,7 @@ export default function NewsletterPage() {
 
             if (insertError) throw insertError;
 
+            // Success!
             setStatus('success');
             setEmail('');
             setFirstName('');

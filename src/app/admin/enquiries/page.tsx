@@ -5,21 +5,26 @@ import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
-
-// Mock enquiries
-const initialEnquiries = [
-    { id: '1', firstName: 'Julian', email: 'julian@example.com', trip: 'Highland Trek', date: '2026-03-05', status: 'new' },
-    { id: '2', firstName: 'Elena', email: 'elena@travel.com', trip: 'Cultural Heritage', date: '2026-03-04', status: 'proposed' },
-];
+import { supabase } from '@/lib/supabaseClient';
 
 export default function EnquiryManager() {
     const { user, loading, isStaff, signOut, signInWithGoogle } = useAuth();
     const router = useRouter();
-    type Enquiry = typeof initialEnquiries[number];
 
-    const [enquiries, setEnquiries] = useState<Enquiry[]>(initialEnquiries);
+    interface Enquiry {
+        id: string;
+        firstName: string;
+        email: string;
+        trip: string;
+        date: string;
+        status: string;
+        message: string;
+    }
+
+    const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
     const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
     const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
         if (!loading && !isStaff) {
@@ -27,8 +32,44 @@ export default function EnquiryManager() {
         }
     }, [loading, isStaff, router]);
 
-    if (loading) {
-        return <div style={{ padding: '100px', textAlign: 'center' }}>Verifying Staff Access...</div>;
+    useEffect(() => {
+        if (isStaff && supabase) {
+            fetchEnquiries();
+        }
+    }, [isStaff]);
+
+    const fetchEnquiries = async () => {
+        if (!supabase) return;
+        setIsFetching(true);
+        try {
+            const { data, error } = await supabase
+                .from('enquiries')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (data) {
+                const mapped: Enquiry[] = data.map(item => ({
+                    id: item.id,
+                    firstName: item.first_name,
+                    email: item.email,
+                    trip: item.trip_name_fallback || 'Custom Request',
+                    date: new Date(item.created_at).toLocaleDateString(),
+                    status: item.status,
+                    message: item.message || ''
+                }));
+                setEnquiries(mapped);
+            }
+        } catch (err) {
+            console.error('Error fetching enquiries:', err);
+        } finally {
+            setIsFetching(false);
+        }
+    };
+
+    if (loading || (isStaff && isFetching)) {
+        return <div style={{ padding: '100px', textAlign: 'center' }}>Verifying Staff Access & Loading Data...</div>;
     }
 
     if (!isStaff) {
@@ -41,18 +82,35 @@ export default function EnquiryManager() {
         );
     }
 
-    const handleSendEmail = (templateName: string) => {
-        if (!selectedEnquiry) {
+    const handleSendEmail = async (templateName: string) => {
+        if (!selectedEnquiry || !supabase) {
             return;
         }
 
-        alert(`Email sent to ${selectedEnquiry.firstName} using "${templateName}" template.`);
+        let newStatus = selectedEnquiry.status;
         if (templateName === 'Proposal') {
-            setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: 'proposed' } : e));
+            newStatus = 'proposed';
         } else if (templateName === 'Confirm & Pay') {
-            setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: 'awaiting-payment' } : e));
+            newStatus = 'awaiting_payment';
         }
-        setActiveTemplate(null);
+
+        try {
+            const { error } = await supabase
+                .from('enquiries')
+                .update({ status: newStatus })
+                .eq('id', selectedEnquiry.id);
+
+            if (error) throw error;
+
+            alert(`Email sent to ${selectedEnquiry.firstName} using "${templateName}" template.\nStatus updated to: ${newStatus}`);
+            
+            setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: newStatus } : e));
+            setSelectedEnquiry(prev => prev ? { ...prev, status: newStatus } : null);
+            setActiveTemplate(null);
+        } catch (err) {
+            console.error('Error updating status:', err);
+            alert('Failed to update status in database.');
+        }
     };
 
     const handleSignOut = async () => {
@@ -74,25 +132,31 @@ export default function EnquiryManager() {
 
                 <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '40px' }}>
                     {/* List */}
-                    <aside className="enquiry-list" style={{ borderRight: '1px solid #eee' }}>
+                    <aside className="enquiry-list" style={{ borderRight: '1px solid #eee', overflowY: 'auto', maxHeight: '70vh', paddingRight: '10px' }}>
                         <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>Recent Enquiries</h3>
-                        {enquiries.map(enq => (
-                            <div
-                                key={enq.id}
-                                className={`enq-item ${selectedEnquiry?.id === enq.id ? 'active' : ''}`}
-                                onClick={() => setSelectedEnquiry(enq)}
-                                style={{
-                                    padding: '15px',
-                                    borderBottom: '1px solid #f0f0f0',
-                                    cursor: 'pointer',
-                                    background: selectedEnquiry?.id === enq.id ? '#f0fafa' : 'transparent',
-                                    borderRadius: '8px'
-                                }}
-                            >
-                                <div style={{ fontWeight: 600 }}>{enq.firstName}</div>
-                                <div style={{ fontSize: '12px', color: '#666' }}>{enq.trip} • {enq.status}</div>
-                            </div>
-                        ))}
+                        {enquiries.length === 0 ? (
+                            <p style={{ color: '#999', fontSize: '14px' }}>No enquiries found.</p>
+                        ) : (
+                            enquiries.map(enq => (
+                                <div
+                                    key={enq.id}
+                                    className={`enq-item ${selectedEnquiry?.id === enq.id ? 'active' : ''}`}
+                                    onClick={() => setSelectedEnquiry(enq)}
+                                    style={{
+                                        padding: '15px',
+                                        borderBottom: '1px solid #f0f0f0',
+                                        cursor: 'pointer',
+                                        background: selectedEnquiry?.id === enq.id ? '#f0fafa' : 'transparent',
+                                        borderRadius: '8px',
+                                        marginBottom: '10px',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                >
+                                    <div style={{ fontWeight: 600 }}>{enq.firstName}</div>
+                                    <div style={{ fontSize: '12px', color: '#666' }}>{enq.trip} • <span style={{ color: enq.status === 'new' ? '#d32f2f' : '#666' }}>{enq.status.toUpperCase()}</span></div>
+                                </div>
+                            ))
+                        )}
                     </aside>
 
                     {/* Details & Templates */}
@@ -107,6 +171,11 @@ export default function EnquiryManager() {
                                     <div className="status-badge" style={{ padding: '5px 15px', borderRadius: '20px', background: '#008080', color: 'white', fontSize: '12px', alignSelf: 'center' }}>
                                         Status: {selectedEnquiry.status.toUpperCase()}
                                     </div>
+                                </div>
+
+                                <div className="request-message" style={{ background: '#f9f9f9', padding: '20px', borderRadius: '8px', marginBottom: '30px', whiteSpace: 'pre-wrap', borderLeft: '4px solid #008080' }}>
+                                    <h4 style={{ fontSize: '13px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Customer Message / Selections:</h4>
+                                    {selectedEnquiry.message}
                                 </div>
 
                                 <div className="template-actions" style={{ display: 'flex', gap: '15px', marginBottom: '40px' }}>
