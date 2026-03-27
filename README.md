@@ -12,8 +12,9 @@ The current codebase includes:
 - A protected confirmation and payment page backed by Supabase authentication
 - Crypto payment intent creation and onchain ERC-20 transfer verification
 - Binance Pay hosted checkout order creation
-- A staff login and enquiry dashboard prototype
-- A Supabase PostgreSQL schema draft in `database.sql`
+- A staff login and enquiries dashboard with server-side RBAC
+- A hardened Supabase PostgreSQL schema with RLS and Audit Logging (`database.sql`)
+- Persistent serverless rate limiting via Upstash Redis
 
 ## Tech Stack
 
@@ -24,6 +25,7 @@ The current codebase includes:
 - Auth and database: Supabase
 - Wallet integration: Wagmi, RainbowKit, WalletConnect, Viem
 - Payment integrations: Stripe redirect link, Binance Pay API, ERC-20 wallet transfer flow
+- Persistence & Security: Supabase RLS, Upstash Redis (Rate Limiting)
 - Linting: ESLint 9
 
 ## Runtime Requirements
@@ -116,18 +118,24 @@ Notes:
 - `APP_BASE_URL` is used to derive fallback Binance return and cancel URLs.
 - The code also checks `NEXT_PUBLIC_APP_URL` as an alternative base URL source.
 
-### Optional staff/admin configuration
+### Required for Persistence & Security (Upstash)
 
 ```env
-NEXT_PUBLIC_STAFF_EMAILS=
-STAFF_EMAILS=
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
 ```
 
-Notes:
+### Required for Blockchain RPCs (Optional but Recommended)
 
-- `NEXT_PUBLIC_STAFF_EMAILS` is exposed to the client and used by `useAuth()` for front-end staff gating.
-- `STAFF_EMAILS` is used by `/api/staff`.
-- If neither is set, the client falls back to two hardcoded Gmail addresses in `src/hooks/useAuth.ts`.
+```env
+RPC_URL_8453=  # Base Private RPC (Alchemy/Infura)
+RPC_URL_1=     # Ethereum Mainnet Private RPC
+```
+
+### Staff/Admin Configuration (Database-Baked)
+
+Admin and staff access is managed directly in the `public.profiles` table via the `role` column (`admin`, `staff`, or `customer`). 
+Manual assignment in the Supabase Table Editor is required to promote a user to `admin`.
 
 ## Project Structure
 
@@ -209,15 +217,17 @@ Authentication is implemented with Supabase and Google OAuth.
 
 Client flow:
 
-- `useAuth()` subscribes to Supabase auth session changes.
+- `useAuth()` subscribes to Supabase auth session changes and fetches the user's `role` from the database.
 - `signInWithGoogle()` computes the redirect URL from `window.location.origin` at runtime.
 - Protected pages check `user` and show a login prompt when unauthenticated.
 
 Server flow:
 
+- **Middleware Guard**: All `/admin/*` routes are protected by `src/middleware.ts`, which validates the Supabase session and user role before the page renders.
 - API routes require `Authorization: Bearer <supabase_access_token>`.
 - `getAuthenticatedUser()` validates the bearer token against Supabase.
 - `ensureProfile()` upserts the authenticated user into `public.profiles`.
+- **Database RLS**: All data access is filtered at the database level using PostgreSQL Row Level Security (RLS) policies that check the authenticated `uid()` and `role`.
 
 Important implementation detail:
 
@@ -364,7 +374,8 @@ Additional cache controls:
 
 - A `jsonNoStore()` helper for non-cacheable JSON responses
 - IP extraction via `x-forwarded-for` or `x-real-ip`
-- In-memory rate limiting
+- **Persistent Rate Limiting**: Distributed, serverless-safe rate limiting using Upstash Redis.
+- Fallback to in-memory limiting during local development.
 
 Current rate limits:
 
@@ -438,8 +449,6 @@ curl http://localhost:3000/api/staff
 
 ## Known Gaps and Risks
 
-- The admin dashboard uses mock enquiry data and does not read from Supabase.
-- Staff authorization is client-side and based on email lists, which is not sufficient for sensitive operations.
 - Stripe integration is only a redirect link; no checkout session creation or webhook verification is implemented.
 - Binance Pay lacks webhook handling and persistence.
 - The payment confirmation page contains hardcoded banking details and payment copy.

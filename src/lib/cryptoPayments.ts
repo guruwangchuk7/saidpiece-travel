@@ -114,9 +114,15 @@ export function createChainPublicClient(chainId: number) {
     throw new Error(`Unsupported chain id ${chainId}.`);
   }
 
+  // Look for a private RPC URL in environment (e.g., RPC_URL_8453)
+  const privateRpcUrl = process.env[`RPC_URL_${chainId}`];
+  if (privateRpcUrl) {
+    console.debug(`[cryptoPayments] Using private RPC for chain ${chainId}`);
+  }
+
   return createPublicClient({
     chain,
-    transport: http(),
+    transport: http(privateRpcUrl || undefined),
   });
 }
 

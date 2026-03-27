@@ -2,12 +2,21 @@ import type { NextConfig } from "next";
 
 const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.supabase.co https://*.google.com https://*.walletconnect.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https:;
+    img-src 'self' blob: data: https://*.supabase.co https://images.unsplash.com https://*.googleusercontent.com https://*.walletconnect.com;
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://*.supabase.co https://*.walletconnect.com wss://*.walletconnect.com https://rpc.walletconnect.com https://*.vercel.app https://mainnet.base.org https://base-mainnet.g.alchemy.com https://base.llamarpc.com;
-    frame-src 'self' https://verify.walletconnect.com;
+    connect-src 'self' 
+        https://*.supabase.co 
+        https://*.walletconnect.com 
+        wss://*.walletconnect.com 
+        https://rpc.walletconnect.com 
+        https://*.vercel.app 
+        https://mainnet.base.org 
+        https://base-mainnet.g.alchemy.com 
+        https://base.llamarpc.com
+        https://api.binance.com;
+    frame-src 'self' https://verify.walletconnect.com https://*.supabase.co;
     object-src 'none';
     base-uri 'self';
     form-action 'self';

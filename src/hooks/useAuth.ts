@@ -2,23 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
 
-function getStaffEmails(): string[] {
-  // Comma-separated list of staff emails (client-visible).
-  // If not set, fallback to the previous hardcoded list.
-  const env = process.env.NEXT_PUBLIC_STAFF_EMAILS;
-  if (!env?.trim()) {
-    return ['saidpiecebhutan@gmail.com', 'guruwangchuk7@gmail.com'];
-  }
-  return env
-    .split(',')
-    .map((email) => email.trim())
-    .filter(Boolean);
-}
+// Staff list is now handled server-side in Middleware and Database RLS.
+// This client-side hook now relies on the user's role in the 'profiles' table.
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(!isSupabaseConfigured);
+  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
@@ -31,15 +22,36 @@ export function useAuth() {
       if (!mounted) return;
       setSession(data.session);
       setUser(data.session?.user ?? null);
+      
+      if (data.session?.user) {
+        // Fetch role from profile
+        const { data: profile } = await client
+          .from('profiles')
+          .select('role')
+          .eq('id', data.session.user.id)
+          .single();
+        if (mounted) setRole(profile?.role ?? 'customer');
+      }
       setLoading(false);
     };
 
     loadSession();
 
-    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = client.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
+
+      if (session?.user) {
+         const { data: profile } = await client
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        if (mounted) setRole(profile?.role ?? 'customer');
+      } else {
+        if (mounted) setRole(null);
+      }
       setLoading(false);
     });
 
@@ -83,8 +95,7 @@ export function useAuth() {
     if (error) console.error('Error signing out:', error);
   };
 
-  const staffEmails = getStaffEmails();
-  const isStaff = !!user?.email && staffEmails.includes(user.email);
+  const isStaff = role === 'staff' || role === 'admin';
 
   return {
     user,
@@ -93,7 +104,7 @@ export function useAuth() {
     signInWithGoogle,
     signOut,
     isStaff,
+    role,
     supabaseConfigured: isSupabaseConfigured,
-    staffEmails,
   };
 }

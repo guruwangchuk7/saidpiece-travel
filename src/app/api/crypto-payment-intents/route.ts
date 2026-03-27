@@ -4,13 +4,15 @@ import { getCryptoPaymentConfig, getExpectedTokenAmount, toTokenBaseUnits } from
 import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
 import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId } from '@/lib/onchainBooking';
 
-type CreateIntentBody = {
-  tripName?: string;
-  travelerName?: string;
-  fiatAmount?: string;
-  currency?: string;
-  cryptoAmount?: string | null;
-};
+import { z } from 'zod';
+
+const createIntentSchema = z.object({
+  tripName: z.string().min(3).max(120),
+  travelerName: z.string().min(2).max(80),
+  fiatAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+  currency: z.string().length(3).toUpperCase(),
+  cryptoAmount: z.string().nullable().optional(),
+});
 
 function getBearerToken(request: NextRequest) {
   const header = request.headers.get('authorization');
@@ -24,7 +26,7 @@ function getBearerToken(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const clientIp = getClientIp(request);
-    const rateLimit = enforceRateLimit({
+    const rateLimit = await enforceRateLimit({
       key: `crypto-intent:${clientIp}`,
       limit: 10,
       windowMs: 60_000,
@@ -41,19 +43,19 @@ export async function POST(request: NextRequest) {
 
     const accessToken = getBearerToken(request);
     const user = await getAuthenticatedUser(accessToken);
-    const body = (await request.json()) as CreateIntentBody;
-
-    const tripName = body.tripName?.trim();
-    const travelerName = body.travelerName?.trim();
-    const fiatAmount = body.fiatAmount?.trim();
-    const currency = body.currency?.trim().toUpperCase();
-
-    if (!tripName || !travelerName || !fiatAmount || !currency) {
+    
+    // Zod validation replacing manual checks
+    const json = await request.json();
+    const result = createIntentSchema.safeParse(json);
+    
+    if (!result.success) {
       return NextResponse.json(
-        { ok: false, error: 'Missing required payment intent fields.' },
+        { ok: false, error: 'Invalid payment intent payload.', details: result.error.format() },
         { status: 400 },
       );
     }
+
+    const { tripName, travelerName, fiatAmount, currency, cryptoAmount } = result.data;
 
     if (!user.email) {
       return NextResponse.json(
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
       fiatAmount,
       currency,
       tokenSymbol: config.tokenSymbol,
-      cryptoAmount: body.cryptoAmount,
+      cryptoAmount: cryptoAmount,
     });
     const expectedTokenAmountBaseUnits = toTokenBaseUnits(expectedTokenAmount, config.tokenDecimals).toString();
     const expiresAt = new Date(Date.now() + config.quoteLifetimeMinutes * 60_000).toISOString();

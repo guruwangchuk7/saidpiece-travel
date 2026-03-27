@@ -12,9 +12,9 @@
 - [ ] Set indexer env vars (`BLOCKCHAIN_INDEXER_BLOCK_RANGE`, `BLOCKCHAIN_INDEXER_CONFIRMATION_DEPTH`, `BLOCKCHAIN_INDEXER_POLL_INTERVAL_MS`).
 
 ## Database
-- [ ] Apply updated `database.sql` migration in Supabase/Postgres.
+- [x] Apply updated `database.sql` migration in Supabase/Postgres (Added Staff/Admin RLS).
 - [ ] Confirm new tables exist: `blockchain_bookings`, `blockchain_indexer_checkpoints`.
-- [ ] Confirm RLS policies for `blockchain_bookings` are active.
+- [x] Confirm RLS policies for `blockchain_bookings` are active.
 
 ## Backend and Indexer
 - [ ] Run the indexer worker `src/indexer/onchainBookingIndexer.ts` in your process manager.
@@ -29,6 +29,11 @@
 - [ ] Confirm failure paths (wrong token, underpayment, expired quote) show correct messages.
 
 ## Security and Operations
+- [x] Implement server-side Middleware for /admin route protection.
+- [x] Integrate Zod schemas for server-side API input validation.
+- [x] Add block confirmation depth checks (2+ blocks) for payment verification.
+- [x] Migrate staff authorization to database roles (removing client-side lists).
+- [x] Implement Redis-based rate limiting for serverless production (Upstash).
 - [ ] Add wallet-signature ownership checks for sensitive API actions.
 - [ ] Move privileged contract ownership to multisig.
 - [ ] Add audit logging for admin refund/settlement actions.

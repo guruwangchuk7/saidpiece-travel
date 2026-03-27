@@ -5,11 +5,13 @@ import { createSupabaseAdminClient, getAuthenticatedUser } from '@/lib/supabaseA
 import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
 import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId, verifyBookingPaymentEvent } from '@/lib/onchainBooking';
 
-type VerifyIntentBody = {
-  intentId?: string;
-  txHash?: string;
-  senderAddress?: string;
-};
+import { z } from 'zod';
+
+const verifyIntentSchema = z.object({
+  intentId: z.string().uuid(),
+  txHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/),
+  senderAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/),
+});
 
 function getBearerToken(request: NextRequest) {
   const header = request.headers.get('authorization');
@@ -23,7 +25,7 @@ function getBearerToken(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const clientIp = getClientIp(request);
-    const rateLimit = enforceRateLimit({
+    const rateLimit = await enforceRateLimit({
       key: `crypto-verify:${clientIp}`,
       limit: 20,
       windowMs: 60_000,
@@ -40,12 +42,20 @@ export async function POST(request: NextRequest) {
 
     const accessToken = getBearerToken(request);
     const user = await getAuthenticatedUser(accessToken);
-    const body = (await request.json()) as VerifyIntentBody;
+    
+    // Zod validation replacing manual checks
+    const json = await request.json();
+    const result = verifyIntentSchema.safeParse(json);
 
-    if (!body.intentId || !body.txHash || !body.senderAddress || !isAddress(body.senderAddress)) {
-      return jsonNoStore({ ok: false, error: 'Missing or invalid verification payload.' }, { status: 400 });
+    if (!result.success) {
+      return jsonNoStore(
+        { ok: false, error: 'Invalid verification payload.', details: result.error.format() },
+        { status: 400 },
+      );
     }
 
+    const { intentId, txHash, senderAddress: rawSenderAddress } = result.data;
+    
     if (!isOnchainBookingConfigured()) {
       return jsonNoStore(
         { ok: false, error: 'Onchain booking contract is not configured. Add NEXT_PUBLIC_BOOKING_MANAGER_ADDRESS.' },
@@ -55,15 +65,15 @@ export async function POST(request: NextRequest) {
 
     const config = getCryptoPaymentConfig();
     const onchainConfig = getOnchainBookingConfig();
-    const senderAddress = getAddress(body.senderAddress);
-    const txHash = body.txHash as `0x${string}`;
+    const senderAddress = getAddress(rawSenderAddress);
+    const typedTxHash = txHash as `0x${string}`;
     const supabase = createSupabaseAdminClient();
 
     const { data: duplicatePayment, error: duplicateError } = await supabase
       .from('crypto_payment_intents')
       .select('id, status')
-      .eq('tx_hash', txHash)
-      .neq('id', body.intentId)
+      .eq('tx_hash', typedTxHash)
+      .neq('id', intentId)
       .maybeSingle();
 
     if (duplicateError) {
@@ -80,7 +90,7 @@ export async function POST(request: NextRequest) {
     const { data: intent, error: intentError } = await supabase
       .from('crypto_payment_intents')
       .select('*')
-      .eq('id', body.intentId)
+      .eq('id', intentId)
       .eq('user_id', user.id)
       .single();
 
@@ -133,7 +143,7 @@ export async function POST(request: NextRequest) {
 
     const verification = await verifyBookingPaymentEvent({
       chainId: intent.chain_id,
-      txHash,
+      txHash: typedTxHash,
       expectedBookingId: bookingId,
       expectedPayer: senderAddress,
       expectedToken: getAddress(intent.token_address),
@@ -153,7 +163,7 @@ export async function POST(request: NextRequest) {
       await supabase
         .from('crypto_payment_intents')
         .update({
-          tx_hash: txHash,
+          tx_hash: typedTxHash,
           sender_address: senderAddress,
           status: failureCode === 'underpayment' ? 'underpaid' : 'failed',
           failure_code: failureCode,
@@ -177,7 +187,7 @@ export async function POST(request: NextRequest) {
     const { error: updateError } = await supabase
       .from('crypto_payment_intents')
       .update({
-        tx_hash: txHash,
+        tx_hash: typedTxHash,
         sender_address: senderAddress,
         received_token_amount_base_units: verification.amount.toString(),
         received_token_amount: receivedAmount,
@@ -196,9 +206,9 @@ export async function POST(request: NextRequest) {
       ok: true,
       payment: {
         intentId: intent.id,
-        txHash,
+        txHash: typedTxHash,
         amount: receivedAmount,
-        explorerUrl: getExplorerUrl(intent.chain_id, txHash),
+        explorerUrl: getExplorerUrl(intent.chain_id, typedTxHash),
       },
     });
   } catch (error) {

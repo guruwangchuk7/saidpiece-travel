@@ -83,6 +83,15 @@ export async function verifyBookingPaymentEvent({
   const payer = getAddress(expectedPayer);
   const token = getAddress(expectedToken);
 
+  // 1. Check Confirmation Depth (Prevent re-org fraud)
+  const confirmationDepth = Number(process.env.BLOCKCHAIN_INDEXER_CONFIRMATION_DEPTH || '2');
+  const latestBlock = await client.getBlockNumber();
+  const txBlock = receipt.blockNumber;
+
+  if (latestBlock - txBlock < BigInt(confirmationDepth)) {
+    return { ok: false as const, reason: 'insufficient_confirmations' };
+  }
+
   for (const log of receipt.logs) {
     if (getAddress(log.address) !== manager) {
       continue;
