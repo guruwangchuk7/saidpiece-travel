@@ -593,6 +593,8 @@ Update Next.js API routes:
                  [Admin/Operations UI]
 ```
 
+https://console.upstash.com/redis/643e5022-a153-493f-86f6-0f99eecbd72b/details?teamid=0
+
 ## File References
 
 - [package.json](D:\My Files\Projects\saidpiece-travel\package.json)
