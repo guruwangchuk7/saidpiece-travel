@@ -15,6 +15,7 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://saidpiecetravels.com"),
   title: "Saidpiece Travel | Bhutan's Leading Adventure Travel Expert",
   description: "Experience Bhutan with Saidpiece Travel. Pioneering authentic, meaningful journeys to the Land of the Thunder Dragon for over 45 years. Custom itineraries, luxury treks, and cultural immersion.",
   keywords: ["Bhutan travel", "Bhutan tours", "luxury travel Bhutan", "adventure travel", "cultural tourism", "Himalayas"],
