@@ -73,9 +73,9 @@ export default function Footer() {
                     <div className="footer-col">
                         <h4>Resources</h4>
                         <div className="footer-links">
-                            <a href="#">Booking Process</a>
+                            <Link href="/about/booking-process">Booking Process</Link>
                             <a href="#">Travel Tips</a>
-                            <a href="#">Terms & Conditions</a>
+                            <Link href="/terms">Terms & Conditions</Link>
                             <Link href="/wizard">Trip Wizard</Link>
                             <a href="#">FAQ</a>
                         </div>
@@ -125,9 +125,9 @@ export default function Footer() {
                 <div className="footer-bottom">
                     <div className="copyright">&copy; 2026 Saidpiece Travel. All rights reserved.</div>
                     <div className="footer-bottom-links">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Use</a>
-                        <a href="#">Sitemap</a>
+                        <Link href="/privacy">Privacy Policy</Link>
+                        <Link href="/terms-of-use">Terms of Use</Link>
+                        <Link href="/site-map">Sitemap</Link>
                     </div>
                     <div className="social-icons">
                         <a href="#" className="social-icon">f</a>

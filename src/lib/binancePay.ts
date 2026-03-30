@@ -99,6 +99,12 @@ function signPayload(timestamp: string, nonce: string, body: string, secretKey: 
     .toUpperCase();
 }
 
+export function verifyBinanceWebhook(timestamp: string, nonce: string, body: string, signature: string) {
+    const config = getBinancePayConfig();
+    const expected = signPayload(timestamp, nonce, body, config.secretKey);
+    return expected === signature;
+}
+
 function sanitizeForBinance(value: string, fallback: string, maxLength: number) {
   const sanitized = value
     .normalize('NFKD')
