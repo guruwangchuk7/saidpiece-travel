@@ -21,19 +21,28 @@ export default function DevEnquiryManager() {
 
     useEffect(() => {
         fetchEnquiries();
+        // FORCE UNLOCK: After 1.5s, let the user see the inbox no matter what
+        const unlock = setTimeout(() => setLoading(false), 1500);
+        return () => clearTimeout(unlock);
     }, []);
 
     const fetchEnquiries = async () => {
-        if (!supabase) return;
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         setLoading(true);
-        const { data, error } = await supabase
-            .from('enquiries')
-            .select('*')
-            .order('created_at', { ascending: false });
+        try {
+            const { data, error } = await supabase
+                .from('enquiries')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-        if (error) console.error('Error:', error);
-        else setEnquiries(data || []);
-        setLoading(false);
+            if (error) console.error('Error:', error);
+            else setEnquiries(data || []);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const updateStatus = async (id: string, status: string) => {

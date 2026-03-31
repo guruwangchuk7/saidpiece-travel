@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
@@ -10,14 +10,26 @@ export default function Footer() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [settings, setSettings] = useState<any>({});
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            if (!supabase) return;
+            const { data } = await supabase.from('site_settings').select('*');
+            if (data) {
+                const s: any = {};
+                data.forEach(item => s[item.setting_key] = item.setting_value);
+                setSettings(s);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
-
         try {
             if (!supabase) throw new Error('Supabase not configured');
-
             const { error: insertError } = await supabase
                 .from('enquiries')
                 .insert([{
@@ -26,9 +38,7 @@ export default function Footer() {
                     message: `Newsletter Subscription: ${firstName} ${lastName}`,
                     status: 'new' as any
                 }]);
-
             if (insertError) throw insertError;
-
             setStatus('success');
             setEmail('');
             setFirstName('');
@@ -56,16 +66,16 @@ export default function Footer() {
                             </Link>
                         </div>
                         <address>
-                            Thimphu, Bhutan<br />
-                            saidpiece@gmail.com
+                            {settings.footer_address || 'Thimphu, Bhutan'}<br />
+                            {settings.contact_email || 'saidpiece@gmail.com'}
                         </address>
                     </div>
                     <div className="footer-col">
                         <h4>Quick Links</h4>
                         <div className="footer-links">
-                            <a href="#">About Us</a>
+                            <Link href="/about/our-story">About Us</Link>
                             <Link href="/about/our-story">Our Story</Link>
-                            <a href="#">Travel Styles</a>
+                            <Link href="/browse">Travel Styles</Link>
                             <Link href="/browse">Destinations</Link>
                             <Link href="/contact">Contact</Link>
                         </div>
@@ -77,7 +87,7 @@ export default function Footer() {
                             <a href="#">Travel Tips</a>
                             <a href="#">Terms & Conditions</a>
                             <Link href="/wizard">Trip Wizard</Link>
-                            <a href="#">FAQ</a>
+                            <Link href="/faq">FAQ</Link>
                         </div>
                     </div>
                     <div className="footer-col">
@@ -85,55 +95,33 @@ export default function Footer() {
                         <p style={{ marginBottom: '15px', color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', lineHeight: '1.6' }}>
                             {status === 'success' 
                                 ? "You're subscribed! Thank you for joining." 
-                                : "Subscribe to our newsletter to receive the latest travel news and exclusive offers."}
+                                : (settings.newsletter_text || "Subscribe to our newsletter to receive the latest travel news and exclusive offers.")}
                         </p>
                         
                         {status !== 'success' && (
                             <form className="newsletter-form" onSubmit={handleSubmit}>
-                                <input 
-                                    type="text" 
-                                    className="newsletter-input" 
-                                    placeholder="First Name" 
-                                    required
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                />
-                                <input 
-                                    type="text" 
-                                    className="newsletter-input" 
-                                    placeholder="Last Name" 
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                />
-                                <input 
-                                    type="email" 
-                                    className="newsletter-input" 
-                                    placeholder="Email Address" 
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                                <button type="submit" className="newsletter-btn" disabled={status === 'loading'}>
-                                    {status === 'loading' ? 'Joining...' : 'Subscribe'}
-                                </button>
-                                {status === 'error' && <p style={{ color: '#ff4444', fontSize: '0.75rem', marginTop: '5px' }}>Error. Please try again.</p>}
+                                <input type="text" className="newsletter-input" placeholder="First Name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                                <input type="text" className="newsletter-input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                                <input type="email" className="newsletter-input" placeholder="Email Address" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                                <button type="submit" className="newsletter-btn" disabled={status === 'loading'}>{status === 'loading' ? 'Joining...' : 'Subscribe'}</button>
                             </form>
                         )}
                     </div>
                 </div>
 
                 <div className="footer-bottom">
-                    <div className="copyright">&copy; 2026 Saidpiece Travel. All rights reserved.</div>
+                    <div className="copyright">&copy; {new Date().getFullYear()} {settings.site_name || 'Saidpiece Travel'}. All rights reserved.</div>
                     <div className="footer-bottom-links">
                         <a href="#">Privacy Policy</a>
                         <a href="#">Terms of Use</a>
                         <a href="#">Sitemap</a>
                     </div>
                     <div className="social-icons">
-                        <a href="#" className="social-icon">f</a>
-                        <a href="#" className="social-icon">in</a>
-                        <a href="#" className="social-icon">yt</a>
-                        <a href="#" className="social-icon">ig</a>
+                        {settings.facebook_url && <a href={settings.facebook_url} className="social-icon" target="_blank">f</a>}
+                        {settings.linkedin_url && <a href={settings.linkedin_url} className="social-icon" target="_blank">in</a>}
+                        {settings.instagram_url && <a href={settings.instagram_url} className="social-icon" target="_blank">ig</a>}
+                        {!settings.facebook_url && <a href="#" className="social-icon">f</a>}
+                        {!settings.instagram_url && <a href="#" className="social-icon">ig</a>}
                     </div>
                 </div>
             </div>

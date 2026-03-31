@@ -31,19 +31,28 @@ export default function DevBlogManager() {
 
     useEffect(() => {
         fetchData();
+        // FORCE UNLOCK: After 1.5s, let the user see the page no matter what
+        const unlock = setTimeout(() => setLoading(false), 1500);
+        return () => clearTimeout(unlock);
     }, []);
 
     const fetchData = async () => {
-        if (!supabase) return;
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         setLoading(true);
-        const { data, error } = await supabase
-            .from('blog_posts')
-            .select('*')
-            .order('created_at', { ascending: false });
+        try {
+            const { data, error } = await supabase
+                .from('blog_posts')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-        if (error) console.error('Error fetching blog:', error);
-        else setPosts(data || []);
-        setLoading(false);
+            if (error) console.error('Error fetching blog:', error);
+            else setPosts(data || []);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSave = async (e: React.FormEvent) => {

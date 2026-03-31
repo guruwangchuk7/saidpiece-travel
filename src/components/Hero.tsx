@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
 const heroImages = ['/images/bhutan/main1.webp', '/images/bhutan/main2.webp'];
 
@@ -10,6 +11,20 @@ export default function Hero() {
     const [heroIndex, setHeroIndex] = useState(0);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [settings, setSettings] = useState<any>({});
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            if (!supabase) return;
+            const { data } = await supabase.from('site_settings').select('*');
+            if (data) {
+                const s: any = {};
+                data.forEach(item => s[item.setting_key] = item.setting_value);
+                setSettings(s);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     useEffect(() => {
         const heroInterval = setInterval(() => {
@@ -48,8 +63,8 @@ export default function Hero() {
             </div>
 
             <div className="hero-content">
-                <h1 className="hero-h1">Meaningful Journeys to Bhutan</h1>
-                <p className="hero-sub">Experience the real rhythm of the country</p>
+                <h1 className="hero-h1">{settings.hero_title || "Meaningful Journeys to Bhutan"}</h1>
+                <p className="hero-sub">{settings.hero_sub_title || "Experience the real rhythm of the country"}</p>
             </div>
 
             <div className="trip-finder" style={{ zIndex: 50 }}>
@@ -75,7 +90,6 @@ export default function Hero() {
                             aria-label="Start date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            onFocus={(e) => e.currentTarget.showPicker?.()}
                         />
                         <span className="date-separator">-</span>
                         <input
@@ -84,7 +98,6 @@ export default function Hero() {
                             aria-label="End date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            onFocus={(e) => e.currentTarget.showPicker?.()}
                         />
                     </div>
                 </div>
@@ -103,7 +116,7 @@ export default function Hero() {
                     className="btn btn-primary trip-finder-btn"
                     style={{ position: 'relative', zIndex: 100, display: 'inline-block' }}
                 >
-                    BROWSE TRIPS
+                    {settings.hero_cta_label || "BROWSE TRIPS"}
                 </Link>
             </div>
         </section>

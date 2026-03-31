@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
-// Clean SVG Icons to match the reference image
+// Clean SVG Icons for the full suite
 const Icons = {
     Dashboard: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>,
     Trips: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
     Destinations: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
     Insights: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>,
     Messages: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>,
+    FAQ: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>,
     Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>,
     Back: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>,
     SignOut: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -26,9 +27,10 @@ export default function DevCMSLayout({
 
     const menuItems = [
         { label: 'Dashboard', href: '/dev-cms', icon: Icons.Dashboard },
-        { label: 'Trips', href: '/dev-cms/trips', icon: Icons.Trips },
+        { label: 'Trips & Packages', href: '/dev-cms/trips', icon: Icons.Trips },
         { label: 'Destinations', href: '/dev-cms/destinations', icon: Icons.Destinations },
         { label: 'Insights (Blog)', href: '/dev-cms/blog', icon: Icons.Insights },
+        { label: 'Travel FAQs', href: '/dev-cms/faq', icon: Icons.FAQ },
         { label: 'Messages', href: '/dev-cms/enquiries', icon: Icons.Messages },
         { label: 'Site Settings', href: '/dev-cms/settings', icon: Icons.Settings },
     ];
@@ -106,7 +108,7 @@ export default function DevCMSLayout({
                     </Link>
                 </nav>
 
-                {/* Profile Section from the Image */}
+                {/* Profile Section */}
                 <div style={{ 
                     padding: '25px', 
                     borderTop: '1px solid #222',
@@ -132,22 +134,25 @@ export default function DevCMSLayout({
                             <p style={{ fontSize: '10px', color: '#666', margin: 0 }}>Super Admin</p>
                         </div>
                     </div>
-                    <Link href="/" style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '10px', 
-                        fontSize: '13px', 
-                        color: '#ff4d4d', 
-                        textDecoration: 'none',
-                        fontWeight: '600'
-                    }}>
-                        <span style={{ display: 'flex', alignItems: 'center' }}><Icons.SignOut /></span> Sign Out
-                    </Link>
                 </div>
             </aside>
 
             {/* Main Content Area */}
             <main style={{ marginLeft: '260px', flex: 1, padding: '50px 60px' }}>
+                <div style={{ 
+                    background: '#fff9e6', 
+                    padding: '12px 25px', 
+                    borderRadius: '8px', 
+                    fontSize: '13px', 
+                    color: '#8b6e1b',
+                    marginBottom: '40px',
+                    border: '1px solid #e5d29a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <strong>🔒 Unlocked Dev Mode:</strong> Managing all pages & content dynamically.
+                </div>
                 {children}
             </main>
 
@@ -155,6 +160,7 @@ export default function DevCMSLayout({
                 h1, h2, h3, h4 { font-family: var(--font-lato), sans-serif; font-weight: 900; }
                 .card { background: white; border: 1px solid #eaeaea; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s; }
                 .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+                input, textarea, select { font-family: var(--font-lato), sans-serif; }
             `}</style>
         </div>
     );
