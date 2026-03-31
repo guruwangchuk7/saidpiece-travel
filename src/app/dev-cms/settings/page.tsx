@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 interface Setting {
-    id: string;
-    setting_key: string;
-    setting_value: string;
+    key: string;
+    value: string;
     description?: string;
 }
 
@@ -29,116 +28,61 @@ export default function DevSettingsManager() {
         { key: 'instagram_url', value: '#', desc: 'Social link' }
     ];
 
+    const fetchSettings = async () => {
+        if (!supabase) return;
+        setLoading(true);
+        const { data, error } = await supabase.from('site_settings').select('*');
+        if (data && data.length > 0) {
+            setSettings(data);
+        } else {
+            // Auto-initialize if empty
+            const inserts = defaultSettings.map(s => ({ key: s.key, value: s.value, description: s.desc }));
+            await supabase.from('site_settings').insert(inserts);
+            const { data: newData } = await supabase.from('site_settings').select('*');
+            setSettings(newData || []);
+        }
+        setLoading(false);
+    };
+
     useEffect(() => {
-        const fetchSettings = async () => {
-            if (!supabase) {
-                setLoading(false);
-                return;
-            }
-            
-            try {
-                const { data, error } = await supabase
-                    .from('site_settings')
-                    .select('*')
-                    .order('setting_key', { ascending: true });
-
-                if (data && data.length > 0) {
-                    setSettings(data);
-                    setLoading(false);
-                } else {
-                    // SILENT AUTO-INITIALIZE if table is empty
-                    const inserts = defaultSettings.map(s => ({
-                        setting_key: s.key,
-                        setting_value: s.value,
-                        description: s.desc
-                    }));
-                    try {
-                        await supabase.from('site_settings').insert(inserts);
-                    } catch (e) {
-                        // Ignore abort during auto-init
-                    }
-                    
-                    // Re-fetch now that it's populated
-                    const { data: newData } = await supabase.from('site_settings').select('*').order('setting_key', { ascending: true });
-                    setSettings(newData || []);
-                    setLoading(false);
-                }
-            } catch (err) {
-                setLoading(false);
-            }
-        };
-
         fetchSettings();
     }, []);
 
-    const handleUpdate = async (id: string, value: string) => {
+    const handleUpdate = async (key: string, value: string) => {
         if (!supabase) return;
-        setUpdating(id);
-        
+        setUpdating(key);
         try {
-            const { error } = await supabase
-                .from('site_settings')
-                .update({ setting_value: value })
-                .eq('id', id);
-
-            if (error && !error.message.includes('AbortError')) {
-                alert('Error saving: ' + error.message);
-            }
-        } catch (err: any) {
-            if (!err.message?.includes('AbortError')) {
-                console.error('Update failed:', err);
-            }
-        } finally {
-            setUpdating(null);
+            await supabase.from('site_settings').update({ value }).eq('key', key);
+        } catch (e) {
+            // Silence lock errors in dev
         }
+        setUpdating(null);
     };
 
-    if (loading) return (
-        <div style={{ padding: '60px', textAlign: 'center' }}>
-            <p style={{ fontWeight: 'bold', color: '#999' }}>Opening Site Configuration...</p>
-        </div>
-    );
+    if (loading) return <div style={{ padding: '60px', textAlign: 'center', color: '#999' }}>Opening Configuration...</div>;
 
     return (
         <section style={{ maxWidth: '900px' }}>
             <h1 style={{ fontSize: '32px', fontWeight: '900', marginBottom: '10px' }}>Site Settings</h1>
-            <p style={{ color: '#888', marginBottom: '50px' }}>Global site variables and content configuration.</p>
+            <p style={{ color: '#888', marginBottom: '50px' }}>Global site variables synced to your `site_settings` table.</p>
 
             <div style={{ display: 'grid', gap: '30px' }}>
                 {settings.map((setting) => (
-                    <div key={setting.id} style={{ background: 'white', padding: '30px', borderRadius: '12px', border: '1px solid #eee', position: 'relative' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', alignItems: 'center' }}>
-                            <label style={{ fontWeight: '900', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: '#000' }}>
-                                {setting.setting_key.replace(/_/g, ' ')}
-                            </label>
-                            {updating === setting.id ? <span style={{ fontSize: '10px', color: '#008080', fontWeight: '900' }}>SAVING LIVE...</span> : null}
+                    <div key={setting.key} style={{ background: 'white', padding: '30px', borderRadius: '12px', border: '1px solid #eee' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                            <label style={{ fontWeight: '900', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>{setting.key.replace(/_/g, ' ')}</label>
+                            {updating === setting.key && <span style={{ fontSize: '10px', color: '#008080', fontWeight: '900' }}>SAVING...</span>}
                         </div>
-                        
                         <input 
-                            type="text"
-                            defaultValue={setting.setting_value}
-                            onBlur={(e) => handleUpdate(setting.id, e.target.value)}
-                            style={{ 
-                                width: '100%', 
-                                padding: '16px', 
-                                borderRadius: '8px', 
-                                border: '1px solid #ddd', 
-                                fontSize: '15px', 
-                                outline: 'none',
-                                background: '#fff' 
-                            }}
-                            placeholder={`Enter value for ${setting.setting_key}`}
+                            type="text" 
+                            defaultValue={setting.value} 
+                            onBlur={(e) => handleUpdate(setting.key, e.target.value)}
+                            style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '15px' }}
                         />
-                        {setting.description && <p style={{ fontSize: '11px', color: '#999', marginTop: '12px', fontWeight: '400' }}>{setting.description}</p>}
+                        {setting.description && <p style={{ fontSize: '11px', color: '#999', marginTop: '12px' }}>{setting.description}</p>}
                     </div>
                 ))}
             </div>
-
-            {settings.length === 0 && (
-                <div style={{ padding: '60px', textAlign: 'center', color: '#999' }}>
-                    Finalizing connection to site configuration...
-                </div>
-            )}
         </section>
     );
 }
