@@ -38,9 +38,9 @@ export default function DevCMSLayout({
     ];
 
     return (
-        <div style={{ 
-            display: 'flex', 
-            minHeight: '100vh', 
+        <div style={{
+            display: 'flex',
+            minHeight: '100vh',
             background: '#f8f9fa',
             fontFamily: 'var(--font-lato), sans-serif',
             color: '#1a1a1a'
@@ -57,19 +57,19 @@ export default function DevCMSLayout({
                 zIndex: 100
             }}>
                 <div style={{ padding: '30px 25px', marginBottom: '20px' }}>
-                    <h2 style={{ 
-                        fontSize: '20px', 
-                        fontWeight: '900', 
-                        textTransform: 'uppercase', 
+                    <h2 style={{
+                        fontSize: '20px',
+                        fontWeight: '900',
+                        textTransform: 'uppercase',
                         letterSpacing: '1px',
                         color: 'white'
                     }}>Saidpiece Admin</h2>
                 </div>
-                
+
                 <nav style={{ flex: 1, padding: '0 15px' }}>
                     {menuItems.map((item) => (
-                        <Link 
-                            key={item.href} 
+                        <Link
+                            key={item.href}
                             href={item.href}
                             style={{
                                 display: 'flex',
@@ -90,7 +90,7 @@ export default function DevCMSLayout({
                             {item.label}
                         </Link>
                     ))}
-                    <Link 
+                    <Link
                         href="/"
                         style={{
                             display: 'flex',
@@ -111,19 +111,19 @@ export default function DevCMSLayout({
                 </nav>
 
                 {/* Profile Section */}
-                <div style={{ 
-                    padding: '25px', 
+                <div style={{
+                    padding: '25px',
                     borderTop: '1px solid #222',
                     background: '#0a0a0a'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                        <div style={{ 
-                            width: '35px', 
-                            height: '35px', 
-                            borderRadius: '50%', 
-                            background: '#333', 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                        <div style={{
+                            width: '35px',
+                            height: '35px',
+                            borderRadius: '50%',
+                            background: '#333',
+                            display: 'flex',
+                            alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '12px',
                             fontWeight: 'bold',
@@ -141,11 +141,11 @@ export default function DevCMSLayout({
 
             {/* Main Content Area */}
             <main style={{ marginLeft: '260px', flex: 1, padding: '50px 60px' }}>
-                <div style={{ 
-                    background: '#fff9e6', 
-                    padding: '12px 25px', 
-                    borderRadius: '8px', 
-                    fontSize: '13px', 
+                <div style={{
+                    background: '#fff9e6',
+                    padding: '12px 25px',
+                    borderRadius: '8px',
+                    fontSize: '13px',
                     color: '#8b6e1b',
                     marginBottom: '40px',
                     border: '1px solid #e5d29a',

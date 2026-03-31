@@ -3,133 +3,91 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
-interface FAQ {
-    id: string;
-    question: string;
-    answer: string;
-    category: string;
-    order_index: number;
-}
-
-export default function DevFAQManager() {
-    const [faqs, setFaqs] = useState<FAQ[]>([]);
+export default function DevCMSFAQ() {
+    const [faqs, setFaqs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentFaq, setCurrentFaq] = useState<Partial<FAQ>>({
-        question: '',
-        answer: '',
-        category: 'General',
-        order_index: 0
-    });
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchData();
-        // FORCE UNLOCK: No hangs allowed
-        const unlock = setTimeout(() => setLoading(false), 1500);
-        return () => clearTimeout(unlock);
+        fetchFaqs();
     }, []);
 
-    const fetchData = async () => {
-        if (!supabase) {
-            setLoading(false);
-            return;
-        }
-        setLoading(true);
+    const fetchFaqs = async () => {
+        if (!supabase) return;
         try {
-            const { data, error } = await supabase
-                .from('faqs')
-                .select('*')
-                .order('order_index', { ascending: true });
-
-            if (error) console.error('Error fetching FAQs:', error);
-            else setFaqs(data || []);
+            const { data, error } = await supabase.from('faqs').select('*').order('created_at', { ascending: false });
+            if (error) {
+                if (error.code === '42P01') {
+                    setError('The "faqs" table does not exist in your database yet. Please run the sync tool.');
+                } else {
+                    setError(error.message);
+                }
+            } else {
+                setFaqs(data || []);
+            }
+        } catch (e: any) {
+            setError(e.message);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!supabase) return;
-        let result;
-        if (currentFaq.id) {
-            result = await supabase.from('faqs').update(currentFaq).eq('id', currentFaq.id);
-        } else {
-            result = await supabase.from('faqs').insert([currentFaq]);
-        }
-        if (result.error) alert('Error: ' + result.error.message);
-        else { setIsEditing(false); fetchData(); }
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!supabase) return;
-        if (confirm('Delete this question?')) {
-            const { error } = await supabase.from('faqs').delete().eq('id', id);
-            if (error) alert('Error: ' + error.message);
-            else fetchData();
-        }
-    };
-
-    if (loading) return <div>Loading FAQs...</div>;
-
     return (
-        <section>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '40px', alignItems: 'center' }}>
-                <h1 style={{ fontSize: '32px' }}>FAQ Manager</h1>
-                {!isEditing && (
-                    <button 
-                        onClick={() => { setCurrentFaq({ question: '', answer: '', category: 'General', order_index: faqs.length }); setIsEditing(true); }}
-                        style={{ padding: '12px 25px', background: '#111', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                        + Add Question
-                    </button>
-                )}
+        <div style={{ maxWidth: '1000px' }}>
+            <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <div>
+                    <h1 style={{ fontSize: '38px', fontWeight: '900', textTransform: 'uppercase', marginBottom: '10px' }}>Travel FAQs</h1>
+                    <p style={{ color: '#888' }}>Manage help topics and common traveler questions.</p>
+                </div>
+                <button style={{ padding: '12px 25px', background: '#111', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    + NEW FAQ
+                </button>
             </div>
 
-            {!isEditing ? (
-                <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee' }}>
-                    {faqs.map(faq => (
-                        <div key={faq.id} style={{ padding: '25px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                                <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>{faq.question}</h3>
-                                <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.6' }}>{faq.answer}</p>
-                                <span style={{ fontSize: '10px', color: '#999', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '15px', display: 'inline-block' }}>Category: {faq.category}</span>
-                            </div>
-                            <div style={{ display: 'flex', gap: '15px' }}>
-                                <button onClick={() => { setCurrentFaq(faq); setIsEditing(true); }} style={{ color: '#008080', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold' }}>Edit</button>
-                                <button onClick={() => handleDelete(faq.id)} style={{ color: '#d32f2f', border: 'none', background: 'none', cursor: 'pointer' }}>Delete</button>
-                            </div>
-                        </div>
-                    ))}
-                    {faqs.length === 0 && <p style={{ padding: '40px', textAlign: 'center', color: '#888' }}>No FAQs yet.</p>}
-                </div>
-            ) : (
-                <div style={{ background: 'white', padding: '40px', borderRadius: '12px', border: '1px solid #eee', maxWidth: '800px' }}>
-                    <form onSubmit={handleSave} style={{ display: 'grid', gap: '25px' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Question</label>
-                            <input type="text" value={currentFaq.question} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }} onChange={e => setCurrentFaq({...currentFaq, question: e.target.value})} required />
-                        </div>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Detailed Answer</label>
-                            <textarea value={currentFaq.answer} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', height: '150px' }} onChange={e => setCurrentFaq({...currentFaq, answer: e.target.value})} required />
-                        </div>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Category</label>
-                            <select value={currentFaq.category} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }} onChange={e => setCurrentFaq({...currentFaq, category: e.target.value})}>
-                                <option value="General">General Info</option>
-                                <option value="Booking">Booking & Payment</option>
-                                <option value="Visas">Visa & Entry</option>
-                                <option value="Health">Health & Safety</option>
-                            </select>
-                        </div>
-                        <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
-                            <button type="submit" style={{ padding: '15px 40px', background: '#111', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>Update FAQ</button>
-                            <button type="button" onClick={() => setIsEditing(false)} style={{ padding: '15px 40px', background: 'transparent', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
-                        </div>
-                    </form>
+            {error && (
+                <div style={{ padding: '30px', background: '#fff5f5', border: '1px solid #feb2b2', borderRadius: '12px', color: '#822727', marginBottom: '40px' }}>
+                    <h3 style={{ marginBottom: '10px' }}>⚠️ System Notice</h3>
+                    <p style={{ fontSize: '14px', marginBottom: '15px' }}>{error}</p>
+                    {error.includes('does not exist') && (
+                        <button onClick={() => window.location.href='/dev-cms/import'} style={{ padding: '8px 15px', background: '#822727', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                            Go to Sync Tool →
+                        </button>
+                    )}
                 </div>
             )}
-        </section>
+
+            <div style={{ background: 'white', border: '1px solid #eaeaea', borderRadius: '12px', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                        <tr style={{ background: '#fafafa', borderBottom: '1px solid #eaeaea', textAlign: 'left' }}>
+                            <th style={{ padding: '20px', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', color: '#999' }}>Question</th>
+                            <th style={{ padding: '20px', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', color: '#999' }}>Status</th>
+                            <th style={{ padding: '20px', textAlign: 'right' }}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {faqs.map((faq) => (
+                            <tr key={faq.id} style={{ borderBottom: '1px solid #f5f5f5' }}>
+                                <td style={{ padding: '20px' }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{faq.question}</div>
+                                    <div style={{ fontSize: '12px', color: '#888' }}>{faq.category || 'General'}</div>
+                                </td>
+                                <td style={{ padding: '20px' }}>
+                                    <span style={{ fontSize: '10px', fontWeight: 'bold', padding: '4px 8px', background: '#e6fffa', color: '#008080', borderRadius: '4px', textTransform: 'uppercase' }}>Published</span>
+                                </td>
+                                <td style={{ padding: '20px', textAlign: 'right' }}>
+                                    <button style={{ background: 'none', border: 'none', color: '#0070f3', fontSize: '12px', cursor: 'pointer' }}>Edit</button>
+                                </td>
+                            </tr>
+                        ))}
+                        {!loading && faqs.length === 0 && !error && (
+                            <tr>
+                                <td colSpan={3} style={{ padding: '60px', textAlign: 'center', color: '#ccc' }}>No FAQs found. Click "New FAQ" to start.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 }
