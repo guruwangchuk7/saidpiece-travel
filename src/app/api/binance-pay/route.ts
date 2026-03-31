@@ -22,7 +22,7 @@ function getBearerToken(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const clientIp = getClientIp(request);
-    const rateLimit = enforceRateLimit({
+    const rateLimit = await enforceRateLimit({
       key: `binance-pay:${clientIp}`,
       limit: 10,
       windowMs: 60_000,
