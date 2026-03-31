@@ -146,7 +146,7 @@ export default function TripManager() {
                                 required
                             />
                         </div>
-                        
+
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                             <div className="form-group">
                                 <label style={{ display: 'block', marginBottom: '10px', fontWeight: 600, fontSize: '14px', color: '#555' }}>Days</label>
