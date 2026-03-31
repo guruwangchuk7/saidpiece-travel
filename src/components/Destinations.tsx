@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabaseClient';
 
-const destinations = {
+const hardcodedDestinations = {
     'Paro': {
         title: 'Paro Valley',
         desc: 'Begin your journey gently in this historic valley, home to the iconic Tiger’s Nest monastery and quiet riverside paths.',
@@ -33,6 +34,48 @@ const destinations = {
 
 export default function Destinations() {
     const [activeTab, setActiveTab] = useState('Paro');
+    const [cmsDestinations, setCmsDestinations] = useState<any[]>([]);
+    const [isUsingCms, setIsUsingCms] = useState(false);
+
+    useEffect(() => {
+        const fetchDestinations = async () => {
+            if (!supabase) return;
+            const { data, error } = await supabase
+                .from('destinations')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (!error && data && data.length > 0) {
+                setCmsDestinations(data);
+                setIsUsingCms(true);
+                setActiveTab(data[0].name);
+            }
+        };
+
+        fetchDestinations();
+    }, []);
+
+    const getData = () => {
+        if (isUsingCms) {
+            const active = cmsDestinations.find(d => d.name === activeTab) || cmsDestinations[0];
+            return {
+                title: active.title,
+                desc: active.description,
+                image: active.image_url || 'bhutan/13.webp', // Default fallback
+                tabs: cmsDestinations.map(d => d.name)
+            };
+        }
+        
+        const active = hardcodedDestinations[activeTab as keyof typeof hardcodedDestinations];
+        return {
+            title: active.title,
+            desc: active.desc,
+            image: active.image,
+            tabs: Object.keys(hardcodedDestinations)
+        };
+    };
+
+    const displayData = getData();
 
     return (
         <section className="dest-section">
@@ -41,7 +84,7 @@ export default function Destinations() {
                     <h2>Exploring Bhutan&apos;s Valleys</h2>
                     <p>From the pine forests of Paro to the spiritual heartland of Bumthang, our carefully curated itineraries take you to the most spectacular corners of Bhutan.</p>
                     <div className="dest-tabs">
-                        {Object.keys(destinations).map((tab) => (
+                        {displayData.tabs.map((tab) => (
                             <div
                                 key={tab}
                                 className={`dest-tab ${activeTab === tab ? 'active' : ''}`}
@@ -55,15 +98,15 @@ export default function Destinations() {
                 <div className="dest-content" style={{ position: 'relative' }}>
                     <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
                         <Image
-                            src={`/images/${destinations[activeTab as keyof typeof destinations].image}`}
+                            src={displayData.image.startsWith('http') ? displayData.image : `/images/${displayData.image}`}
                             alt={activeTab}
                             fill
                             style={{ objectFit: 'cover', borderRadius: '4px' }}
                         />
                     </div>
                     <div className="dest-info">
-                        <h3>{destinations[activeTab as keyof typeof destinations].title}</h3>
-                        <p>{destinations[activeTab as keyof typeof destinations].desc}</p>
+                        <h3>{displayData.title}</h3>
+                        <p>{displayData.desc}</p>
                         <a href="/browse" className="btn btn-primary">View All {activeTab} Trips</a>
                     </div>
                 </div>
