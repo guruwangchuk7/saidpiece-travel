@@ -1,53 +1,57 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
-const destinations = {
-    'Paro': {
-        title: 'Paro Valley',
-        desc: 'Begin your journey gently in this historic valley, home to the iconic Tiger’s Nest monastery and quiet riverside paths.',
-        image: 'bhutan/13.webp'
-    },
-    'Thimphu': {
-        title: 'Capital City of Thimphu',
-        desc: 'Explore Bhutan’s vibrant capital through local markets, arts schools, and serene monasteries overlooking the valley.',
-        image: 'bhutan/14.webp'
-    },
-    'Punakha': {
-        title: 'Punakha Valley',
-        desc: 'Descend into a warmer valley of rice fields and rivers, home to Bhutan’s most beautiful dzong.',
-        image: 'bhutan/15.webp'
-    },
-    'Bumthang': {
-        title: 'The Heartland of Bumthang',
-        desc: 'Journey to central Bhutan to discover living spiritual heritage, ancient temples, and deep cultural roots.',
-        image: 'bhutan/16.webp'
-    },
-    'Gangtey': {
-        title: 'Phobjikha Valley',
-        desc: 'Find peace in this wide glacial valley, famous for its dramatic landscapes and quiet, relaxing atmosphere.',
-        image: 'bhutan/17.webp'
-    }
-};
+interface Destination {
+    name: string;
+    title: string;
+    description: string;
+    image_url: string;
+}
 
 export default function Destinations() {
-    const [activeTab, setActiveTab] = useState('Paro');
+    const [activeTab, setActiveTab] = useState('');
+    const [destinations, setDestinations] = useState<Destination[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDestinations = async () => {
+            if (!supabase) return;
+            const { data } = await supabase
+                .from('destinations')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (data && data.length > 0) {
+                setDestinations(data);
+                setActiveTab(data[0].name);
+            }
+            setLoading(false);
+        };
+        fetchDestinations();
+    }, []);
+
+    const activeDest = destinations.find(d => d.name === activeTab) || destinations[0];
+
+    if (loading || destinations.length === 0) return null;
 
     return (
         <section className="dest-section">
             <div className="container dest-grid">
                 <div className="dest-controls">
                     <h2>Exploring Bhutan&apos;s Valleys</h2>
-                    <p>From the pine forests of Paro to the spiritual heartland of Bumthang, our carefully curated itineraries take you to the most spectacular corners of Bhutan.</p>
+                    <p>From the pine forests of Paro to the spiritual heartland of Bumthang, our itineraries reveal the most spectacular corners of the kingdom.</p>
                     <div className="dest-tabs">
-                        {Object.keys(destinations).map((tab) => (
+                        {destinations.map((dest) => (
                             <div
-                                key={tab}
-                                className={`dest-tab ${activeTab === tab ? 'active' : ''}`}
-                                onClick={() => setActiveTab(tab)}
+                                key={dest.name}
+                                className={`dest-tab ${activeTab === dest.name ? 'active' : ''}`}
+                                onClick={() => setActiveTab(dest.name)}
                             >
-                                {tab}
+                                {dest.name}
                             </div>
                         ))}
                     </div>
@@ -55,16 +59,18 @@ export default function Destinations() {
                 <div className="dest-content" style={{ position: 'relative' }}>
                     <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
                         <Image
-                            src={`/images/${destinations[activeTab as keyof typeof destinations].image}`}
-                            alt={activeTab}
+                            src={activeDest.image_url.startsWith('http') ? activeDest.image_url : `/images/${activeDest.image_url}`}
+                            alt={activeDest.name}
                             fill
                             style={{ objectFit: 'cover', borderRadius: '4px' }}
                         />
                     </div>
                     <div className="dest-info">
-                        <h3>{destinations[activeTab as keyof typeof destinations].title}</h3>
-                        <p>{destinations[activeTab as keyof typeof destinations].desc}</p>
-                        <a href="/browse" className="btn btn-primary">View All {activeTab} Trips</a>
+                        <h3>{activeDest.title}</h3>
+                        <p>{activeDest.description}</p>
+                        <Link href={`/browse?dest=${encodeURIComponent(activeDest.name)}`} className="btn btn-primary">
+                            View All {activeDest.name} Trips
+                        </Link>
                     </div>
                 </div>
             </div>
