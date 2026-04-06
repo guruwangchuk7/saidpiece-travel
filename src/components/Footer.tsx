@@ -5,7 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 
+import { useAuth } from '@/hooks/useAuth';
+
 export default function Footer() {
+    const { isStaff } = useAuth();
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -71,13 +74,17 @@ export default function Footer() {
                         </address>
                     </div>
                     <div className="footer-col">
-                        <h4>Quick Links</h4>
+                        <h4>QUICK LINKS</h4>
                         <div className="footer-links">
                             <Link href="/about/our-story">About Us</Link>
                             <Link href="/about/our-story">Our Story</Link>
                             <Link href="/browse">Travel Styles</Link>
                             <Link href="/browse">Destinations</Link>
                             <Link href="/contact">Contact</Link>
+                            
+                            <Link href="/admin" className="footer-admin-link">
+                                Admin Access
+                            </Link>
                         </div>
                     </div>
                     <div className="footer-col">

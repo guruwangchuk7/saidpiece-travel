@@ -22,7 +22,7 @@ export function useAuth() {
       if (!mounted) return;
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      
+
       if (data.session?.user) {
         // Fetch role from profile
         const { data: profile } = await client
@@ -43,7 +43,7 @@ export function useAuth() {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-         const { data: profile } = await client
+        const { data: profile } = await client
           .from('profiles')
           .select('role')
           .eq('id', session.user.id)
@@ -76,13 +76,18 @@ export function useAuth() {
         ? window.location.origin
         : process.env.NEXT_PUBLIC_APP_URL ?? '';
 
-    const redirectUrl = baseUrl + (redirectTo || '/confirm-pay');
+    const nextPath = redirectTo || '/';
+    const redirectUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`;
     console.log('[useAuth] signInWithGoogle redirectUrl:', redirectUrl);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
 

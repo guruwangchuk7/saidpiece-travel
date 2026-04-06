@@ -130,7 +130,7 @@ function ConfirmPayContent() {
             <div className="container text-center" style={{ padding: '150px 20px' }}>
                 <h2 className="serif-title">Secure Login Required</h2>
                 <p style={{ margin: '20px auto', maxWidth: '500px' }}>To protect your personal details and booking history, please sign in with Google to continue your booking.</p>
-                <button className="btn btn-primary" onClick={() => signInWithGoogle()}>Sign in with Google</button>
+                <button className="btn btn-primary" onClick={() => signInWithGoogle('/confirm-pay')}>Sign in with Google</button>
             </div>
         );
     }

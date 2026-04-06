@@ -1340,6 +1340,20 @@ select.trip-finder-input {
   color: var(--color-white);
 }
 
+.footer-admin-link {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.8rem;
+  margin-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 15px;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.footer-admin-link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .newsletter-form {
   display: flex;
   flex-direction: column;
