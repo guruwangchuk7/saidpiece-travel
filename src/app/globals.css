@@ -1201,10 +1201,14 @@ select.trip-finder-input {
 }
 
 .trip-card-footer {
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .link-btn-small {
+  display: inline-block;
+  margin-left: auto;
   text-transform: uppercase;
   color: var(--color-brand);
   font-weight: 700;
