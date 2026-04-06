@@ -10,6 +10,8 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
@@ -18,19 +20,25 @@ export function useAuth() {
     let mounted = true;
 
     const loadSession = async () => {
-      const { data } = await client.auth.getSession();
+      const { data: { session: currentSession } } = await client.auth.getSession();
       if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
+      
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
 
-      if (data.session?.user) {
-        // Fetch role from profile
+      if (currentSession?.user) {
         const { data: profile } = await client
           .from('profiles')
           .select('role')
-          .eq('id', data.session.user.id)
+          .eq('id', currentSession.user.id)
           .single();
-        if (mounted) setRole(profile?.role ?? 'customer');
+        
+        if (mounted) {
+          const userRole = profile?.role ?? 'customer';
+          setRole(userRole);
+          setIsAdmin(userRole === 'admin');
+          setIsStaff(['admin', 'staff', 'moderator', 'editor'].includes(userRole));
+        }
       }
       setLoading(false);
     };
@@ -48,9 +56,19 @@ export function useAuth() {
           .select('role')
           .eq('id', session.user.id)
           .single();
-        if (mounted) setRole(profile?.role ?? 'customer');
+        
+        if (mounted) {
+          const userRole = profile?.role ?? 'customer';
+          setRole(userRole);
+          setIsAdmin(userRole === 'admin');
+          setIsStaff(['admin', 'staff', 'moderator', 'editor'].includes(userRole));
+        }
       } else {
-        if (mounted) setRole(null);
+        if (mounted) {
+          setRole(null);
+          setIsAdmin(false);
+          setIsStaff(false);
+        }
       }
       setLoading(false);
     });
@@ -69,8 +87,6 @@ export function useAuth() {
       return;
     }
 
-    // Use the current browser origin at runtime so deployed preview builds don't
-    // hardcode a localhost origin from a build-time env var.
     const baseUrl =
       typeof window !== 'undefined'
         ? window.location.origin
@@ -100,8 +116,6 @@ export function useAuth() {
     if (error) console.error('Error signing out:', error);
   };
 
-  const isStaff = role === 'staff' || role === 'admin';
-
   return {
     user,
     session,
@@ -109,6 +123,7 @@ export function useAuth() {
     signInWithGoogle,
     signOut,
     isStaff,
+    isAdmin,
     role,
     supabaseConfigured: isSupabaseConfigured,
   };

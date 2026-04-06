@@ -42,16 +42,16 @@ export default function PermanentMasterDashboard() {
     };
 
     const mainStats = [
-        { label: 'Trips & Packages', count: counts.trips, icon: Icons.Trips, href: '/dev-cms/trips' },
-        { label: 'Insights (Blog)', count: counts.blog, icon: Icons.Insights, href: '/dev-cms/blog' },
-        { label: 'Destinations', count: counts.dests, icon: Icons.Destinations, href: '/dev-cms/destinations' },
-        { label: 'Travel FAQs', count: counts.faqs, icon: Icons.FAQ, href: '/dev-cms/faq' },
-        { label: 'Messages', count: counts.msgs, icon: Icons.Messages, href: '/dev-cms/enquiries' },
+        { label: 'Trips & Packages', count: counts.trips, icon: Icons.Trips, href: '/admin/trips' },
+        { label: 'Insights (Blog)', count: counts.blog, icon: Icons.Insights, href: '/admin/blog' },
+        { label: 'Destinations', count: counts.dests, icon: Icons.Destinations, href: '/admin/destinations' },
+        { label: 'Travel FAQs', count: counts.faqs, icon: Icons.FAQ, href: '/admin/faq' },
+        { label: 'Messages', count: counts.msgs, icon: Icons.Messages, href: '/admin/enquiries' },
     ];
 
     const maintenanceModules = [
-        { label: 'Import Content', icon: Icons.Import, href: '/dev-cms/import', sub: 'Recovery Bridge' },
-        { label: 'Site Settings', icon: Icons.Settings, href: '/dev-cms/settings', sub: 'Global Meta Info' },
+        { label: 'Import Content', icon: Icons.Import, href: '/admin/import', sub: 'Recovery Bridge' },
+        { label: 'Site Settings', icon: Icons.Settings, href: '/admin/settings', sub: 'Global Meta Info' },
     ];
 
     return (
