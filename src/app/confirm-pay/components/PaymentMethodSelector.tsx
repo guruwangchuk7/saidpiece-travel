@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 interface PaymentMethodSelectorProps {
-    paymentMethod: 'card' | 'crypto' | 'wire' | 'binance';
+    paymentMethod: 'card' | 'crypto' | 'wire' | 'binance' | null;
     onMethodChange: (method: 'card' | 'crypto' | 'wire' | 'binance') => void;
 }
 

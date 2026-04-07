@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 interface SuccessViewProps {
     travelerName: string;
-    paymentMethod: 'card' | 'crypto' | 'wire' | 'binance';
+    paymentMethod: 'card' | 'crypto' | 'wire' | 'binance' | null;
     cryptoTxId: string | null;
 }
 
@@ -35,7 +35,7 @@ export default function SuccessView({ travelerName, paymentMethod, cryptoTxId }:
             : 'We are now connecting you to our secure payment gateway to finalize your booking.';
 
     return (
-        <div className="confirmation-success animation-fade-in text-center" style={{ padding: '100px 20px' }}>
+        <div className="confirmation-success animation-fade-in text-center" style={{ padding: '180px 20px' }}>
             <div className="success-icon" style={{ fontSize: '64px', marginBottom: '20px' }}>{icon}</div>
             <h1 className="serif-title">{title}</h1>
             <p className="lead-text" style={{ maxWidth: '600px', margin: '20px auto' }}>

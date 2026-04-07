@@ -5,26 +5,21 @@ interface TripSummaryProps {
     travelerName: string;
     amount: string;
     currency: string;
+    checkoutStep?: 'review' | 'method' | 'pay';
 }
 
-export default function TripSummary({ tripName, travelerName, amount, currency }: TripSummaryProps) {
+export default function TripSummary({ tripName, travelerName, amount, currency, checkoutStep = 'pay' }: TripSummaryProps) {
+    const stepNumber = checkoutStep === 'review' ? '1' : checkoutStep === 'method' ? '2' : '3';
+    const stepTitle = checkoutStep === 'review' ? 'Review Trip' : checkoutStep === 'method' ? 'Select Payment' : 'Finalize Payment';
+
     return (
-        <div className="checkout-summary-card">
+        <div className="checkout-summary-card" style={{ position: 'relative', zIndex: 10, background: 'var(--color-cream)' }}>
             <div className="summary-header">
-                <span className="step-tag">Step 3: Secure Your Trip</span>
+                <span className="step-tag">Step {stepNumber}: {stepTitle}</span>
                 <h1 className="serif-h2">Review & Confirm</h1>
             </div>
 
             <div className="trip-preview-box">
-                <div className="trip-image">
-                    <Image 
-                        src="/images/bhutan/11.webp" 
-                        alt="Bhutan" 
-                        fill 
-                        sizes="120px" 
-                        style={{ objectFit: 'cover' }} 
-                    />
-                </div>
                 <div className="trip-details">
                     <h3 className="serif-title" style={{ fontSize: '24px' }}>{tripName}</h3>
                     <p className="traveler-info">Prepared for: {travelerName}</p>

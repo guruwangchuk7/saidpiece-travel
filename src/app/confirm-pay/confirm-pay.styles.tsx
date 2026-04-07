@@ -1,19 +1,26 @@
 export const confirmPayStyles = (
     <style jsx>{`
-        .confirm-pay-container {
-            padding: 160px 20px 100px;
+        :global(.confirm-pay-container) {
+            padding: 180px 20px 100px !important;
+            position: relative;
+            z-index: 5;
+            background: #fff;
+            min-height: 80vh;
         }
         .checkout-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
+            display: flex;
+            justify-content: center;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
         .checkout-summary-card {
             background: var(--color-cream);
             padding: 50px;
             border-radius: 4px;
+            position: relative;
+            z-index: 10;
         }
         .step-tag {
             color: var(--color-brand);
@@ -265,8 +272,8 @@ export const confirmPayStyles = (
                 grid-template-columns: 1fr;
                 gap: 40px;
             }
-            .confirm-pay-container {
-                padding-top: 120px;
+            :global(.confirm-pay-container) {
+                padding-top: 160px !important;
             }
         }
         @media (max-width: 600px) {
