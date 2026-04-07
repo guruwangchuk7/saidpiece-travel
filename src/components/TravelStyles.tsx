@@ -6,11 +6,12 @@ import Link from 'next/link';
 
 const travelStyles = [
     { name: 'Discovery', image: 'bhutan/7.webp' },
+    { name: 'Romantic Escape', image: 'bhutan/12.webp' },
     { name: 'Cultural Immersion', image: 'bhutan/8.webp' },
+    { name: 'Nature Retreat', image: 'bhutan/11.webp' },
     { name: 'Family Adventure', image: 'bhutan/9.webp' },
     { name: 'Festival Tours', image: 'bhutan/10.webp' },
-    { name: 'Nature Retreat', image: 'bhutan/11.webp' },
-    { name: 'Romantic Escape', image: 'bhutan/12.webp' }
+    { name: 'Trekking & Hiking', image: 'bhutan/13.webp' }
 ];
 
 export default function TravelStyles() {

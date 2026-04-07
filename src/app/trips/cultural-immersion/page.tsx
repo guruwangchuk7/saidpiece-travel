@@ -16,7 +16,7 @@ export default function CulturalImmersionTrip() {
 
     const tripData = {
         name: "Cultural Immersion",
-        price: "3800",
+        price: "3600",
         image: "/images/bhutan/main5.webp"
     };
 
@@ -60,7 +60,7 @@ export default function CulturalImmersionTrip() {
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Starting From</span>
-                                <span className="value">$3,800</span>
+                                <span className="value">$3,600</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Level</span>
@@ -187,22 +187,22 @@ export default function CulturalImmersionTrip() {
                                         <td>May 10, 2026</td>
                                         <td>May 21, 2026</td>
                                         <td><span className="status-badge space">Space Available</span></td>
-                                        <td>$3,800</td>
+                                        <td>$3,600</td>
                                         <td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>Sep 15, 2026</td>
                                         <td>Sep 26, 2026</td>
                                         <td><span className="status-badge last-call">Festival Dates</span></td>
-                                        <td>$4,100</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=4100`)}>Book Now</button></td>
+                                        <td>$3,900</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3900`)}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>Oct 05, 2026</td>
                                         <td>Oct 16, 2026</td>
                                         <td><span className="status-badge guaranteed">Guaranteed</span></td>
-                                        <td>$3,950</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3950`)}>Book Now</button></td>
+                                        <td>$4,500</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=4500`)}>Book Now</button></td>
                                     </tr>
                                 </tbody>
                             </table>

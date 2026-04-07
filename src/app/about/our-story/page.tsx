@@ -60,14 +60,14 @@ export default function OurStory() {
                         <blockquote>
                             {settings.story_quote || "The most meaningful journeys are those that lead us not just to new places, but to new ways of seeing the world."}
                         </blockquote>
-                        <cite>— {settings.site_name || 'Saidpiece Travel'}</cite>
+                        <cite>— Pema Nyamdrol, Co-Founder</cite>
                     </div>
                 </section>
 
                 <section className="story-split container">
                     <div className="split-text">
                         <h2>The Journey Begins</h2>
-                        <p>{settings.story_body_1 || "Saidpiece Travel was born from a simple yet profound realization: that travel should be more than just a checklist of sights. Founded on the principles of care and thoughtfulness."}</p>
+                        <p>{settings.story_body_1 || "Saidpiece Travel was born from my desire to share the true feeling of my home, Bhutan. After returning from abroad and reflecting on our family's deep roots in hospitality, I realized that many travelers miss the soul of the country. I wanted to create something different: unhurried journeys where every moment is crafted with intention and respect for our traditions."}</p>
                         <Link href="/browse" className="inline-link">Explore our journeys &rarr;</Link>
                     </div>
                     <div className="split-media">
@@ -80,7 +80,7 @@ export default function OurStory() {
                 <section className="story-split container alternate">
                     <div className="split-text">
                         <h2>Rooted in Tradition</h2>
-                        <p>{settings.story_body_2 || "Since our inception, we have partnered with world-class researchers and local elders to ensure our trips are educationally rich and culturally respectful."}</p>
+                        <p>{settings.story_body_2 || "Our heritage is not just about what we see, but how we host. With roots in family hospitality and a Bhutanese-led team, we ensure that every guest feels the warmth of our local culture. We believe travel should be a bridge to understanding, connecting people with rituals, stories, and the deeper rhythm of Himalayan life."}</p>
                     </div>
                     <div className="split-media">
                         <div className="media-frame">
@@ -91,9 +91,9 @@ export default function OurStory() {
 
                 <section className="story-today container text-center">
                     <div className="divider-line"></div>
-                    <h2>{settings.site_name || 'Saidpiece Travel'} Today</h2>
+                    <h2>{settings.site_name || 'Saidpiece Travelers'} Today</h2>
                     <p className="lead-text">Carrying forward a legacy of mindful exploration into the modern era.</p>
-                    <p>Based in Thimphu, we continue to bridge the gap between global curiosity and Himalayan wisdom. Every trip we design is a chapter in an ongoing story of discovery and mutual respect.</p>
+                    <p>Based in Thimphu, we are a Bhutan-based team of specialists who bridge the gap between global curiosity and Himalayan wisdom. Every trip we design is a chapter in an ongoing story of discovery and mutual respect— protecting what is sacred while opening our world to mindful explorers.</p>
                     <div className="divider-line"></div>
                 </section>
             </div>

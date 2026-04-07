@@ -16,7 +16,7 @@ export default function NatureRetreatTrip() {
 
     const tripData = {
         name: "Nature Retreat",
-        price: "2100",
+        price: "3000",
         image: "/images/bhutan/main6.webp"
     };
 
@@ -56,11 +56,11 @@ export default function NatureRetreatTrip() {
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Duration</span>
-                                <span className="value">7 Days / 6 Nights</span>
+                                <span className="value">10 Days / 9 Nights</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Starting From</span>
-                                <span className="value">$2,100</span>
+                                <span className="value">$3,000</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Level</span>
@@ -125,40 +125,41 @@ export default function NatureRetreatTrip() {
                             {/* Accordion Item 1 */}
                             <div className={`accordion-item ${openDay === 1 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(1)}>
-                                    <div className="day-badge">Days 1-2</div>
-                                    <span className="day-title">Arrival & Acclimatisation</span>
+                                    <div className="day-badge">Days 1-3</div>
+                                    <span className="day-title">Arrival & Spirit of Paro</span>
                                     <svg className={`chevron ${openDay === 1 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 1 — Arrive in Paro:</strong> Take in the freshest air in the world as you step off the plane. Enjoy a welcome dinner made from 100% organic local ingredients.</p>
-                                    <p><strong>Day 2 — Paro Pine Forests:</strong> Gentle acclimatization hike to Zuri Dzong through beautiful pine forests. Afternoon yoga and meditation.</p>
+                                    <p><strong>Day 1 — Arrive in Paro:</strong> Take in the freshest air in the world. Welcome dinner with organic local ingredients.</p>
+                                    <p><strong>Day 2 — Paro Valley Slow Day:</strong> Gentle walk to Zuri Dzong for panoramic views. Afternoon meditation session.</p>
+                                    <p><strong>Day 3 — Paro to Thimphu:</strong> Scenic drive to the capital. Visit Buddha Dordenma for a sunset mindfulness moment.</p>
                                 </div>
                             </div>
 
-                            {/* Accordion Item 2 */}
                             <div className={`accordion-item ${openDay === 2 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(2)}>
-                                    <div className="day-badge">Days 3-5</div>
-                                    <span className="day-title">Chele La Pass & Haa Valley</span>
+                                    <div className="day-badge">Days 4-6</div>
+                                    <span className="day-title">Thimphu & Punakha Valleys</span>
                                     <svg className={`chevron ${openDay === 2 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 3 — Chele La Pass:</strong> Drive to the highest motorable road in Bhutan. Enjoy a high-altitude hike among prayer flags and blue poppies.</p>
-                                    <p><strong>Day 4 — Haa Valley Exploration:</strong> Wake up in an eco-lodge. Spend the day hiking or cycling through the untouched remote wilderness of Haa.</p>
-                                    <p><strong>Day 5 — Kila Nunnery:</strong> Hike to the cliffside Kila Goemba nunnery. Experience deep silence and reflection before returning to Paro.</p>
+                                    <p><strong>Day 4 — Thimphu Nature & Spirit:</strong> Explore Sangaygang for views and visit the Cheri Monastery hike— Bhutan’s first monastery.</p>
+                                    <p><strong>Day 5 — Thimphu to Punakha:</strong> Cross Dochula Pass (3,100m). Visit the architectural masterpiece of Punakha Dzong.</p>
+                                    <p><strong>Day 6 — Punakha Valley Leisure:</strong> A slow day by the Mo Chhu river. Optional riverside picnic and village walk.</p>
                                 </div>
                             </div>
 
-                            {/* Accordion Item 3 */}
                             <div className={`accordion-item ${openDay === 3 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(3)}>
-                                    <div className="day-badge">Days 6-7</div>
-                                    <span className="day-title">The Tiger&apos;s Nest & Departure</span>
+                                    <div className="day-badge">Days 7-10</div>
+                                    <span className="day-title">Phobjikha Wildlife & The Tiger&apos;s Nest</span>
                                     <svg className={`chevron ${openDay === 3 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 6 — Taktsang Hike:</strong> Rise early for the ultimate Bhutanese hike up to the Tiger&apos;s Nest. Evening traditional hot stone bath infused with mountain herbs.</p>
-                                    <p><strong>Day 7 — Departure:</strong> Leave rejuvenated as our team brings you to the airport for your onward journey.</p>
+                                    <p><strong>Day 7 — Punakha to Phobjikha:</strong> Drive to the stunning glacial valley of Phobjikha, home to black-necked cranes.</p>
+                                    <p><strong>Day 8 — Phobjikha Slow Pacing:</strong> Wander through the valley trails. Visit Gangtey Goemba monastery.</p>
+                                    <p><strong>Day 9 — Phobjikha to Paro:</strong> Return to Paro. Conclude with a traditional hot stone bath infused with mountain herbs.</p>
+                                    <p><strong>Day 10 — Departure:</strong> Say goodbye to the Dragon Kingdom as you fly onward.</p>
                                 </div>
                             </div>
                         </div>
@@ -181,24 +182,24 @@ export default function NatureRetreatTrip() {
                                 <tbody>
                                     <tr>
                                         <td>Mar 15, 2026</td>
-                                        <td>Mar 21, 2026</td>
+                                        <td>Mar 24, 2026</td>
                                         <td><span className="status-badge space">Spring Blooms</span></td>
-                                        <td>$2,100</td>
+                                        <td>$3,000</td>
                                         <td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>May 10, 2026</td>
-                                        <td>May 16, 2026</td>
+                                        <td>May 19, 2026</td>
                                         <td><span className="status-badge space">Space Available</span></td>
-                                        <td>$2,100</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=2100`)}>Book Now</button></td>
+                                        <td>$3,250</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3250`)}>Book Now</button></td>
                                     </tr>
                                     <tr>
                                         <td>Sep 20, 2026</td>
-                                        <td>Sep 26, 2026</td>
+                                        <td>Sep 29, 2026</td>
                                         <td><span className="status-badge last-call">Limited Space</span></td>
-                                        <td>$2,450</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=2450`)}>Book Now</button></td>
+                                        <td>$3,800</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3800`)}>Book Now</button></td>
                                     </tr>
                                 </tbody>
                             </table>
