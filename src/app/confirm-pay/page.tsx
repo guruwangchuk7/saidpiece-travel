@@ -145,97 +145,206 @@ function ConfirmPayContent() {
             <div className="checkout-layout">
                 <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <div className="payment-options-card" style={{ maxWidth: '650px', width: '100%' }}>
-                    {checkoutStep === 'review' && (
-                        <div className="checkout-step-content animation-slide-in">
-                            <h3 className="serif-h2" style={{ fontSize: '28px', marginBottom: '15px' }}>Confirm Your Booking</h3>
-                            <p className="payment-note">Please review your trip details below. Once confirmed, you can proceed to select your preferred payment method.</p>
+                        {checkoutStep === 'review' && (
+                            <div className="checkout-step-content animation-slide-in">
+                                <div className="booking-checkout-stepper">
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Review
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator">
+                                        <div className="step-dot"></div>
+                                        Payment
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator">
+                                        <div className="step-dot"></div>
+                                        Confirm
+                                    </div>
+                                </div>
+                                
+                                <div className="premium-summary-card">
+                                    <div className="premium-card-header">
+                                        <h3 className="serif-h2" style={{ fontSize: '32px', margin: '0 0 10px' }}>Confirm Your Booking</h3>
+                                        <p style={{ color: '#666', fontSize: '15px', maxWidth: '400px', margin: '0 auto' }}>
+                                            Please review your journey details before we proceed to secure payment.
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="premium-card-body">
+                                        <div className="premium-details-grid">
+                                            <div className="detail-item">
+                                                <div className="detail-label">Destined For</div>
+                                                <div className="detail-value">{tripName}</div>
+                                            </div>
+                                            <div className="detail-item">
+                                                <div className="detail-label">Lead Traveler</div>
+                                                <div className="detail-value">{travelerName}</div>
+                                            </div>
+                                            
+                                            <div className="premium-amount-box">
+                                                <div className="amount-info">
+                                                    <div className="label">Total Investment</div>
+                                                    <div className="value">{currency} {amount}</div>
+                                                </div>
+                                                <div className="premium-badge">
+                                                    ★ Premium Experience
+                                                </div>
+                                            </div>
+                                        </div>
 
-                            <div className="booking-summary-highlights" style={{ background: '#F9FAFB', padding: '25px', borderRadius: '8px', marginBottom: '30px', border: '1px solid #E5E7EB' }}>
-                                <div style={{ marginBottom: '15px' }}><strong>Trip:</strong> {tripName}</div>
-                                <div style={{ marginBottom: '15px' }}><strong>Traveler:</strong> {travelerName}</div>
-                                <div><strong>Total Amount:</strong> {currency} {amount}</div>
+                                        <div className="confirm-actions">
+                                            <button
+                                                className="btn-confirm-booking"
+                                                onClick={() => {
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                    setCheckoutStep('method');
+                                                }}
+                                            >
+                                                CONFIRM & CHOOSE PAYMENT METHOD
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                                </svg>
+                                            </button>
+                                            
+                                            <div className="security-footer">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                                </svg>
+                                                256-bit Secure SSL Booking
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        )}
 
-                            <button
-                                className="btn btn-primary full-width"
-                                onClick={() => setCheckoutStep('method')}
-                                style={{ padding: '20px' }}
-                            >
-                                CONFIRM & CHOOSE PAYMENT METHOD
-                            </button>
-                        </div>
-                    )}
+                        {checkoutStep === 'method' && (
+                            <div className="checkout-step-content animation-slide-in">
+                                <div className="booking-checkout-stepper">
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Review
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Payment
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator">
+                                        <div className="step-dot"></div>
+                                        Confirm
+                                    </div>
+                                </div>
 
-                    {checkoutStep === 'method' && (
-                        <div className="checkout-step-content animation-slide-in">
-                            <h3 className="serif-h2" style={{ fontSize: '28px', marginBottom: '15px' }}>Choose Payment Method</h3>
-                            <p className="payment-note">Select how you would like to pay for your journey. We support secure card payments, crypto wallets, and bank transfers.</p>
+                                <div className="premium-summary-card">
+                                    <div className="premium-card-header">
+                                        <h3 className="serif-h2" style={{ fontSize: '32px', margin: '0 0 10px' }}>Choose Payment Method</h3>
+                                        <p style={{ color: '#666', fontSize: '15px', maxWidth: '450px', margin: '0 auto' }}>
+                                            Select your preferred secure payment channel. All transactions are encrypted and processed through industry-leading providers.
+                                        </p>
+                                    </div>
 
-                            <PaymentMethodSelector
-                                paymentMethod={paymentMethod}
-                                onMethodChange={(m) => {
-                                    setPaymentMethod(m);
-                                    setCheckoutStep('pay');
-                                }}
-                            />
+                                    <div className="premium-card-body">
+                                        <PaymentMethodSelector
+                                            paymentMethod={paymentMethod}
+                                            onMethodChange={(m) => {
+                                                setPaymentMethod(m);
+                                                setCheckoutStep('pay');
+                                            }}
+                                        />
 
-                            <button
-                                className="link-btn-small"
-                                onClick={() => setCheckoutStep('review')}
-                                style={{ marginTop: '20px', background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}
-                            >
-                                ← Back to Trip Summary
-                            </button>
-                        </div>
-                    )}
-
-                    {checkoutStep === 'pay' && (
-                        <div className="checkout-step-content animation-slide-in">
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                <h3 className="serif-h2" style={{ fontSize: '24px', margin: 0 }}>Secure Payment</h3>
-                                <button
-                                    onClick={() => setCheckoutStep('method')}
-                                    style={{ fontSize: '13px', background: 'none', border: 'none', color: 'var(--color-brand)', cursor: 'pointer', fontWeight: 600 }}
-                                >
-                                    Change Method
-                                </button>
+                                        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                            <button
+                                                className="link-btn-small"
+                                                onClick={() => setCheckoutStep('review')}
+                                                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}
+                                            >
+                                                ← Back to Summary
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        )}
 
-                            {paymentMethod === 'card' && (
-                                <CardPayment
-                                    acceptedTerms={acceptedTerms}
-                                    setAcceptedTerms={setAcceptedTerms}
-                                    onSubmit={handleStripePayment}
-                                />
-                            )}
+                        {checkoutStep === 'pay' && (
+                            <div className="checkout-step-content animation-slide-in">
+                                <div className="booking-checkout-stepper">
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Review
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Payment
+                                    </div>
+                                    <div className="step-line"></div>
+                                    <div className="step-indicator active">
+                                        <div className="step-dot"></div>
+                                        Confirm
+                                    </div>
+                                </div>
 
-                            {paymentMethod === 'crypto' && (
-                                <CryptoPayment
-                                    {...crypto}
-                                    amount={amount}
-                                    onPay={crypto.handleCryptoPayment}
-                                />
-                            )}
+                                <div className="premium-summary-card">
+                                    <div className="premium-card-header">
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                            <h3 className="serif-h2" style={{ fontSize: '30px', margin: 0 }}>Secure Finalization</h3>
+                                            <button
+                                                onClick={() => setCheckoutStep('method')}
+                                                style={{ fontSize: '11px', background: 'none', border: 'none', color: 'var(--color-brand)', cursor: 'pointer', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}
+                                            >
+                                                Change Method
+                                            </button>
+                                        </div>
+                                        <p style={{ color: '#666', fontSize: '14px', textAlign: 'left' }}>
+                                            Complete the fields below to finalize your booking for <strong>{tripName}</strong>.
+                                        </p>
+                                    </div>
 
-                            {paymentMethod === 'binance' && (
-                                <BinancePayment
-                                    currency={currency}
-                                    amount={amount}
-                                    travelerName={travelerName}
-                                    acceptedTerms={acceptedTerms}
-                                    setAcceptedTerms={setAcceptedTerms}
-                                    isBinancePayLoading={isBinancePayLoading}
-                                    binancePayError={binancePayError}
-                                    binanceCheckoutUrl={binanceCheckoutUrl}
-                                    onSubmit={handleBinancePayment}
-                                />
-                            )}
+                                    <div className="premium-card-body" style={{ paddingTop: '10px' }}>
+                                        {paymentMethod === 'card' && (
+                                            <CardPayment
+                                                acceptedTerms={acceptedTerms}
+                                                setAcceptedTerms={setAcceptedTerms}
+                                                onSubmit={handleStripePayment}
+                                            />
+                                        )}
 
-                            {paymentMethod === 'wire' && (
-                                <WirePayment currency={currency} amount={amount} />
-                            )}
-                        </div>
-                    )}
+                                {paymentMethod === 'crypto' && (
+                                    <CryptoPayment
+                                        {...crypto}
+                                        amount={amount}
+                                        onPay={crypto.handleCryptoPayment}
+                                    />
+                                )}
+
+                                {paymentMethod === 'binance' && (
+                                    <BinancePayment
+                                        currency={currency}
+                                        amount={amount}
+                                        travelerName={travelerName}
+                                        acceptedTerms={acceptedTerms}
+                                        setAcceptedTerms={setAcceptedTerms}
+                                        isBinancePayLoading={isBinancePayLoading}
+                                        binancePayError={binancePayError}
+                                        binanceCheckoutUrl={binanceCheckoutUrl}
+                                        onSubmit={handleBinancePayment}
+                                    />
+                                )}
+
+                                        {paymentMethod === 'wire' && (
+                                            <WirePayment currency={currency} amount={amount} />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
