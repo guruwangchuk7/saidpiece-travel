@@ -1201,7 +1201,16 @@ select.trip-finder-input {
 }
 
 .trip-card-footer {
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px; /* Minimum separation */
+}
+
+.trip-price {
+  font-weight: 700;
+  color: var(--color-brand);
+  font-size: 1rem;
 }
 
 .link-btn-small {
