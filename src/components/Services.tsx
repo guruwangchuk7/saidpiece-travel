@@ -2,9 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const services = [
-    { title: 'Care & Thoughtful Design', desc: 'Every journey is thoughtfully designed with attention to detail— from pacing and accommodation to the small cultural moments that make travel memorable.', link: 'Local Expertise', url: '/about/local-expertise', image: 'bhutan/18.webp' },
-    { title: 'Local Expertise', desc: 'Our journeys are designed and hosted by Bhutanese travel professionals. We work with experienced guides and skilled drivers to ensure every trip runs smoothly and authentically.', link: 'Meet Our Team', url: '/about/meet-our-team', image: 'bhutan/19.webp' },
-    { title: 'Meaningful Connection', desc: 'Our journeys focus on meaningful interactions— with monks, artisans, and local communities— so travelers experience Bhutan as a living culture.', link: 'Booking Process', url: '/about/booking-process', image: 'bhutan/20.webp' }
+    { title: 'Care', desc: 'Every journey is designed with deep care— from the pacing of the itinerary to the comfort of our boutique stays and the character of our private guides.', link: 'Our Approach', url: '/about/care', image: 'bhutan/18.webp' },
+    { title: 'Respect', desc: 'Our trips are locally rooted, ensuring every interaction is culturally respectful. We protect Bhutan’s sacred traditions while sharing its living culture with you.', link: 'Our Stewardship', url: '/about/responsible-travel', image: 'bhutan/19.webp' },
+    { title: 'Connection', desc: 'We bridge the gap between global curiosity and Himalayan wisdom, helping you connect deeply with the people, rituals, and stories of Bhutan.', link: 'Our Stories', url: '/about/our-story', image: 'bhutan/20.webp' }
 ];
 
 export default function Services() {

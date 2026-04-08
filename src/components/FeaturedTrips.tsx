@@ -62,9 +62,9 @@ export default function FeaturedTrips() {
                                 <h3 className="trip-card-title">{trip.title}</h3>
                                 <div className="trip-card-details">
                                     <span>{trip.duration_days} Days</span>
-                                    <span>From ${trip.starting_price}</span>
                                 </div>
                                 <div className="trip-card-footer">
+                                    <span className="trip-price">From ${trip.starting_price}</span>
                                     <Link href={`/trip-detail/${trip.slug}`} className="link-btn-small">View Trip</Link>
                                 </div>
                             </div>

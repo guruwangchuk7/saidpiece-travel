@@ -5,7 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 
+import { useAuth } from '@/hooks/useAuth';
+
 export default function Footer() {
+    const { isStaff } = useAuth();
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -71,21 +74,25 @@ export default function Footer() {
                         </address>
                     </div>
                     <div className="footer-col">
-                        <h4>Quick Links</h4>
+                        <h4>QUICK LINKS</h4>
                         <div className="footer-links">
                             <Link href="/about/our-story">About Us</Link>
                             <Link href="/about/our-story">Our Story</Link>
                             <Link href="/browse">Travel Styles</Link>
                             <Link href="/browse">Destinations</Link>
                             <Link href="/contact">Contact</Link>
+                            
+                            <Link href="/admin" className="footer-admin-link">
+                                Admin Access
+                            </Link>
                         </div>
                     </div>
                     <div className="footer-col">
                         <h4>Resources</h4>
                         <div className="footer-links">
-                            <a href="#">Booking Process</a>
+                            <Link href="/about/booking-process">Booking Process</Link>
                             <a href="#">Travel Tips</a>
-                            <a href="#">Terms & Conditions</a>
+                            <Link href="/terms">Terms & Conditions</Link>
                             <Link href="/wizard">Trip Wizard</Link>
                             <Link href="/faq">FAQ</Link>
                         </div>
@@ -112,9 +119,9 @@ export default function Footer() {
                 <div className="footer-bottom">
                     <div className="copyright">&copy; {new Date().getFullYear()} {settings.site_name || 'Saidpiece Travel'}. All rights reserved.</div>
                     <div className="footer-bottom-links">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Use</a>
-                        <a href="#">Sitemap</a>
+                        <Link href="/privacy">Privacy Policy</Link>
+                        <Link href="/terms-of-use">Terms of Use</Link>
+                        <Link href="/site-map">Sitemap</Link>
                     </div>
                     <div className="social-icons">
                         {settings.facebook_url && <a href={settings.facebook_url} className="social-icon" target="_blank">f</a>}

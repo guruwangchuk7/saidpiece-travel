@@ -19,7 +19,7 @@ export default function Hero() {
             const { data } = await supabase.from('site_settings').select('*');
             if (data) {
                 const s: any = {};
-                data.forEach(item => s[item.setting_key] = item.setting_value);
+                data.forEach(item => s[item.key] = item.value);
                 setSettings(s);
             }
         };
@@ -63,8 +63,8 @@ export default function Hero() {
             </div>
 
             <div className="hero-content">
-                <h1 className="hero-h1">{settings.hero_title || "Meaningful Journeys to Bhutan"}</h1>
-                <p className="hero-sub">{settings.hero_sub_title || "Experience the real rhythm of the country"}</p>
+                <h1 className="hero-h1">{settings.hero_title || "A Journey Created with Heart so Bhutan Stays with You for Life"}</h1>
+                <p className="hero-sub">{settings.hero_sub_title || "Private journeys in Bhutan: locally rooted, mindful, and tailored"}</p>
             </div>
 
             <div className="trip-finder" style={{ zIndex: 50 }}>

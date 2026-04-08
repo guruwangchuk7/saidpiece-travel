@@ -5,9 +5,9 @@ import { supabase } from '@/lib/supabaseClient';
 
 interface Testimonial {
     id: string;
-    quote: string;
-    author: string;
-    location: string;
+    content: string;
+    client_name: string;
+    role: string;
 }
 
 export default function Testimonials() {
@@ -17,14 +17,14 @@ export default function Testimonials() {
 
     const hardcodedFallback = [
         {
-            quote: "The entire trip was perfectly orchestrated. Our guide was incredibly knowledgeable and passionate, making every day an unforgettable adventure.",
-            author: "Sarah Mitchell",
-            location: "San Francisco, CA"
+            content: "The entire trip was perfectly orchestrated. Our guide was incredibly knowledgeable and passionate, making every day an unforgettable adventure.",
+            client_name: "Sarah Mitchell",
+            role: "San Francisco, CA"
         },
         {
-            quote: "Saidpiece Travel exceeded every expectation. The level of detail and care in the itinerary design made for a truly immersive and stress-free journey.",
-            author: "Robert Chen",
-            location: "London, UK"
+            content: "Saidpiece Travel exceeded every expectation. The level of detail and care in the itinerary design made for a truly immersive and stress-free journey.",
+            client_name: "Robert Chen",
+            role: "London, UK"
         }
     ];
 
@@ -56,9 +56,9 @@ export default function Testimonials() {
         <section className="testimonials-section">
             <div className="container relative">
                 <div style={{ minHeight: '300px' }}>
-                    <div className="testimonial-quote">&quot;{testimonials[testimonialIndex].quote}&quot;</div>
-                    <div className="testimonial-author">{testimonials[testimonialIndex].author}</div>
-                    <div className="testimonial-location">{testimonials[testimonialIndex].location}</div>
+                    <div className="testimonial-quote">&quot;{testimonials[testimonialIndex].content}&quot;</div>
+                    <div className="testimonial-author">{testimonials[testimonialIndex].client_name}</div>
+                    <div className="testimonial-location">{testimonials[testimonialIndex].role}</div>
                 </div>
 
                 <div className="testimonial-controls">

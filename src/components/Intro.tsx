@@ -14,7 +14,7 @@ export default function Intro() {
             const { data } = await supabase.from('site_settings').select('*');
             if (data) {
                 const s: any = {};
-                data.forEach(item => s[item.setting_key] = item.setting_value);
+                data.forEach(item => s[item.key] = item.value);
                 setSettings(s);
             }
         };

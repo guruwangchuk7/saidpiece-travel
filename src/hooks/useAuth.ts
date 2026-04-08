@@ -10,49 +10,112 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !supabase) return;
-    const client = supabase;
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('[useAuth] Supabase not configured, skipping auth initialization.');
+      setLoading(false);
+      return;
+    }
 
+    const client = supabase;
     let mounted = true;
 
-    const loadSession = async () => {
-      const { data } = await client.auth.getSession();
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      
-      if (data.session?.user) {
-        // Fetch role from profile
-        const { data: profile } = await client
+    const fetchProfile = async (userId: string) => {
+      try {
+        const { data: profile, error } = await client
           .from('profiles')
           .select('role')
-          .eq('id', data.session.user.id)
+          .eq('id', userId)
           .single();
-        if (mounted) setRole(profile?.role ?? 'customer');
+        
+        if (error) {
+          console.warn('[useAuth] Error fetching profile:', error.message);
+          return 'customer';
+        }
+        return profile?.role ?? 'customer';
+      } catch (err) {
+        console.error('[useAuth] Exception fetching profile:', err);
+        return 'customer';
       }
-      setLoading(false);
+    };
+
+    const loadSession = async () => {
+      try {
+        const { data: { session: currentSession }, error: sessionError } = await client.auth.getSession();
+        
+        if (sessionError) {
+          console.error('[useAuth] Error getting session:', sessionError.message);
+        }
+
+        if (!mounted) return;
+        
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
+          const userRole = await fetchProfile(currentSession.user.id);
+          
+          if (mounted) {
+            const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
+              .split(',')
+              .map(e => e.trim().toLowerCase());
+            
+            const isEmailStaff = staffEmails.includes(currentSession.user.email?.toLowerCase() || '');
+            const finalRole = (userRole === 'customer' && isEmailStaff) ? 'admin' : userRole;
+
+            setRole(finalRole);
+            setIsAdmin(finalRole === 'admin');
+            setIsStaff(['admin', 'staff', 'moderator', 'editor'].includes(finalRole));
+            console.log(`[useAuth] Logged in: ${currentSession.user.email}, Role: ${finalRole} (DB: ${userRole}, Email Match: ${isEmailStaff})`);
+          }
+        }
+      } catch (err) {
+        console.error('[useAuth] loadSession failed:', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
 
     loadSession();
 
     const { data: { subscription } } = client.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
+      
+      console.log(`[useAuth] Auth state change event: ${_event}`);
       setSession(session);
       setUser(session?.user ?? null);
 
-      if (session?.user) {
-         const { data: profile } = await client
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-        if (mounted) setRole(profile?.role ?? 'customer');
-      } else {
-        if (mounted) setRole(null);
+      try {
+        if (session?.user) {
+          const userRole = await fetchProfile(session.user.id);
+          
+          if (mounted) {
+            const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
+              .split(',')
+              .map(e => e.trim().toLowerCase());
+            
+            const isEmailStaff = staffEmails.includes(session.user.email?.toLowerCase() || '');
+            const finalRole = (userRole === 'customer' && isEmailStaff) ? 'admin' : userRole;
+
+            setRole(finalRole);
+            setIsAdmin(finalRole === 'admin');
+            setIsStaff(['admin', 'staff', 'moderator', 'editor'].includes(finalRole));
+          }
+        } else {
+          if (mounted) {
+            setRole(null);
+            setIsAdmin(false);
+            setIsStaff(false);
+          }
+        }
+      } catch (err) {
+        console.error('[useAuth] onAuthStateChange callback failed:', err);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
@@ -69,20 +132,23 @@ export function useAuth() {
       return;
     }
 
-    // Use the current browser origin at runtime so deployed preview builds don't
-    // hardcode a localhost origin from a build-time env var.
     const baseUrl =
       typeof window !== 'undefined'
         ? window.location.origin
         : process.env.NEXT_PUBLIC_APP_URL ?? '';
 
-    const redirectUrl = baseUrl + (redirectTo || '/confirm-pay');
+    const nextPath = redirectTo || '/';
+    const redirectUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`;
     console.log('[useAuth] signInWithGoogle redirectUrl:', redirectUrl);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
 
@@ -95,8 +161,6 @@ export function useAuth() {
     if (error) console.error('Error signing out:', error);
   };
 
-  const isStaff = role === 'staff' || role === 'admin';
-
   return {
     user,
     session,
@@ -104,6 +168,7 @@ export function useAuth() {
     signInWithGoogle,
     signOut,
     isStaff,
+    isAdmin,
     role,
     supabaseConfigured: isSupabaseConfigured,
   };

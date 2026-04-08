@@ -80,3 +80,26 @@ export async function ensureProfile(user: User) {
     throw new Error(`Failed to ensure profile: ${error.message}`);
   }
 }
+
+export async function getUserProfile(userId: string) {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function ensureIsStaff(accessToken: string) {
+  const user = await getAuthenticatedUser(accessToken);
+  const profile = await getUserProfile(user.id);
+  
+  if (profile.role !== 'staff' && profile.role !== 'admin') {
+    throw new Error('Forbidden: Staff access required');
+  }
+  
+  return { user, profile };
+}

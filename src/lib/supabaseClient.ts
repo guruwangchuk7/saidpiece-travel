@@ -1,6 +1,6 @@
 'use client';
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -8,20 +8,12 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 /**
- * The Supabase client configuration.
- * 🔧 FIXED: Disabling 'persistSession' to prevent "Lock broken by steal option" errors 
- * when using multiple tabs or Next.js Turbopack HMR.
+ * The Supabase client configuration for Browser-side usage.
+ * Using @supabase/ssr ensure standard cookie handling in Next.js.
  */
-export const supabase: SupabaseClient | null =
-  isSupabaseConfigured
-    ? createClient(supabaseUrl as string, supabaseAnonKey as string, {
-        auth: {
-          persistSession: false, // Prevents Web Lock collisions in dev mode
-          autoRefreshToken: false,
-          detectSessionInUrl: false
-        }
-      })
-    : null;
+export const supabase = isSupabaseConfigured
+  ? createBrowserClient(supabaseUrl as string, supabaseAnonKey as string)
+  : null;
 
 if (!isSupabaseConfigured && typeof window !== 'undefined') {
   console.warn(

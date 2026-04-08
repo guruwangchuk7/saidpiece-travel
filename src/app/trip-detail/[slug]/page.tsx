@@ -125,7 +125,7 @@ export default function DynamicTripDetail() {
                             </div>
                         </div>
                         <div className="quick-info-ctas">
-                            <button className="btn btn-primary" style={{ backgroundColor: '#fff', color: '#111' }} onClick={handleBookOnline}>BOOK ONLINE</button>
+                            <button className="btn btn-primary" style={{ backgroundColor: '#fff', color: '#111' }} onClick={handleBookOnline}>CONFIRM BOOKING</button>
                         </div>
                     </div>
                 </div>
