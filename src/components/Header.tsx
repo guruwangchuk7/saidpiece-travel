@@ -65,20 +65,29 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
 
             {/* Mobile Nav Drawer */}
             <div className={`mobile-nav-drawer ${isMobileMenuOpen && isMounted ? 'is-open' : ''}`}>
-                <nav className="mobile-nav-links">
-                    <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Destinations</Link>
-                    <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Browse Trips</Link>
-                    <Link href="/wizard" onClick={() => setIsMobileMenuOpen(false)}>Trip Wizard</Link>
-                    <Link href="/about/our-story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
-                    <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
-                </nav>
-                <div className="mobile-nav-bottom">
-                    <a href="tel:1-800-368-2794">1-800-368-2794</a>
-                    {user ? (
-                        <button onClick={() => signOut()} className="nav-button">Logout</button>
-                    ) : (
-                        <button onClick={() => signInWithGoogle()} className="nav-button">Login</button>
-                    )}
+                <div className="mobile-nav-inner">
+                    <nav className="mobile-nav-links">
+                        <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Destinations</Link>
+                        <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Browse Trips</Link>
+                        <Link href="/wizard" onClick={() => setIsMobileMenuOpen(false)}>Trip Wizard</Link>
+                        <Link href="/about/our-story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
+                    </nav>
+                    
+                    <div className="mobile-nav-bottom">
+                        <div className="mobile-social-wrap">
+                            <a href="#" className="social-link">Instagram</a>
+                            <a href="#" className="social-link">Facebook</a>
+                            <a href="#" className="social-link">YouTube</a>
+                        </div>
+                        
+                        <div className="mobile-auth-zone">
+                            {user ? (
+                                <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="btn btn-outline w-full">Logout</button>
+                            ) : (
+                                <button onClick={() => { signInWithGoogle(); setIsMobileMenuOpen(false); }} className="btn btn-primary w-full">Login / Sign Up</button>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -98,7 +107,6 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                         <a href="tel:1-800-368-2794">1-800-368-2794</a>
                         <Link href="/catalog">Catalog</Link>
                         <Link href="/newsletter">Newsletter</Link>
-                        <Link href="/contact">Contact Us</Link>
                     </div>
                 </div>
                 <div className="main-nav-bar" style={{ position: 'relative' }}>

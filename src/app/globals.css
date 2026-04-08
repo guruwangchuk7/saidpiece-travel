@@ -1515,52 +1515,101 @@ select.trip-finder-input {
   right: -100%;
   width: 100%;
   height: 100vh;
-  background: var(--color-white);
+  background: white;
   z-index: 3000;
   display: flex;
   flex-direction: column;
-  padding: 100px 40px 40px;
-  transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  text-align: center;
+  padding: 120px 40px 60px;
+  transition: right 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .mobile-nav-drawer.is-open {
   right: 0;
 }
 
+.mobile-nav-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .mobile-nav-links {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 35px;
+  margin-bottom: auto;
 }
 
-.mobile-nav-links a,
-.mobile-nav-links button {
+.mobile-nav-links a {
   font-family: var(--font-playfair);
-  font-size: 2rem;
-  color: var(--color-text-primary);
-  text-transform: none;
-  font-weight: 700;
-  background: none;
-  border: none;
-  padding: 0;
+  font-size: 1.75rem;
+  color: #111;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+}
+
+.mobile-nav-links a:hover,
+.mobile-nav-links a:active {
+  color: var(--color-brand);
+  transform: translateX(10px);
 }
 
 .mobile-nav-bottom {
-  margin-top: auto;
   padding-top: 40px;
-  border-top: 1px solid #EEE;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  border-top: 1px solid #eee;
 }
 
-.mobile-nav-bottom a {
-  font-size: 0.875rem;
+.mobile-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.mobile-contact-info .label {
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.3em;
+  color: #bbb;
+  margin-bottom: 5px;
+}
+
+.mobile-contact-info a {
+  font-size: 1.25rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: var(--font-playfair);
+}
+
+.mobile-social-wrap {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.mobile-social-wrap .social-link {
+  font-size: 0.8rem;
+  color: var(--color-brand);
+  text-decoration: none;
   font-weight: 700;
-  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.mobile-auth-zone {
+  margin-top: 20px;
+}
+
+.mobile-auth-zone .btn {
+  padding: 20px;
+  width: 100%;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
@@ -4356,12 +4405,14 @@ select.trip-finder-input {
   .catalog-section,
   .featured-section,
   .cta-section,
-  .main-footer {
-    padding: 70px 0 !important;
+  .main-footer,
+  .contact-content-scaffold,
+  .story-container {
+    padding: 60px 0 !important;
   }
 
   /* 3. Typography Scaling */
-  h1, .hero-h1 {
+  h1, .hero-h1, .story-hero-content h1 {
     font-size: 2.75rem !important;
     line-height: 1.15 !important;
     margin-bottom: 20px !important;
@@ -4373,31 +4424,32 @@ select.trip-finder-input {
   .service-section h2, 
   .catalog-content h2, 
   .cta-content h2,
-  .section-header-row h2 {
+  .section-header-row h2,
+  .split-text h2,
+  .serif-h2,
+  .story-today h2 {
     font-size: 2.2rem !important;
     line-height: 1.2 !important;
     margin-bottom: 25px !important;
   }
 
-  h3, .trip-card-title, .dest-info h3 {
+  h3, .trip-card-title, .dest-info h3, .connect-card h3 {
     font-size: 1.6rem !important;
   }
 
   /* 4. Hero Section */
+  .hero-section, .story-hero {
+    height: 85dvh !important;
+    min-height: 500px !important;
+    margin-bottom: 0;
+  }
+
   .hero-section {
-    height: 85vh;
-    min-height: 550px;
-    margin-bottom: 200px; /* Space for the trip finder which is absolute positioned */
+    margin-bottom: 200px; /* Space for trip finder */
   }
 
-  .hero-content {
+  .hero-content, .story-hero-content {
     padding: 0 25px;
-  }
-
-  .hero-sub {
-    font-size: 0.9rem;
-    letter-spacing: 0.2em;
-    margin-bottom: 10px;
   }
 
   .trip-finder {
@@ -4414,7 +4466,7 @@ select.trip-finder-input {
   }
 
   .trip-finder-branding {
-    display: none; /* Hide brand label in mobile trip finder to simplify */
+    display: none;
   }
 
   .trip-finder .trip-finder-btn {
@@ -4422,18 +4474,70 @@ select.trip-finder-input {
     width: calc(100% - 20px);
   }
 
-  /* 5. Intro Section */
-  .intro-block {
-    gap: 40px;
+  /* 5. Intro & Split Sections (Our Story, Home) */
+  .intro-block, .story-split {
+    flex-direction: column !important;
+    gap: 40px !important;
   }
 
-  .intro-image {
+  .story-split.alternate {
+    flex-direction: column !important;
+  }
+
+  .intro-image, .story-image, .split-media {
     height: 320px !important;
     flex: none;
     width: 100%;
   }
 
-  /* 6. Destinations Section */
+  .quote-block {
+    padding: 40px 0 !important;
+  }
+
+  .quote-block blockquote {
+    font-size: 1.6rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .quote-mark {
+    font-size: 5rem !important;
+  }
+
+  .story-today {
+    padding: 0 20px;
+    margin-bottom: 80px !important;
+  }
+
+  /* 6. Contact & Catalog Pages */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 50px !important;
+  }
+
+  .contact-hero-frame {
+    margin-bottom: 30px;
+  }
+
+  .contact-form {
+    padding: 30px 20px !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* 7. Connect Bridge Cards */
+  .connect-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .connect-card {
+    padding: 30px !important;
+  }
+
+  /* 8. Destinations Section */
   .dest-grid {
     gap: 30px;
   }
@@ -4456,7 +4560,7 @@ select.trip-finder-input {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   }
 
-  /* 7. Travel Styles Carousel */
+  /* 9. Travel Styles Carousel */
   .section-header-row {
     flex-direction: column;
     align-items: flex-start;
@@ -4477,8 +4581,9 @@ select.trip-finder-input {
     font-size: 1.5rem;
   }
 
-  /* 8. Service Grid */
+  /* 10. Service Grid */
   .service-grid {
+    grid-template-columns: 1fr !important;
     gap: 40px;
   }
 
@@ -4487,8 +4592,9 @@ select.trip-finder-input {
     margin-bottom: 25px;
   }
 
-  /* 9. Catalog Section */
+  /* 11. Catalog Section (Home Page) */
   .catalog-container {
+    flex-direction: column !important;
     gap: 40px;
   }
 
@@ -4499,14 +4605,14 @@ select.trip-finder-input {
   }
 
   .catalog-buttons {
-    flex-direction: row; /* Keep horizontal if possible, or stack if too tight */
+    flex-direction: row;
     flex-wrap: wrap;
     gap: 15px;
   }
 
-  /* 10. Featured Trips */
+  /* 12. Featured Trips */
   .featured-grid {
-    grid-template-columns: 1fr; /* Single column for better readability on mobile */
+    grid-template-columns: 1fr !important;
     gap: 30px;
   }
 
@@ -4518,7 +4624,7 @@ select.trip-finder-input {
     padding: 25px;
   }
 
-  /* 11. Testimonials */
+  /* 13. Testimonials */
   .testimonials-section {
     padding: 80px 20px;
   }
@@ -4529,10 +4635,10 @@ select.trip-finder-input {
   }
 
   .testimonial-controls {
-    display: none; /* Hide arrows on mobile, rely on swipe if carousel or just show featured */
+    display: none;
   }
 
-  /* 12. CTA section */
+  /* 14. CTA section */
   .cta-content {
     padding: 0 20px;
   }
@@ -4542,9 +4648,13 @@ select.trip-finder-input {
     margin-bottom: 35px;
   }
 
-  /* 13. Footer */
+  .cta-buttons {
+    flex-direction: column !important;
+  }
+
+  /* 15. Footer */
   .footer-top {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     gap: 50px;
   }
 
@@ -4553,7 +4663,7 @@ select.trip-finder-input {
   }
 
   .footer-bottom {
-    padding: 40px 0 100px; /* Extra bottom padding for sticky contact button */
+    padding: 40px 0 100px;
   }
 
   .footer-bottom-links {
@@ -4562,18 +4672,21 @@ select.trip-finder-input {
     align-items: center;
   }
 
-  /* 14. Global Utilities */
+  /* 16. Global Utilities */
+  .sticky-contact-btn, .sticky-contact {
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+    right: 20px !important;
+  }
+
   .sticky-contact-btn {
-    bottom: 20px;
-    right: 20px;
     padding: 12px 20px;
     font-size: 0.8rem;
     border-radius: 40px;
   }
 
-  /* 15. Trip Detail Page */
+  /* 17. Trip Detail Page */
   .trip-hero {
-    height: 70vh !important;
+    height: 70dvh !important;
     min-height: 450px !important;
   }
 
@@ -4662,12 +4775,12 @@ select.trip-finder-input {
     font-size: 1.1rem !important;
   }
 
-  /* 16. Hero Refinements */
+  /* 18. Hero Refinements */
   .hero-indicators {
-    display: none !important; /* Hide indicators on mobile for a cleaner look */
+    display: none !important;
   }
 
-  /* 17. Footer Refinements */
+  /* 19. Footer Refinements */
   .footer-bottom-links {
     flex-direction: row !important;
     flex-wrap: wrap !important;
@@ -4678,7 +4791,7 @@ select.trip-finder-input {
 
 /* Small Mobile Devices */
 @media (max-width: 480px) {
-  h1, .hero-h1 {
+  h1, .hero-h1, .story-hero-content h1 {
     font-size: 2.25rem !important;
   }
 
@@ -4699,12 +4812,8 @@ select.trip-finder-input {
     font-size: 0.95rem;
   }
 
-  .catalog-buttons .btn {
-    width: 100%; /* Stack buttons on very small screens */
-  }
-
-  .cta-buttons .btn {
-    width: 100%;
+  .catalog-buttons .btn, .cta-buttons .btn {
+    width: 100% !important;
   }
 
   .testimonial-quote {
@@ -4720,9 +4829,7 @@ select.trip-finder-input {
 
 @supports (-webkit-touch-callout: none) {
   /* 1. Dynamic Viewport Handling */
-  /* Fixes the "100vh" issues where content is hidden behind Safari's expanding/collapsing chrome */
-  
-  .hero-section {
+  .hero-section, .story-hero {
     height: 90dvh !important;
   }
   
@@ -4736,7 +4843,6 @@ select.trip-finder-input {
   
   .mobile-nav-drawer {
     height: 100dvh !important;
-    /* Ensure drawer content doesn't hit the status bar or notch */
     padding-top: calc(80px + env(safe-area-inset-top)) !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
   }
@@ -4746,61 +4852,50 @@ select.trip-finder-input {
     top: 0 !important;
   }
 
-  /* 2. Safe Area Insets for Persistent UI */
-  
+  /* 2. Safe Area Insets */
   .global-header {
-    /* Add padding to top of header for notched iPhones */
     padding-top: env(safe-area-inset-top);
   }
   
-  .sticky-contact-btn {
-    /* Ensure the sticky button doesn't overlap the iOS Home Indicator */
+  .sticky-contact-btn, .sticky-contact {
     bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: max(20px, env(safe-area-inset-right)) !important;
   }
 
   .main-footer {
-    /* Extra breathing room at the bottom of the page */
     padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
   }
 
   .filter-drawer-footer {
-    /* Fix for mobile filters in Browse page */
     padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
 
   .quick-info-bar {
-    /* Trip Detail mobile bar */
     padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
   }
 
-  /* 3. Visual Stability & Fit */
-  
+  /* 3. Visual Stability */
   html, body {
-    /* Helps prevent the "rubber-band" effect and layout jumps */
     min-height: -webkit-fill-available;
   }
 
   .container {
-    /* Horizontal safe areas for landscape orientation */
     padding-left: max(20px, env(safe-area-inset-left)) !important;
     padding-right: max(20px, env(safe-area-inset-right)) !important;
   }
 
-  /* Ensure Hero Content stays visually centered even when address bar moves */
-  .hero-content {
+  .hero-content, .story-hero-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100%;
   }
 
-  /* Fix for absolute positioned elements inside relative parents that use vh */
   .trip-finder {
-    /* Adjust bottom placement for iPhone to ensure it doesn't overlap bottom bar */
     @media (max-width: 768px) {
       bottom: -180px !important;
     }
   }
 }
+
 
