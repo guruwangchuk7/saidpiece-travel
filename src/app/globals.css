@@ -4315,3 +4315,492 @@ select.trip-finder-input {
     font-size: 2.5rem;
   }
 }
+
+/* ==========================================================================
+   Comprehensive Mobile Responsiveness Polish
+   Objective: Fix all layout breaks, spacing, and typography on small screens
+   while preserving the premium desktop design untouched.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* 1. Header & Navigation */
+  .top-utility-bar {
+    display: none !important; /* Hide secondary utility nav on mobile to focus on core menu */
+  }
+
+  .nav-container-inner {
+    height: 70px; /* Slimmer header */
+  }
+
+  .header-logo-img {
+    width: 160px !important;
+    height: auto !important;
+  }
+
+  .mobile-menu-btn {
+    padding: 5px;
+  }
+
+  /* 2. Global Layout & Spacing */
+  .container {
+    padding: 0 max(5vw, 20px);
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Standardize section vertical spacing for mobile */
+  .intro-section,
+  .dest-section,
+  .service-section,
+  .catalog-section,
+  .featured-section,
+  .cta-section,
+  .main-footer {
+    padding: 70px 0 !important;
+  }
+
+  /* 3. Typography Scaling */
+  h1, .hero-h1 {
+    font-size: 2.75rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 20px !important;
+  }
+
+  h2, 
+  .intro-content h2, 
+  .dest-controls h2, 
+  .service-section h2, 
+  .catalog-content h2, 
+  .cta-content h2,
+  .section-header-row h2 {
+    font-size: 2.2rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 25px !important;
+  }
+
+  h3, .trip-card-title, .dest-info h3 {
+    font-size: 1.6rem !important;
+  }
+
+  /* 4. Hero Section */
+  .hero-section {
+    height: 85vh;
+    min-height: 550px;
+    margin-bottom: 200px; /* Space for the trip finder which is absolute positioned */
+  }
+
+  .hero-content {
+    padding: 0 25px;
+  }
+
+  .hero-sub {
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+  }
+
+  .trip-finder {
+    width: 92%;
+    bottom: -160px;
+    padding: 10px;
+    border-radius: 4px;
+    flex-wrap: wrap;
+  }
+
+  .trip-finder-field {
+    padding: 15px 20px;
+    width: 100%;
+  }
+
+  .trip-finder-branding {
+    display: none; /* Hide brand label in mobile trip finder to simplify */
+  }
+
+  .trip-finder .trip-finder-btn {
+    margin: 15px 10px;
+    width: calc(100% - 20px);
+  }
+
+  /* 5. Intro Section */
+  .intro-block {
+    gap: 40px;
+  }
+
+  .intro-image {
+    height: 320px !important;
+    flex: none;
+    width: 100%;
+  }
+
+  /* 6. Destinations Section */
+  .dest-grid {
+    gap: 30px;
+  }
+
+  .dest-tab {
+    font-size: 1.3rem;
+    padding: 12px 0 12px 20px;
+  }
+
+  .dest-content {
+    height: 400px;
+  }
+
+  .dest-info {
+    position: relative;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 7. Travel Styles Carousel */
+  .section-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .style-card {
+    min-width: 220px;
+    height: 400px;
+  }
+
+  .style-overlay {
+    padding: 25px 20px;
+  }
+
+  .style-title {
+    font-size: 1.5rem;
+  }
+
+  /* 8. Service Grid */
+  .service-grid {
+    gap: 40px;
+  }
+
+  .service-item .image-placeholder {
+    height: 220px;
+    margin-bottom: 25px;
+  }
+
+  /* 9. Catalog Section */
+  .catalog-container {
+    gap: 40px;
+  }
+
+  .catalog-image {
+    height: 280px !important;
+    flex: none;
+    width: 100%;
+  }
+
+  .catalog-buttons {
+    flex-direction: row; /* Keep horizontal if possible, or stack if too tight */
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  /* 10. Featured Trips */
+  .featured-grid {
+    grid-template-columns: 1fr; /* Single column for better readability on mobile */
+    gap: 30px;
+  }
+
+  .trip-card .image-placeholder {
+    height: 240px;
+  }
+
+  .trip-card-content {
+    padding: 25px;
+  }
+
+  /* 11. Testimonials */
+  .testimonials-section {
+    padding: 80px 20px;
+  }
+
+  .testimonial-quote {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+
+  .testimonial-controls {
+    display: none; /* Hide arrows on mobile, rely on swipe if carousel or just show featured */
+  }
+
+  /* 12. CTA section */
+  .cta-content {
+    padding: 0 20px;
+  }
+
+  .cta-content p {
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+  }
+
+  /* 13. Footer */
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .footer-logo {
+    margin-bottom: 20px;
+  }
+
+  .footer-bottom {
+    padding: 40px 0 100px; /* Extra bottom padding for sticky contact button */
+  }
+
+  .footer-bottom-links {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  /* 14. Global Utilities */
+  .sticky-contact-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    font-size: 0.8rem;
+    border-radius: 40px;
+  }
+
+  /* 15. Trip Detail Page */
+  .trip-hero {
+    height: 70vh !important;
+    min-height: 450px !important;
+  }
+
+  .trip-hero-content h1 {
+    font-size: 2.5rem !important;
+  }
+
+  .quick-info-bar {
+    padding: 15px 0 !important;
+  }
+
+  .quick-info-grid {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  .quick-info-items {
+    gap: 20px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  .trip-content-layout {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    padding: 40px 20px !important;
+  }
+
+  .sticky-nav {
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 30px !important;
+  }
+
+  .sticky-nav ul {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    border-left: none !important;
+    border-bottom: 2px solid #eee !important;
+    padding-bottom: 1px !important;
+    scrollbar-width: none !important;
+  }
+
+  .sticky-nav ul::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .sticky-nav li {
+    white-space: nowrap !important;
+    border-left: none !important;
+    border-bottom: 2px solid transparent !important;
+    left: 0 !important;
+    padding: 10px 15px !important;
+  }
+
+  .sticky-nav li.active {
+    border-bottom-color: var(--color-brand) !important;
+    background: transparent !important;
+  }
+
+  .highlights-box {
+    padding: 25px !important;
+  }
+
+  .highlights-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .itinerary-accordion {
+    margin: 0 -20px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .accordion-header {
+    padding: 20px !important;
+  }
+
+  .day-badge {
+    margin-right: 15px !important;
+    padding: 4px 10px !important;
+  }
+
+  .day-title {
+    font-size: 1.1rem !important;
+  }
+
+  /* 16. Hero Refinements */
+  .hero-indicators {
+    display: none !important; /* Hide indicators on mobile for a cleaner look */
+  }
+
+  /* 17. Footer Refinements */
+  .footer-bottom-links {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  h1, .hero-h1 {
+    font-size: 2.25rem !important;
+  }
+
+  h2 {
+    font-size: 1.85rem !important;
+  }
+
+  .trip-finder {
+    width: 95%;
+    bottom: -200px;
+  }
+
+  .trip-finder-field {
+    padding: 12px 15px;
+  }
+
+  .trip-finder-input {
+    font-size: 0.95rem;
+  }
+
+  .catalog-buttons .btn {
+    width: 100%; /* Stack buttons on very small screens */
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+  }
+
+  .testimonial-quote {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   iPhone Safari UI & Viewport Optimization
+   Targeting iOS Safari specifically to handle dynamic viewport height (dvh)
+   and hardware safe areas (notches/home indicators).
+   ========================================================================== */
+
+@supports (-webkit-touch-callout: none) {
+  /* 1. Dynamic Viewport Handling */
+  /* Fixes the "100vh" issues where content is hidden behind Safari's expanding/collapsing chrome */
+  
+  .hero-section {
+    height: 90dvh !important;
+  }
+  
+  .trip-hero {
+    height: 80dvh !important;
+  }
+  
+  .wizard-framework {
+    min-height: 100dvh !important;
+  }
+  
+  .mobile-nav-drawer {
+    height: 100dvh !important;
+    /* Ensure drawer content doesn't hit the status bar or notch */
+    padding-top: calc(80px + env(safe-area-inset-top)) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+  
+  .menu-overlay {
+    height: 100dvh !important;
+    top: 0 !important;
+  }
+
+  /* 2. Safe Area Insets for Persistent UI */
+  
+  .global-header {
+    /* Add padding to top of header for notched iPhones */
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .sticky-contact-btn {
+    /* Ensure the sticky button doesn't overlap the iOS Home Indicator */
+    bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+    right: max(20px, env(safe-area-inset-right)) !important;
+  }
+
+  .main-footer {
+    /* Extra breathing room at the bottom of the page */
+    padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .filter-drawer-footer {
+    /* Fix for mobile filters in Browse page */
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .quick-info-bar {
+    /* Trip Detail mobile bar */
+    padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* 3. Visual Stability & Fit */
+  
+  html, body {
+    /* Helps prevent the "rubber-band" effect and layout jumps */
+    min-height: -webkit-fill-available;
+  }
+
+  .container {
+    /* Horizontal safe areas for landscape orientation */
+    padding-left: max(20px, env(safe-area-inset-left)) !important;
+    padding-right: max(20px, env(safe-area-inset-right)) !important;
+  }
+
+  /* Ensure Hero Content stays visually centered even when address bar moves */
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* Fix for absolute positioned elements inside relative parents that use vh */
+  .trip-finder {
+    /* Adjust bottom placement for iPhone to ensure it doesn't overlap bottom bar */
+    @media (max-width: 768px) {
+      bottom: -180px !important;
+    }
+  }
+}
+

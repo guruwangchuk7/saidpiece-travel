@@ -19,7 +19,7 @@ export default function FAQSyncUpgrade() {
         });
         if (!response.ok) {
             const err = await response.text();
-            if (err.includes('already exists')) return; 
+            if (err.includes('already exists')) return;
             throw new Error(`API ${response.status}: ${err}`);
         }
     };
