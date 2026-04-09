@@ -3,15 +3,23 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useUI } from '@/contexts/UIContext';
 
-export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 'light', children?: React.ReactNode }) {
+export default function Header({ theme: propTheme = 'auto', children, forceShow = false }: { theme?: 'auto' | 'light', children?: React.ReactNode, forceShow?: boolean }) {
+    const pathname = usePathname();
+    const { headerTheme } = useUI();
+    const theme = propTheme === 'auto' ? headerTheme : propTheme;
+
     const { user, signInWithGoogle, signOut } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const isAutoMount = propTheme === 'auto';
 
     const isLightState = theme === 'light' || isScrolled || openMenu !== null || (isMobileMenuOpen && isMounted);
 
@@ -57,6 +65,9 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
 
     // Placeholder image that implies travel
     const placeholderImg = '/images/bhutan/main1.webp';
+
+    // Hide the automatic (layout-level) header on admin pages
+    if (!forceShow && isAutoMount && pathname?.startsWith('/admin')) return null;
 
     return (
         <>
@@ -165,7 +176,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                                         </svg>
                                     </button>
                                 </li>
-                                <li><a href="/wizard">Trip Wizard</a></li>
+                                <li><Link href="/wizard">Trip Wizard</Link></li>
                                 <li className="nav-item static-nav-item" onMouseEnter={() => handleMouseEnter('inspiration')} onMouseLeave={handleMouseLeave}>
                                     <button className={`nav-button ${openMenu === 'inspiration' ? 'is-open' : ''}`} aria-expanded={openMenu === 'inspiration'}>
                                         Inspiration
@@ -210,19 +221,19 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                         <div className="mega-menu-container">
                             <div className="destinations-left">
                                 <ul className="mega-list">
-                                    <li><a href="#">Paro Valley</a></li>
-                                    <li><a href="#">Thimphu</a></li>
-                                    <li><a href="#">Punakha</a></li>
-                                    <li><a href="#">Bumthang</a></li>
-                                    <li><a href="#">Gangtey & Phobjikha</a></li>
-                                    <li><a href="#">Haa Valley</a></li>
-                                    <li><a href="#">Eastern Bhutan</a></li>
+                                    <li><Link href="/browse?destination=Paro%20Valley" onClick={handleMenuLinkClick}>Paro Valley</Link></li>
+                                    <li><Link href="/browse?destination=Thimphu" onClick={handleMenuLinkClick}>Thimphu</Link></li>
+                                    <li><Link href="/browse?destination=Punakha" onClick={handleMenuLinkClick}>Punakha</Link></li>
+                                    <li><Link href="/browse?destination=Bumthang" onClick={handleMenuLinkClick}>Bumthang</Link></li>
+                                    <li><Link href="/browse?destination=Gangtey%20%26%20Phobjikha" onClick={handleMenuLinkClick}>Gangtey & Phobjikha</Link></li>
+                                    <li><Link href="/browse?destination=Haa%20Valley" onClick={handleMenuLinkClick}>Haa Valley</Link></li>
+                                    <li><Link href="/browse?destination=Eastern%20Bhutan" onClick={handleMenuLinkClick}>Eastern Bhutan</Link></li>
                                 </ul>
                             </div>
                             <div className="destinations-right">
                                 <div className="feature-content">
                                     <h3>Explore All Destinations</h3>
-                                    <a href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                    <Link href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</Link>
                                 </div>
                             </div>
                         </div>
@@ -254,7 +265,7 @@ export default function Header({ theme = 'auto', children }: { theme?: 'auto' | 
                             <div className="destinations-right" style={{ background: `url(${placeholderImg}) center/cover no-repeat`, marginLeft: '50px' }}>
                                 <div className="feature-content" style={{ backgroundColor: 'rgba(255,255,255,0.95)', padding: '40px', borderRadius: '4px' }}>
                                     <h3>Find Your Perfect Trip</h3>
-                                    <a href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</a>
+                                    <Link href="/browse" className="btn btn-outline" style={{ borderColor: 'var(--color-brand)', color: 'var(--color-brand)' }}>View All</Link>
                                 </div>
                             </div>
                         </div>

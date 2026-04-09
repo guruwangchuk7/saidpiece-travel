@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { supabase } from '@/lib/supabaseClient';
+import { useUI } from '@/contexts/UIContext';
 
 interface Trip {
     id: string;
@@ -30,6 +29,7 @@ export default function BrowseTripsClient({
     initialType?: string;
     initialActivity?: string;
 }) {
+    const { setHeaderTheme } = useUI();
     const [allTrips, setAllTrips] = useState<Trip[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState({
@@ -41,6 +41,11 @@ export default function BrowseTripsClient({
     const [sortBy, setSortBy] = useState('Default');
     const [isMounted, setIsMounted] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+    useEffect(() => {
+        setHeaderTheme('light');
+        return () => setHeaderTheme('auto');
+    }, [setHeaderTheme]);
 
     useEffect(() => {
         setIsMounted(true);
@@ -95,8 +100,6 @@ export default function BrowseTripsClient({
 
     return (
         <main>
-            <Header theme="light" />
-
             <div className="browse-page-layout">
                 <div className="breadcrumbs">
                     <div className="container">
@@ -204,7 +207,6 @@ export default function BrowseTripsClient({
                     </div>
                 </div>
             </div>
-            <Footer />
         </main>
     );
 }

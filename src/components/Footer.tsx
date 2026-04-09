@@ -3,17 +3,20 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
 import { useAuth } from '@/hooks/useAuth';
 
-export default function Footer() {
+export default function Footer({ isAuto = false }: { isAuto?: boolean }) {
+    const pathname = usePathname();
     const { isStaff } = useAuth();
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [settings, setSettings] = useState<any>({});
+
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -57,6 +60,9 @@ export default function Footer() {
             setStatus('error');
         }
     };
+
+    // Hide footer on admin pages if it's the automatic one
+    if (isAuto && pathname?.startsWith('/admin')) return null;
 
     return (
         <footer className="main-footer">

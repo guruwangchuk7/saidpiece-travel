@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function TripDetail() {
@@ -36,7 +34,6 @@ export default function TripDetail() {
 
     return (
         <main className="trip-detail-page">
-            <Header theme="light" />
 
             <div className="trip-hero">
                 <Image src="/images/bhutan/main4.webp" alt="Bhutan Discovery" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
@@ -264,7 +261,6 @@ export default function TripDetail() {
                 </section>
             </div>
 
-            <Footer />
         </main>
     );
 }

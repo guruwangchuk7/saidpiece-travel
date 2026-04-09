@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -141,16 +139,13 @@ export default function EnquiryManager() {
     }
 
     return (
-        <main className="admin-page page-with-header">
-            <Header theme="light" />
-            <div className="container" style={{ padding: '120px 20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h1 className="serif-title" style={{ margin: 0 }}>Management Dashboard</h1>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <span style={{ fontSize: '14px', color: '#666' }}>Logged in as: <strong>{user?.email}</strong></span>
-                        <button className="btn btn-outline" style={{ padding: '8px 20px' }} onClick={handleSignOut}>Logout</button>
-                    </div>
+        <div className="admin-content-wrapper">
+            <div className="admin-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                <h1 className="serif-title" style={{ margin: 0 }}>Management Dashboard</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <span style={{ fontSize: '14px', color: '#666' }}>Logged in as: <strong>{user?.email}</strong></span>
                 </div>
+            </div>
 
                 <div className="view-toggle" style={{ display: 'flex', gap: '10px', marginBottom: '40px' }}>
                     <button 
@@ -306,8 +301,6 @@ export default function EnquiryManager() {
                         )}
                     </section>
                 </div>
-            </div>
-            <Footer />
-        </main>
+        </div>
     );
 }

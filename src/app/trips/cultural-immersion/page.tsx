@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
+
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -36,7 +36,7 @@ export default function CulturalImmersionTrip() {
 
     return (
         <main className="trip-detail-page">
-            <Header theme="light" />
+            
 
             <div className="trip-hero">
                 <Image src="/images/bhutan/main5.webp" alt="Cultural Immersion" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
@@ -241,7 +241,8 @@ export default function CulturalImmersionTrip() {
                 </section>
             </div>
 
-            <Footer />
+            
         </main>
     );
 }
+
