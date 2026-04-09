@@ -12,6 +12,7 @@ const createIntentSchema = z.object({
   fiatAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
   currency: z.string().length(3).toUpperCase(),
   cryptoAmount: z.string().nullable().optional(),
+  bookingId: z.string().uuid().optional(),
 });
 
 function getBearerToken(request: NextRequest) {
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { tripName, travelerName, fiatAmount, currency, cryptoAmount } = result.data;
+    const { tripName, travelerName, fiatAmount, currency, cryptoAmount, bookingId } = result.data;
 
     if (!user.email) {
       return NextResponse.json(
@@ -158,6 +159,7 @@ export async function POST(request: NextRequest) {
         recipient_address: config.recipientAddress,
         status: 'pending',
         quote_expires_at: expiresAt,
+        booking_id: bookingId,
       })
       .select('id, trip_name, fiat_currency, fiat_amount, token_symbol, expected_token_amount, chain_id, recipient_address, quote_expires_at, status')
       .single();

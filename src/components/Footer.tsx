@@ -32,16 +32,22 @@ export default function Footer() {
         e.preventDefault();
         setStatus('loading');
         try {
-            if (!supabase) throw new Error('Supabase not configured');
-            const { error: insertError } = await supabase
-                .from('enquiries')
-                .insert([{
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     first_name: firstName,
                     email: email,
-                    message: `Newsletter Subscription: ${firstName} ${lastName}`,
-                    status: 'new' as any
-                }]);
-            if (insertError) throw insertError;
+                    message: `Newsletter Subscription: ${firstName} ${lastName}`.trim(),
+                    trip_name_fallback: 'Newsletter'
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to subscribe');
+            }
+
             setStatus('success');
             setEmail('');
             setFirstName('');

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { enforceRateLimit, getClientIp, jsonNoStore, validateBodySize } from '@/lib/apiSecurity';
+import { sendEnquiryNotificationEmail } from '@/lib/notifications';
 
 const enquirySchema = z.object({
   first_name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
@@ -65,6 +66,9 @@ export async function POST(request: NextRequest) {
       console.error('[enquiries] Database error:', error);
       return jsonNoStore({ ok: false, error: 'Database capture failed' }, { status: 500 });
     }
+
+    // Trigger Admin Notification
+    await sendEnquiryNotificationEmail(first_name, email, message, trip_name_fallback || '');
 
     return jsonNoStore({ ok: true, message: 'Enquiry received' });
   } catch (error) {

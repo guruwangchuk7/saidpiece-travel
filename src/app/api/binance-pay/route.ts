@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enforceRateLimit, getClientIp, jsonNoStore, validateBodySize } from '@/lib/apiSecurity';
 import { createBinancePayOrder } from '@/lib/binancePay';
-import { getAuthenticatedUser } from '@/lib/supabaseAdmin';
+import { getAuthenticatedUser, createSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { z } from 'zod';
 
 const binancePaySchema = z.object({
@@ -9,6 +9,7 @@ const binancePaySchema = z.object({
   travelerName: z.string().min(1).max(80),
   fiatAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
   currency: z.string().length(3).toUpperCase(),
+  bookingId: z.string().uuid().optional(),
 });
 
 function getBearerToken(request: NextRequest) {
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
       return jsonNoStore({ ok: false, error: 'Invalid Binance Pay payload.', details: result.error.format() }, { status: 400 });
     }
 
-    const { tripName, travelerName, fiatAmount, currency } = result.data;
+    const { tripName, travelerName, fiatAmount, currency, bookingId } = result.data;
 
     const order = await createBinancePayOrder({
       tripName,
@@ -62,6 +63,17 @@ export async function POST(request: NextRequest) {
       buyerRegistrationTime: user.created_at ? new Date(user.created_at).getTime() : undefined,
       orderClientIp: clientIp !== 'unknown' ? clientIp : undefined,
     });
+
+    if (bookingId) {
+        const supabase = createSupabaseAdminClient();
+        await supabase
+            .from('bookings')
+            .update({ 
+                payment_reference: order.merchantTradeNo,
+                status: 'awaiting_payment'
+            })
+            .eq('id', bookingId);
+    }
 
     return jsonNoStore({
       ok: true,
