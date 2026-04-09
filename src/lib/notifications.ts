@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with a fallback to avoid Vercel build errors when API_KEY is not yet set
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function sendBookingConfirmationEmail(email: string, travelerName: string, tripName: string, bookingId: string) {
   if (!process.env.RESEND_API_KEY) {
@@ -9,7 +10,7 @@ export async function sendBookingConfirmationEmail(email: string, travelerName: 
   }
 
   try {
-    await resend.emails.send({
+    await resend?.emails.send({
       from: 'Saidpiece Travel <bookings@saidpiecetravels.com>',
       to: email,
       subject: `Booking Confirmed: ${tripName}`,
@@ -37,7 +38,7 @@ export async function notifyAdminOfNewBooking(tripName: string, travelerName: st
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'saidpiece@gmail.com';
 
   try {
-    await resend.emails.send({
+    await resend?.emails.send({
       from: 'Saidpiece System <system@saidpiecetravels.com>',
       to: adminEmail,
       subject: `🚨 NEW BOOKING: ${travelerName} - ${tripName}`,
@@ -62,7 +63,7 @@ export async function sendEnquiryNotificationEmail(first_name: string, email: st
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'saidpiece@gmail.com';
 
   try {
-    await resend.emails.send({
+    await resend?.emails.send({
       from: 'Saidpiece Enquiries <system@saidpiecetravels.com>',
       to: adminEmail,
       subject: `✉️ NEW ENQUIRY: ${first_name} - ${trip_name || 'General'}`,
