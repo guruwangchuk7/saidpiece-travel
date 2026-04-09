@@ -3,7 +3,12 @@ import Stripe from 'stripe';
 import { createSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { sendBookingConfirmationEmail, notifyAdminOfNewBooking } from '@/lib/notifications';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+// Helper function to get Stripe client safely
+const getStripe = () => {
+    if (!process.env.STRIPE_SECRET_KEY) return null;
+    return new Stripe(process.env.STRIPE_SECRET_KEY);
+};
+
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 export async function POST(req: NextRequest) {
@@ -13,6 +18,10 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
+    const stripe = getStripe();
+    if (!stripe) {
+        throw new Error('Stripe is not configured.');
+    }
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err: any) {
     console.error(`[Stripe Webhook] Signature verification failed: ${err.message}`);
