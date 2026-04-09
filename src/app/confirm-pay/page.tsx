@@ -124,10 +124,11 @@ function ConfirmPayContent() {
         setIsConfirmed(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        setTimeout(() => {
-            // In a real production app, you would pass the bookingId as a client_reference_id to Stripe
-            window.location.href = `https://buy.stripe.com/00w6oHc3Daev27M9Bm93y00?client_reference_id=${bookingId}`;
-        }, 2000);
+        // Pull the payment link from environment variables. 
+        // Use your Test Mode link from Stripe Dashboard here!
+        const paymentLink = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/test_6oEbK2eZf0M17726oo';
+        
+        window.location.href = `${paymentLink}?client_reference_id=${bookingId}`;
     };
 
     const handleWireSelection = async () => {

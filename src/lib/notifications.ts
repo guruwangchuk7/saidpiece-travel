@@ -1,17 +1,23 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-// Initialize Resend with a fallback to avoid Vercel build errors when API_KEY is not yet set
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+// Configuration for Nodemailer using Gmail SMTP
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'saidpiece@gmail.com',
+    pass: process.env.EMAIL_APP_PASSWORD, // This MUST be the 16-character Google App Password
+  },
+});
 
 export async function sendBookingConfirmationEmail(email: string, travelerName: string, tripName: string, bookingId: string) {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[Notifications] RESEND_API_KEY is missing. Email skipped.');
+  if (!process.env.EMAIL_APP_PASSWORD) {
+    console.warn('[Notifications] EMAIL_APP_PASSWORD is missing. Email skipped.');
     return;
   }
 
   try {
-    await resend?.emails.send({
-      from: 'Saidpiece Travel <bookings@saidpiecetravels.com>',
+    await transporter.sendMail({
+      from: `"Saidpiece Travel" <${process.env.EMAIL_USER || 'saidpiece@gmail.com'}>`,
       to: email,
       subject: `Booking Confirmed: ${tripName}`,
       html: `
@@ -27,26 +33,27 @@ export async function sendBookingConfirmationEmail(email: string, travelerName: 
         </div>
       `,
     });
+    console.log(`[Notifications] Confirmation email sent to ${email}`);
   } catch (error) {
     console.error('[Notifications] Failed to send confirmation email:', error);
   }
 }
 
 export async function notifyAdminOfNewBooking(tripName: string, travelerName: string, amount: number) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.EMAIL_APP_PASSWORD) return;
 
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL 
+  const adminEmails = process.env.ADMIN_NOTIFICATION_EMAIL
     ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
     : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
 
   try {
-    await resend?.emails.send({
-      from: 'Saidpiece System <system@saidpiecetravels.com>',
-      to: adminEmail,
+    await transporter.sendMail({
+      from: `"Saidpiece System" <${process.env.EMAIL_USER || 'saidpiece@gmail.com'}>`,
+      to: adminEmails,
       subject: `🚨 NEW BOOKING: ${travelerName} - ${tripName}`,
       html: `
         <div style="font-family: sans-serif; color: #333;">
-          <h2>New Booking Received</h2>
+          <h2 style="color: #008080;">New Booking Received</h2>
           <p><strong>Traveler:</strong> ${travelerName}</p>
           <p><strong>Trip:</strong> ${tripName}</p>
           <p><strong>Amount:</strong> $${amount}</p>
@@ -54,22 +61,23 @@ export async function notifyAdminOfNewBooking(tripName: string, travelerName: st
         </div>
       `,
     });
+    console.log(`[Notifications] Admin notification sent.`);
   } catch (error) {
     console.error('[Notifications] Failed to notify admin:', error);
   }
 }
 
 export async function sendEnquiryNotificationEmail(first_name: string, email: string, message: string, trip_name: string) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.EMAIL_APP_PASSWORD) return;
 
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL 
+  const adminEmails = process.env.ADMIN_NOTIFICATION_EMAIL
     ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
     : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
 
   try {
-    await resend?.emails.send({
-      from: 'Saidpiece Enquiries <system@saidpiecetravels.com>',
-      to: adminEmail,
+    await transporter.sendMail({
+      from: `"Saidpiece Enquiries" <${process.env.EMAIL_USER || 'saidpiece@gmail.com'}>`,
+      to: adminEmails,
       subject: `✉️ NEW ENQUIRY: ${first_name} - ${trip_name || 'General'}`,
       html: `
         <div style="font-family: sans-serif; color: #333;">
@@ -83,6 +91,7 @@ export async function sendEnquiryNotificationEmail(first_name: string, email: st
         </div>
       `,
     });
+    console.log(`[Notifications] Enquiry notification sent.`);
   } catch (error) {
     console.error('[Notifications] Failed to send enquiry notification:', error);
   }
