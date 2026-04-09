@@ -9,15 +9,41 @@ import Link from 'next/link';
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
+        setError(null);
+
+        const formData = new FormData(e.currentTarget);
+        const payload = {
+            first_name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
+            email: formData.get('email') as string,
+            message: `Phone: ${formData.get('phone') || 'N/A'}\nMessage: ${formData.get('message') || 'No message'}\nCatalog Requested: ${formData.get('catalog') ? 'Yes' : 'No'}`,
+            trip_name_fallback: 'Direct Contact Form'
+        };
+
+        try {
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to send message');
+            }
+
             setSubmitted(true);
-        }, 1500);
+        } catch (err: any) {
+            console.error('Error submitting contact form:', err);
+            setError(err.message || 'Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -80,34 +106,36 @@ export default function ContactPage() {
                                     <div className="form-row">
                                         <div className="form-group">
                                             <label htmlFor="firstName">First Name *</label>
-                                            <input type="text" id="firstName" required placeholder="Enter your first name" />
+                                            <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name" />
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="lastName">Last Name</label>
-                                            <input type="text" id="lastName" placeholder="Enter your last name" />
+                                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" />
                                         </div>
                                     </div>
 
                                     <div className="form-row">
                                         <div className="form-group">
                                             <label htmlFor="email">Email Address *</label>
-                                            <input type="email" id="email" required placeholder="Enter your email" />
+                                            <input type="email" id="email" name="email" required placeholder="Enter your email" />
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="phone">Phone Number</label>
-                                            <input type="tel" id="phone" placeholder="Enter your phone" />
+                                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone" />
                                         </div>
                                     </div>
 
                                     <div className="form-group checkbox-group">
-                                        <input type="checkbox" id="catalog" />
+                                        <input type="checkbox" id="catalog" name="catalog" />
                                         <label htmlFor="catalog">Request a catalog</label>
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="message">Message</label>
-                                        <textarea id="message" rows={5} placeholder="Tell us about the trips or regions you're interested in..."></textarea>
+                                        <textarea id="message" name="message" rows={5} placeholder="Tell us about the trips or regions you're interested in..."></textarea>
                                     </div>
+
+                                    {error && <p style={{ color: '#d32f2f', marginBottom: '20px', fontSize: '0.9rem' }}>{error}</p>}
 
                                     <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                                         {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}

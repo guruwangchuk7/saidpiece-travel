@@ -1,14 +1,16 @@
-import { NextRequest } from 'next/server';
-import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
+import { NextRequest, NextResponse } from 'next/server';
+import { enforceRateLimit, getClientIp, jsonNoStore, validateBodySize } from '@/lib/apiSecurity';
 import { createBinancePayOrder } from '@/lib/binancePay';
-import { getAuthenticatedUser } from '@/lib/supabaseAdmin';
+import { getAuthenticatedUser, createSupabaseAdminClient } from '@/lib/supabaseAdmin';
+import { z } from 'zod';
 
-type CreateBinancePayBody = {
-  tripName?: string;
-  travelerName?: string;
-  fiatAmount?: string;
-  currency?: string;
-};
+const binancePaySchema = z.object({
+  tripName: z.string().min(1).max(120),
+  travelerName: z.string().min(1).max(80),
+  fiatAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+  currency: z.string().length(3).toUpperCase(),
+  bookingId: z.string().uuid().optional(),
+});
 
 function getBearerToken(request: NextRequest) {
   const header = request.headers.get('authorization');
@@ -21,6 +23,9 @@ function getBearerToken(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!validateBodySize(request)) {
+      return jsonNoStore({ ok: false, error: 'Payload too large.' }, { status: 413 });
+    }
     const clientIp = getClientIp(request);
     const rateLimit = await enforceRateLimit({
       key: `binance-pay:${clientIp}`,
@@ -39,16 +44,15 @@ export async function POST(request: NextRequest) {
 
     const accessToken = getBearerToken(request);
     const user = await getAuthenticatedUser(accessToken);
-    const body = (await request.json()) as CreateBinancePayBody;
+    
+    const body = await request.json();
+    const result = binancePaySchema.safeParse(body);
 
-    const tripName = body.tripName?.trim();
-    const travelerName = body.travelerName?.trim();
-    const fiatAmount = body.fiatAmount?.trim();
-    const currency = body.currency?.trim().toUpperCase();
-
-    if (!tripName || !travelerName || !fiatAmount || !currency) {
-      return jsonNoStore({ ok: false, error: 'Missing required Binance Pay fields.' }, { status: 400 });
+    if (!result.success) {
+      return jsonNoStore({ ok: false, error: 'Invalid Binance Pay payload.', details: result.error.format() }, { status: 400 });
     }
+
+    const { tripName, travelerName, fiatAmount, currency, bookingId } = result.data;
 
     const order = await createBinancePayOrder({
       tripName,
@@ -59,6 +63,17 @@ export async function POST(request: NextRequest) {
       buyerRegistrationTime: user.created_at ? new Date(user.created_at).getTime() : undefined,
       orderClientIp: clientIp !== 'unknown' ? clientIp : undefined,
     });
+
+    if (bookingId) {
+        const supabase = createSupabaseAdminClient();
+        await supabase
+            .from('bookings')
+            .update({ 
+                payment_reference: order.merchantTradeNo,
+                status: 'awaiting_payment'
+            })
+            .eq('id', bookingId);
+    }
 
     return jsonNoStore({
       ok: true,

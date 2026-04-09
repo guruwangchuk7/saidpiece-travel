@@ -17,19 +17,25 @@ export default function NewsletterPage() {
         setStatus('loading');
         setErrorMessage('');
 
+        const payload = {
+            first_name: firstName,
+            email: email,
+            message: 'Newsletter Subscription Request',
+            trip_name_fallback: 'Newsletter Subscription'
+        };
+
         try {
-            if (!supabase) throw new Error('Supabase not configured');
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-            const { error: insertError } = await supabase
-                .from('enquiries')
-                .insert([{
-                    first_name: firstName,
-                    email: email,
-                    message: 'Newsletter Subscription Request',
-                    status: 'new' as any
-                }]);
+            const result = await response.json();
 
-            if (insertError) throw insertError;
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to join');
+            }
 
             // Success!
             setStatus('success');

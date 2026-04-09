@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient, ensureProfile, getAuthenticatedUser } from '@/lib/supabaseAdmin';
 import { getCryptoPaymentConfig, getExpectedTokenAmount, toTokenBaseUnits } from '@/lib/cryptoPayments';
-import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
+import { enforceRateLimit, getClientIp, jsonNoStore, validateBodySize } from '@/lib/apiSecurity';
 import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId } from '@/lib/onchainBooking';
 
 import { z } from 'zod';
@@ -12,6 +12,7 @@ const createIntentSchema = z.object({
   fiatAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
   currency: z.string().length(3).toUpperCase(),
   cryptoAmount: z.string().nullable().optional(),
+  bookingId: z.string().uuid().optional(),
 });
 
 function getBearerToken(request: NextRequest) {
@@ -25,6 +26,9 @@ function getBearerToken(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!validateBodySize(request)) {
+      return jsonNoStore({ ok: false, error: 'Payload too large.' }, { status: 413 });
+    }
     const clientIp = getClientIp(request);
     const rateLimit = await enforceRateLimit({
       key: `crypto-intent:${clientIp}`,
@@ -55,7 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { tripName, travelerName, fiatAmount, currency, cryptoAmount } = result.data;
+    const { tripName, travelerName, fiatAmount, currency, cryptoAmount, bookingId } = result.data;
 
     if (!user.email) {
       return NextResponse.json(
@@ -155,6 +159,7 @@ export async function POST(request: NextRequest) {
         recipient_address: config.recipientAddress,
         status: 'pending',
         quote_expires_at: expiresAt,
+        booking_id: bookingId,
       })
       .select('id, trip_name, fiat_currency, fiat_amount, token_symbol, expected_token_amount, chain_id, recipient_address, quote_expires_at, status')
       .single();

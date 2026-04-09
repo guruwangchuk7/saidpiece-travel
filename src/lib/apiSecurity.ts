@@ -104,3 +104,16 @@ export function getClientIp(request: Request) {
 
   return 'unknown';
 }
+
+/**
+ * Validates that the request body size is within the allowed limit.
+ * Helps prevent DoS attacks using large payloads.
+ */
+export function validateBodySize(request: Request, maxBytes: number = 1_000_000) { // Default 1MB
+  const contentLength = request.headers.get('content-length');
+  if (contentLength && parseInt(contentLength, 10) > maxBytes) {
+    return false;
+  }
+  return true;
+}
+

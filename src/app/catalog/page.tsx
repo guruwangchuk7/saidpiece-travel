@@ -17,21 +17,25 @@ export default function CatalogPage() {
         setError(null);
 
         const formData = new FormData(e.currentTarget);
-        const data = {
+        const payload = {
             first_name: formData.get('firstName') as string,
             email: formData.get('email') as string,
             message: `Catalog Request. Interests: ${formData.get('interests')}. Address: ${formData.get('address')}`,
-            status: 'new' as any
+            trip_name_fallback: 'Saidpiece Catalog Request'
         };
 
         try {
-            if (!supabase) throw new Error('Supabase not configured');
-            
-            const { error: insertError } = await supabase
-                .from('enquiries')
-                .insert([data]);
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-            if (insertError) throw insertError;
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to submit request');
+            }
 
             setSubmitted(true);
         } catch (err: any) {

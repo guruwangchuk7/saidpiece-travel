@@ -23,6 +23,7 @@ interface UseCryptoPaymentProps {
     currency: string;
     cryptoAmountFromUrl: string | null;
     paymentMethod: string;
+    bookingId: string | null; // Added
     onSuccess: (txHash: string) => void;
 }
 
@@ -35,6 +36,7 @@ export function useCryptoPayment({
     currency,
     cryptoAmountFromUrl,
     paymentMethod,
+    bookingId, // Added
     onSuccess
 }: UseCryptoPaymentProps) {
     const { isConnected, address } = useAccount();
@@ -99,6 +101,7 @@ export function useCryptoPayment({
                 fiatAmount: normalizedFiatAmount,
                 currency,
                 cryptoAmount: cryptoAmountFromUrl,
+                bookingId, // Link to central booking
             }),
         })
             .then(async (response) => {

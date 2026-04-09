@@ -16,8 +16,11 @@
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "next": "16.1.6",
+    "nodemailer": "^8.0.5",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "resend": "^6.10.0",
+    "stripe": "^22.0.1",
     "viem": "^2.47.1",
     "wagmi": "^3.5.0",
     "zod": "^4.3.6"
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

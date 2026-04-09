@@ -76,11 +76,11 @@ export default function DynamicTripDetail() {
 
     const handleBookOnline = () => {
         if (!user) {
-            const destination = `/confirm-pay?trip=${encodeURIComponent(trip?.title || '')}&amount=${trip?.starting_price || 0}`;
+            const destination = `/confirm-pay?tripId=${trip?.id || ''}&trip=${encodeURIComponent(trip?.title || '')}&amount=${trip?.starting_price || 0}`;
             localStorage.setItem('booking_redirect', destination);
             signInWithGoogle();
         } else {
-            router.push(`/confirm-pay?trip=${encodeURIComponent(trip?.title || '')}&amount=${trip?.starting_price || 0}`);
+            router.push(`/confirm-pay?tripId=${trip?.id || ''}&trip=${encodeURIComponent(trip?.title || '')}&amount=${trip?.starting_price || 0}`);
         }
     };
 

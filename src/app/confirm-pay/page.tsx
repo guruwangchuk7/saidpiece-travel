@@ -32,6 +32,8 @@ function ConfirmPayContent() {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [cryptoTxId, setCryptoTxId] = useState<string | null>(null);
+    const [currentBookingId, setCurrentBookingId] = useState<string | null>(null);
+    const [isBookingLoading, setIsBookingLoading] = useState(false);
 
     // Binance specific state
     const [isBinancePayLoading, setIsBinancePayLoading] = useState(false);
@@ -39,6 +41,7 @@ function ConfirmPayContent() {
     const [binanceCheckoutUrl, setBinanceCheckoutUrl] = useState<string | null>(null);
 
     // Metadata from URL or defaults
+    const tripId = searchParams.get('tripId');
     const travelerName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Traveler';
     const tripName = searchParams.get('trip') || 'Custom Bhutan Discovery';
     const amount = searchParams.get('amount') || '4,250';
@@ -56,12 +59,51 @@ function ConfirmPayContent() {
         currency,
         cryptoAmountFromUrl,
         paymentMethod: paymentMethod === 'crypto' ? 'crypto' : 'card', // Fallback for hook
+        bookingId: currentBookingId, // Pass the new booking ID
         onSuccess: (txHash) => {
             setCryptoTxId(txHash);
             setIsConfirmed(true);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
+
+    const ensureBookingRecord = async (targetMethod: string) => {
+        if (currentBookingId) return currentBookingId;
+        if (!tripId) {
+            console.error('Missing tripId for booking record creation');
+            return null;
+        }
+
+        setIsBookingLoading(true);
+        try {
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session?.access_token}`,
+                },
+                body: JSON.stringify({
+                    tripId,
+                    travelerName,
+                    passengersCount: 1, // Defaulting to 1 for this flow
+                    paymentMethod: targetMethod
+                }),
+            });
+
+            const data = await response.json();
+            if (!response.ok || !data.ok) {
+                throw new Error(data.error || 'Failed to initialize booking record.');
+            }
+
+            setCurrentBookingId(data.bookingId);
+            return data.bookingId;
+        } catch (error) {
+            console.error('Booking record creation failed:', error);
+            return null;
+        } finally {
+            setIsBookingLoading(false);
+        }
+    };
 
     useEffect(() => {
         const redirect = localStorage.getItem('booking_redirect');
@@ -70,14 +112,33 @@ function ConfirmPayContent() {
         }
     }, [user]);
 
-    const handleStripePayment = (e: React.FormEvent) => {
+    const handleStripePayment = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const bookingId = await ensureBookingRecord('card');
+        if (!bookingId) {
+            alert('We could not initialize your secure booking. Please try again or contact support.');
+            return;
+        }
+
         setIsConfirmed(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        setTimeout(() => {
-            window.location.href = 'https://buy.stripe.com/00w6oHc3Daev27M9Bm93y00';
-        }, 2000);
+        // Pull the payment link from environment variables. 
+        // Use your Test Mode link from Stripe Dashboard here!
+        const paymentLink = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/test_6oEbK2eZf0M17726oo';
+        
+        window.location.href = `${paymentLink}?client_reference_id=${bookingId}`;
+    };
+
+    const handleWireSelection = async () => {
+        const bookingId = await ensureBookingRecord('wire');
+        if (bookingId) {
+            setPaymentMethod('wire');
+            setCheckoutStep('pay');
+        } else {
+            alert('Failed to initialize booking record for wire transfer.');
+        }
     };
 
     const handleBinancePayment = async (e?: React.FormEvent) => {
@@ -91,6 +152,14 @@ function ConfirmPayContent() {
         setIsBinancePayLoading(true);
         setBinancePayError(null);
         setBinanceCheckoutUrl(null);
+
+        const bookingId = await ensureBookingRecord('binance');
+        if (!bookingId) {
+            setBinancePayError('Failed to initialize secure booking record.');
+            setIsBinancePayLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch('/api/binance-pay', {
                 method: 'POST',
@@ -103,6 +172,7 @@ function ConfirmPayContent() {
                     travelerName,
                     fiatAmount: normalizedFiatAmount,
                     currency,
+                    bookingId, // Passing bookingId to link the transaction
                 }),
             });
 
@@ -253,8 +323,12 @@ function ConfirmPayContent() {
                                         <PaymentMethodSelector
                                             paymentMethod={paymentMethod}
                                             onMethodChange={(m) => {
-                                                setPaymentMethod(m);
-                                                setCheckoutStep('pay');
+                                                if (m === 'wire') {
+                                                    handleWireSelection();
+                                                } else {
+                                                    setPaymentMethod(m);
+                                                    setCheckoutStep('pay');
+                                                }
                                             }}
                                         />
 

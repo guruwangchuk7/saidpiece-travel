@@ -22,9 +22,38 @@ export default function BookingModal({ isOpen, onClose, tripName, tripPrice, tri
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setStep(2);
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    first_name: formData.firstName,
+                    email: formData.email,
+                    message: `Passengers: ${formData.passengers}\nMessage: ${formData.message}`.trim(),
+                    trip_name_fallback: tripName
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to send request');
+            }
+
+            setStep(2);
+        } catch (err: any) {
+            console.error('Booking request error:', err);
+            setError(err.message || 'Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -96,14 +125,23 @@ export default function BookingModal({ isOpen, onClose, tripName, tripPrice, tri
                                 <div className="form-group">
                                     <label>Message (Optional)</label>
                                     <textarea
-                                        rows={3}
-                                        placeholder="Special requests, dates, etc."
-                                        value={formData.message}
-                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    ></textarea>
-                                </div>
-                                <button type="submit" className="btn btn-primary full-width">SEND BOOKING REQUEST</button>
-                                <p className="form-footer-note">Secure & Private • No immediate payment required</p>
+                                         rows={3}
+                                         placeholder="Special requests, dates, etc."
+                                         value={formData.message}
+                                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                     ></textarea>
+                                 </div>
+                                 
+                                 {error && <p style={{ color: '#d32f2f', marginBottom: '15px', fontSize: '13px' }}>{error}</p>}
+                                 
+                                 <button 
+                                     type="submit" 
+                                     className="btn btn-primary full-width" 
+                                     disabled={isSubmitting}
+                                 >
+                                     {isSubmitting ? 'SENDING...' : 'SEND BOOKING REQUEST'}
+                                 </button>
+                                 <p className="form-footer-note">Secure & Private • No immediate payment required</p>
                             </form>
                         </div>
                     </div>

@@ -2,8 +2,9 @@ import { NextRequest } from 'next/server';
 import { getAddress, isAddress } from 'viem';
 import { getExplorerUrl, getCryptoPaymentConfig, fromTokenBaseUnits } from '@/lib/cryptoPayments';
 import { createSupabaseAdminClient, getAuthenticatedUser } from '@/lib/supabaseAdmin';
-import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
+import { enforceRateLimit, getClientIp, jsonNoStore, validateBodySize } from '@/lib/apiSecurity';
 import { getOnchainBookingConfig, isOnchainBookingConfigured, toBookingId, verifyBookingPaymentEvent } from '@/lib/onchainBooking';
+import { sendBookingConfirmationEmail, notifyAdminOfNewBooking } from '@/lib/notifications';
 
 import { z } from 'zod';
 
@@ -24,6 +25,9 @@ function getBearerToken(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!validateBodySize(request)) {
+      return jsonNoStore({ ok: false, error: 'Payload too large.' }, { status: 413 });
+    }
     const clientIp = getClientIp(request);
     const rateLimit = await enforceRateLimit({
       key: `crypto-verify:${clientIp}`,
@@ -200,6 +204,33 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       return jsonNoStore({ ok: false, error: updateError.message }, { status: 500 });
+    }
+
+    // 2. Update Central Booking Status
+    if (intent.booking_id) {
+        const { data: booking, error: bookingError } = await supabase
+            .from('bookings')
+            .update({ status: 'paid' })
+            .eq('id', intent.booking_id)
+            .select('*, trips(title)')
+            .single();
+        
+        if (booking) {
+            // 3. Trigger Notifications
+            await Promise.all([
+                sendBookingConfirmationEmail(
+                    booking.traveler_email, 
+                    booking.traveler_name, 
+                    booking.trips?.title || 'Your Trip', 
+                    booking.id
+                ),
+                notifyAdminOfNewBooking(
+                    booking.trips?.title || 'Your Trip', 
+                    booking.traveler_name, 
+                    booking.total_amount
+                )
+            ]);
+        }
     }
 
     return jsonNoStore({
