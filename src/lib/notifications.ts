@@ -35,7 +35,9 @@ export async function sendBookingConfirmationEmail(email: string, travelerName: 
 export async function notifyAdminOfNewBooking(tripName: string, travelerName: string, amount: number) {
   if (!process.env.RESEND_API_KEY) return;
 
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'saidpiece@gmail.com';
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL 
+    ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
+    : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
 
   try {
     await resend?.emails.send({
@@ -60,7 +62,9 @@ export async function notifyAdminOfNewBooking(tripName: string, travelerName: st
 export async function sendEnquiryNotificationEmail(first_name: string, email: string, message: string, trip_name: string) {
   if (!process.env.RESEND_API_KEY) return;
 
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'saidpiece@gmail.com';
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL 
+    ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
+    : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
 
   try {
     await resend?.emails.send({
