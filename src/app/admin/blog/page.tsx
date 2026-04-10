@@ -332,6 +332,18 @@ export default function BlogManager() {
                     padding-bottom: 30px;
                     border-bottom: 1px solid #eee;
                 }
+                @media (max-width: 768px) {
+                    .admin-page-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                        margin-bottom: 30px;
+                    }
+                    .btn-add-story {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
                 .subtitle {
                     color: #888;
                     font-size: 15px;
@@ -354,6 +366,11 @@ export default function BlogManager() {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
                     gap: 30px;
+                }
+                @media (max-width: 400px) {
+                    .blog-inventory-grid {
+                        grid-template-columns: 1fr;
+                    }
                 }
                 .inventory-card {
                     background: white;
@@ -447,12 +464,35 @@ export default function BlogManager() {
                     overflow-y: auto;
                     padding: 60px;
                 }
+                @media (max-width: 1024px) {
+                    .editor-overlay {
+                        padding: 40px;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .editor-overlay {
+                        padding: 100px 20px 40px;
+                    }
+                }
                 .blog-editor-form {
                     max-width: 1200px;
                     margin: 0 auto;
                     display: grid;
                     grid-template-columns: 350px 1fr;
                     gap: 80px;
+                }
+                @media (max-width: 1100px) {
+                    .blog-editor-form {
+                        gap: 40px;
+                        grid-template-columns: 280px 1fr;
+                    }
+                }
+                @media (max-width: 900px) {
+                    .blog-editor-form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 40px;
+                    }
                 }
                 .image-dropzone {
                     width: 100%;
@@ -500,6 +540,19 @@ export default function BlogManager() {
 
                 .editor-header h2 { font-size: 28px; margin: 0 0 40px; }
                 .editor-controls { display: flex; gap: 12px; position: fixed; top: 40px; right: 60px; }
+                @media (max-width: 768px) {
+                    .editor-header h2 { font-size: 24px; margin-bottom: 20px; }
+                    .editor-controls {
+                        position: static;
+                        width: 100%;
+                        justify-content: flex-end;
+                        margin-bottom: 30px;
+                    }
+                    .btn-cancel, .btn-save {
+                        padding: 10px 15px;
+                        font-size: 13px;
+                    }
+                }
                 .btn-cancel {
                     padding: 10px 25px;
                     border: 1px solid #ddd;
@@ -543,6 +596,11 @@ export default function BlogManager() {
                     background: none !important;
                     padding: 0 !important;
                     width: 100%;
+                }
+                @media (max-width: 640px) {
+                    .title-input {
+                        font-size: 24px !important;
+                    }
                 }
                 .form-item input, .form-item textarea {
                     width: 100%;

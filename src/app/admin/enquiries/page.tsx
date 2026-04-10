@@ -339,6 +339,33 @@ export default function EnquiryManager() {
                     height: calc(100vh - 250px);
                 }
 
+                @media (max-width: 1200px) {
+                    .dashboard-layout {
+                        gap: 30px;
+                        grid-template-columns: 280px 1fr;
+                    }
+                }
+
+                @media (max-width: 900px) {
+                    .dashboard-layout {
+                        display: flex;
+                        flex-direction: column;
+                        height: auto;
+                        gap: 40px;
+                    }
+                    .view-selector {
+                        max-height: 400px;
+                    }
+                    .admin-page-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                    }
+                    .staff-info {
+                        text-align: left;
+                    }
+                }
+
                 .view-selector {
                     display: flex;
                     flex-direction: column;
@@ -404,6 +431,16 @@ export default function EnquiryManager() {
                     padding: 50px;
                     overflow-y: auto;
                 }
+                @media (max-width: 640px) {
+                    .details-view {
+                        padding: 30px 20px;
+                    }
+                    .detail-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 15px;
+                    }
+                }
                 .architect-details { max-width: 800px; }
                 .detail-header {
                     display: flex;
@@ -464,6 +501,14 @@ export default function EnquiryManager() {
                 }
 
                 .btn-group { display: flex; gap: 12px; }
+                @media (max-width: 640px) {
+                    .btn-group {
+                        flex-direction: column;
+                    }
+                    .btn-accent, .btn-outline-dark {
+                        width: 100%;
+                    }
+                }
                 .btn-outline-dark {
                     padding: 12px 20px;
                     border: 1px solid #111;
@@ -520,6 +565,11 @@ export default function EnquiryManager() {
                 }
 
                 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+                @media (max-width: 640px) {
+                    .stats-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
                 .stat-card { padding: 25px; background: #fcfcfc; border: 1px solid #eee; border-radius: 12px; }
                 .stat-card label { display: block; font-size: 10px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; font-weight: 800; }
                 .stat-card .value { font-size: 20px; font-weight: 800; margin-bottom: 8px; }

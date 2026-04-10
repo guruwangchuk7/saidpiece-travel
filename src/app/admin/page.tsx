@@ -6,18 +6,19 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
 const Icons = {
-    Trips: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>,
-    Insights: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path></svg>,
-    Messages: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1-2-0 2-2z"></path></svg>,
-    Destinations: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>,
-    FAQ: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path></svg>,
-    Import: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>,
-    Settings: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path></svg>,
+    Trips: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>,
+    Insights: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path></svg>,
+    Messages: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v5"></path></svg>,
+    Destinations: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>,
+    FAQ: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path></svg>,
+    Sync: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>,
+    Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path></svg>
 };
 
-export default function PermanentMasterDashboard() {
+export default function ArchitectDashboard() {
     const { isStaff } = useAuth();
     const [counts, setCounts] = useState({ trips: 0, blog: 0, dests: 0, msgs: 0, faqs: 0 });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (isStaff) fetchCounts();
@@ -25,7 +26,7 @@ export default function PermanentMasterDashboard() {
 
     const fetchCounts = async () => {
         if (!supabase) return;
-        
+        setLoading(true);
         try {
             const [trips, blog, dests, enquiries, faqs] = await Promise.all([
                 supabase.from('trips').select('*', { count: 'exact', head: true }),
@@ -43,61 +44,245 @@ export default function PermanentMasterDashboard() {
                 faqs: faqs.count || 0
             });
         } catch (e) {
-            console.error('Failed to fetch dashboard counts:', e);
+            console.error('Failed to sync dashboard telemetry:', e);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const mainStats = [
-        { label: 'Trips & Packages', count: counts.trips, icon: Icons.Trips, href: '/admin/trips' },
-        { label: 'Insights (Blog)', count: counts.blog, icon: Icons.Insights, href: '/admin/blog' },
-        { label: 'Destinations', count: counts.dests, icon: Icons.Destinations, href: '/admin/destinations' },
-        { label: 'Travel FAQs', count: counts.faqs, icon: Icons.FAQ, href: '/admin/faq' },
-        { label: 'Messages', count: counts.msgs, icon: Icons.Messages, href: '/admin/enquiries' },
-    ];
-
-    const maintenanceModules = [
-        { label: 'Import Content', icon: Icons.Import, href: '/admin/import', sub: 'Recovery Bridge' },
-        { label: 'Site Settings', icon: Icons.Settings, href: '/admin/settings', sub: 'Global Meta Info' },
+    const modules = [
+        { label: 'Trips & Packages', count: counts.trips, icon: Icons.Trips, href: '/admin/trips', cat: 'Inventory' },
+        { label: 'Travel Insights', count: counts.blog, icon: Icons.Insights, href: '/admin/blog', cat: 'Publications' },
+        { label: 'Region Manager', count: counts.dests, icon: Icons.Destinations, href: '/admin/destinations', cat: 'Geography' },
+        { label: 'Knowledge Base', count: counts.faqs, icon: Icons.FAQ, href: '/admin/faq', cat: 'FAQS' },
+        { label: 'Enquiry Center', count: counts.msgs, icon: Icons.Messages, href: '/admin/enquiries', cat: 'Communication' },
     ];
 
     return (
-        <div style={{ maxWidth: '1200px' }}>
-            <div style={{ marginBottom: '60px' }}>
-                <h1 style={{ fontSize: '42px', fontWeight: '900', letterSpacing: '-0.5px', marginBottom: '10px', textTransform: 'uppercase' }}>Saidpiece Admin</h1>
-                <p style={{ fontSize: '18px', color: '#888', fontWeight: '400' }}>Full Architectural CMS Management Hub.</p>
-            </div>
+        <div className="admin-dashboard-container">
+            <header className="admin-page-header">
+                <div className="header-titles">
+                    <h1 className="serif-title">Saidpiece Architect</h1>
+                    <p className="subtitle">Central command for Bhutanese travel infrastructure.</p>
+                </div>
+                <button className="btn-sync" onClick={fetchCounts}>
+                    <Icons.Sync />
+                    <span>Sync Repository</span>
+                </button>
+            </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '25px', marginBottom: '80px' }}>
-                {mainStats.map((stat, i) => (
-                    <Link key={i} href={stat.href} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div className="card" style={{ padding: '30px', background: 'white', border: '1px solid #eaeaea', borderRadius: '12px', cursor: 'pointer' }}>
-                            <div style={{ width: '45px', height: '45px', borderRadius: '4px', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '25px' }}>
-                                <stat.icon />
-                            </div>
-                            <div style={{ fontSize: '38px', fontWeight: '900', marginBottom: '5px' }}>{stat.count}</div>
-                            <div style={{ fontSize: '10px', fontWeight: '800', color: '#999', textTransform: 'uppercase', letterSpacing: '1.5px' }}>{stat.label}</div>
+            <div className="dashboard-grid">
+                {modules.map((mod, i) => (
+                    <Link key={i} href={mod.href} className="dash-card">
+                        <div className="card-header">
+                            <span className="category-tag">{mod.cat}</span>
+                            <div className="icon-badge"><mod.icon /></div>
+                        </div>
+                        <div className="card-body">
+                            <h3 className="card-stat">{loading ? '...' : mod.count}</h3>
+                            <p className="card-label">{mod.label}</p>
+                        </div>
+                        <div className="card-footer">
+                            <span>Manage Module</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </Link>
                 ))}
+
+                <Link href="/admin/import" className="dash-card maintenance-card">
+                    <div className="card-header">
+                        <span className="category-tag">System</span>
+                        <div className="icon-badge dark"><Icons.Sync /></div>
+                    </div>
+                    <div className="card-body">
+                        <h3 className="card-title">Sync Manager</h3>
+                        <p className="card-description">Reconcile local cache with master repository.</p>
+                    </div>
+                    <div className="card-footer">
+                        <span>Initialize Recovery</span>
+                        <div className="status-dot"></div>
+                    </div>
+                </Link>
+
+                <Link href="/admin/settings" className="dash-card maintenance-card">
+                    <div className="card-header">
+                        <span className="category-tag">Identity</span>
+                        <div className="icon-badge dark"><Icons.Settings /></div>
+                    </div>
+                    <div className="card-body">
+                        <h3 className="card-title">Site Settings</h3>
+                        <p className="card-description">Manage global variables and brand identity.</p>
+                    </div>
+                    <div className="card-footer">
+                        <span>Edit Configuration</span>
+                        <div className="status-dot"></div>
+                    </div>
+                </Link>
             </div>
 
-            <div style={{ marginBottom: '40px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', color: '#333', marginBottom: '30px' }}>Maintenance & Infrastructure</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '25px' }}>
-                    {maintenanceModules.map((item, i) => (
-                        <Link key={i} href={item.href} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <div className="card" style={{ padding: '30px', background: '#1a1a1a', border: '1px solid #1a1a1a', borderRadius: '12px', cursor: 'pointer', color: 'white' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '5px' }}>
-                                    <item.icon />
-                                    <div style={{ fontSize: '16px', fontWeight: '900', textTransform: 'uppercase' }}>{item.label}</div>
-                                </div>
-                                <div style={{ fontSize: '11px', color: '#888', marginLeft: '35px' }}>{item.sub}</div>
-                                <div style={{ marginTop: '20px', fontSize: '10px', color: '#00ff00', marginLeft: '35px', fontWeight: '800' }}>● READY</div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+            <style jsx>{`
+                .admin-dashboard-container {
+                    padding: 40px 0;
+                }
+                .admin-page-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-bottom: 50px;
+                    padding-bottom: 30px;
+                    border-bottom: 1px solid #eee;
+                }
+                @media (max-width: 768px) {
+                    .admin-page-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                    }
+                    .btn-sync {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
+                .admin-page-header h1 {
+                    font-size: 32px;
+                    margin: 0;
+                }
+                .subtitle {
+                    color: #888;
+                    font-size: 15px;
+                    margin-top: 5px;
+                }
+                .btn-sync {
+                    background: white;
+                    border: 1px solid #eee;
+                    padding: 10px 20px;
+                    border-radius: 6px;
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    color: #666;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-sync:hover {
+                    border-color: #111;
+                    color: #111;
+                }
+
+                .dashboard-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                    gap: 25px;
+                }
+                @media (max-width: 400px) {
+                    .dashboard-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+
+                .dash-card {
+                    background: white;
+                    border: 1px solid #eee;
+                    border-radius: 12px;
+                    display: flex;
+                    flex-direction: column;
+                    text-decoration: none;
+                    color: inherit;
+                    transition: all 0.3s ease;
+                }
+                .dash-card:hover {
+                    border-color: #d4c8b0;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+                    transform: translateY(-2px);
+                }
+                .card-header {
+                    padding: 20px 25px 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .category-tag {
+                    font-size: 9px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    background: #f9f9f9;
+                    color: #999;
+                    padding: 3px 8px;
+                    border-radius: 4px;
+                }
+                .icon-badge {
+                    width: 36px;
+                    height: 36px;
+                    background: #fdfcf9;
+                    border: 1px solid #f5f2eb;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #d4c8b0;
+                }
+                .icon-badge.dark {
+                    background: #1a1a1a;
+                    color: #d4c8b0;
+                    border-color: #1a1a1a;
+                }
+                .card-body {
+                    padding: 20px 25px 30px;
+                    flex-grow: 1;
+                }
+                .card-stat {
+                    font-family: var(--font-playfair), serif;
+                    font-size: 42px;
+                    margin: 0 0 5px;
+                    font-weight: 800;
+                }
+                .card-label {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: #111;
+                    margin: 0;
+                }
+                .card-title {
+                    font-family: var(--font-playfair), serif;
+                    font-size: 20px;
+                    margin: 0 0 10px;
+                }
+                .card-description {
+                    font-size: 13px;
+                    color: #888;
+                    margin: 0;
+                    line-height: 1.5;
+                }
+                .card-footer {
+                    padding: 15px 25px;
+                    border-top: 1px solid #f9f9f9;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    color: #bbb;
+                    transition: color 0.2s;
+                }
+                .dash-card:hover .card-footer {
+                    color: #d4c8b0;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    background: #52c41a;
+                    border-radius: 50%;
+                }
+                .maintenance-card {
+                    background: #fdfcf9;
+                    border-style: dashed;
+                }
+            `}</style>
         </div>
     );
 }

@@ -204,12 +204,22 @@ export default function FAQSyncUpgrade() {
                     font-size: 16px;
                     margin-top: 5px;
                 }
+                @media (max-width: 768px) {
+                    .serif-title { font-size: 28px; }
+                    .admin-page-header { margin-bottom: 30px; }
+                }
 
                 .status-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                     gap: 20px;
                     margin-bottom: 40px;
+                }
+                @media (max-width: 480px) {
+                    .status-grid {
+                        grid-template-columns: 1fr;
+                        gap: 12px;
+                    }
                 }
                 .status-card {
                     background: white;
@@ -337,6 +347,17 @@ export default function FAQSyncUpgrade() {
                     gap: 12px;
                     margin: 0 auto 20px;
                     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+                @media (max-width: 640px) {
+                    .console-body {
+                        height: 350px;
+                        font-size: 12px;
+                        padding: 15px;
+                    }
+                    .btn-sync {
+                        padding: 14px 20px;
+                        font-size: 13px;
+                    }
                 }
                 .btn-sync:hover:not(:disabled) {
                     background: #000;

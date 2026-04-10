@@ -387,6 +387,21 @@ export default function TripManager() {
                     padding-bottom: 30px;
                     border-bottom: 1px solid #eee;
                 }
+                @media (max-width: 768px) {
+                    .admin-page-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                        margin-bottom: 30px;
+                    }
+                    .admin-page-header h1 {
+                        font-size: 26px;
+                    }
+                    .btn-add-trip {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
                 .subtitle {
                     color: #888;
                     font-size: 15px;
@@ -415,6 +430,11 @@ export default function TripManager() {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
                     gap: 30px;
+                }
+                @media (max-width: 400px) {
+                    .trips-inventory-grid {
+                        grid-template-columns: 1fr;
+                    }
                 }
                 .inventory-card {
                     background: white;
@@ -539,12 +559,38 @@ export default function TripManager() {
                     overflow-y: auto;
                     padding: 60px;
                 }
+                @media (max-width: 1024px) {
+                    .editor-overlay {
+                        padding: 40px;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .editor-overlay {
+                        padding: 80px 20px 40px;
+                    }
+                }
                 .trip-editor-form {
                     max-width: 1300px;
                     margin: 0 auto;
                     display: grid;
                     grid-template-columns: 380px 1fr;
                     gap: 80px;
+                }
+                @media (max-width: 1200px) {
+                    .trip-editor-form {
+                        gap: 40px;
+                        grid-template-columns: 300px 1fr;
+                    }
+                }
+                @media (max-width: 900px) {
+                    .trip-editor-form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 40px;
+                    }
+                    .editor-sidebar {
+                        position: static;
+                    }
                 }
                 .editor-sidebar {
                     position: sticky;
@@ -636,6 +682,22 @@ export default function TripManager() {
                     align-items: center;
                     margin-bottom: 60px;
                 }
+                @media (max-width: 640px) {
+                    .editor-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                        margin-bottom: 40px;
+                    }
+                    .editor-controls {
+                        width: 100%;
+                    }
+                    .btn-cancel, .btn-save {
+                        flex: 1;
+                        padding: 12px 15px;
+                        font-size: 13px;
+                    }
+                }
                 .editor-controls { display: flex; gap: 15px; }
                 .btn-cancel {
                     background: none;
@@ -666,6 +728,18 @@ export default function TripManager() {
                 }
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
                 .form-item.span-full { grid-column: span 2; }
+                @media (max-width: 640px) {
+                    .form-grid {
+                        grid-template-columns: 1fr;
+                        gap: 20px;
+                    }
+                    .form-item.span-full {
+                        grid-column: span 1;
+                    }
+                    .form-sections {
+                        gap: 40px;
+                    }
+                }
                 .form-item label {
                     display: block;
                     font-size: 13px;
