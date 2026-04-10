@@ -58,15 +58,15 @@ export default function SettingsManager() {
                     {updating === key && <span className="sync-status">Syncing...</span>}
                 </div>
                 {isTextarea ? (
-                    <textarea 
-                        defaultValue={setting.value} 
+                    <textarea
+                        defaultValue={setting.value}
                         onBlur={(e) => handleUpdate(key, e.target.value)}
                         rows={4}
                     />
                 ) : (
-                    <input 
-                        type="text" 
-                        defaultValue={setting.value} 
+                    <input
+                        type="text"
+                        defaultValue={setting.value}
                         onBlur={(e) => handleUpdate(key, e.target.value)}
                     />
                 )}

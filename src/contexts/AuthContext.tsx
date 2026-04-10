@@ -84,15 +84,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setLoading(false);
         };
 
-        // Initial session check
-        client.auth.getSession().then(({ data: { session: initialSession } }) => {
-            updateAuthState(initialSession);
-        });
+        // Initial session check with robust error handling
+        client.auth.getSession()
+            .then(({ data: { session: initialSession }, error }) => {
+                if (error) {
+                    console.error('[AuthProvider] Initial session error:', error.message);
+                    // If refresh token is missing, we should explicitly sign out to clear stale cookies
+                    if (error.message.includes('Refresh Token Not Found') || error.status === 400) {
+                        client.auth.signOut();
+                    }
+                    updateAuthState(null);
+                } else {
+                    updateAuthState(initialSession);
+                }
+            })
+            .catch(err => {
+                console.error('[AuthProvider] Critical error during session fetch:', err);
+                updateAuthState(null);
+            });
 
         // Listen for changes
         const { data: { subscription } } = client.auth.onAuthStateChange(async (_event, newSession) => {
             console.log(`[AuthProvider] Auth state change event: ${_event}`);
-            updateAuthState(newSession);
+            
+            // Handle cases where the session might be invalid leading to Refresh Token errors
+            try {
+                await updateAuthState(newSession);
+            } catch (authError) {
+                console.error('[AuthProvider] Error updating auth state on change:', authError);
+                setLoading(false);
+            }
         });
 
         return () => {

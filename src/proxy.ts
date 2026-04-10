@@ -1,6 +1,7 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// In Next.js 16 (Turbopack), the "proxy" file convention replaces middleware
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -14,61 +15,39 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
+        getAll() {
+          return request.cookies.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set({ name, value, ...options }))
           response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
+            request,
           })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
         },
       },
     }
   )
 
-  // 2. Protect Admin Routes
-  const isExcluded = request.nextUrl.pathname.includes('.') || 
-                     request.nextUrl.pathname.startsWith('/_next/') ||
-                     request.nextUrl.pathname.startsWith('/api/') ||
-                     request.nextUrl.pathname === '/admin/login'
+  // 2. Refresh the session (Prevents "Refresh Token Not Found" errors)
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (request.nextUrl.pathname.startsWith('/admin') && !isExcluded) {
-    const { data: { user } } = await supabase.auth.getUser()
+  // 3. Protect Admin Routes
+  const pathname = request.nextUrl.pathname
+  const isExcluded = pathname.includes('.') || 
+                     pathname.startsWith('/_next/') ||
+                     pathname.startsWith('/api/') ||
+                     pathname === '/admin/login' ||
+                     pathname === '/auth/callback'
 
+  if (pathname.startsWith('/admin') && !isExcluded) {
     if (!user) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
-    // Role check: Only staff and admin can access /admin paths
+    // Role check
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -76,8 +55,7 @@ export async function proxy(request: NextRequest) {
       .single()
 
     if (!profile || !['staff', 'admin'].includes(profile.role)) {
-       // Also check the bypass list if the user was just added and DB is laggy
-       const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com')
+       const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
          .split(',')
          .map(e => e.trim().toLowerCase());
        
@@ -90,8 +68,9 @@ export async function proxy(request: NextRequest) {
   return response
 }
 
+// Next.js 16 Proxy Config
 export const config = {
   matcher: [
-    '/admin/:path*',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
