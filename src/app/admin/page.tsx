@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
-const Icons = {
-    Trips: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>,
-    Insights: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path></svg>,
-    Messages: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v5"></path></svg>,
-    Destinations: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>,
-    FAQ: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path></svg>,
-    Sync: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>,
-    Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path></svg>
-};
+const TripIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>;
+const InsightsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path></svg>;
+const MessagesIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v5"></path></svg>;
+const DestinationsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>;
+const FAQIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path></svg>;
+const SyncIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>;
+const SettingsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path></svg>;
 
 export default function ArchitectDashboard() {
     const { isStaff } = useAuth();
@@ -51,11 +49,11 @@ export default function ArchitectDashboard() {
     };
 
     const modules = [
-        { label: 'Trips & Packages', count: counts.trips, icon: Icons.Trips, href: '/admin/trips', cat: 'Inventory' },
-        { label: 'Travel Insights', count: counts.blog, icon: Icons.Insights, href: '/admin/blog', cat: 'Publications' },
-        { label: 'Region Manager', count: counts.dests, icon: Icons.Destinations, href: '/admin/destinations', cat: 'Geography' },
-        { label: 'Knowledge Base', count: counts.faqs, icon: Icons.FAQ, href: '/admin/faq', cat: 'FAQS' },
-        { label: 'Enquiry Center', count: counts.msgs, icon: Icons.Messages, href: '/admin/enquiries', cat: 'Communication' },
+        { label: 'Trips & Packages', count: counts.trips, icon: TripIcon, href: '/admin/trips', cat: 'Inventory' },
+        { label: 'Travel Insights', count: counts.blog, icon: InsightsIcon, href: '/admin/blog', cat: 'Publications' },
+        { label: 'Region Manager', count: counts.dests, icon: DestinationsIcon, href: '/admin/destinations', cat: 'Geography' },
+        { label: 'Knowledge Base', count: counts.faqs, icon: FAQIcon, href: '/admin/faq', cat: 'FAQS' },
+        { label: 'Enquiry Center', count: counts.msgs, icon: MessagesIcon, href: '/admin/enquiries', cat: 'Communication' },
     ];
 
     return (
@@ -66,7 +64,7 @@ export default function ArchitectDashboard() {
                     <p className="subtitle">Central command for Bhutanese travel infrastructure.</p>
                 </div>
                 <button className="btn-sync" onClick={fetchCounts}>
-                    <Icons.Sync />
+                    <SyncIcon />
                     <span>Sync Repository</span>
                 </button>
             </header>
@@ -92,7 +90,7 @@ export default function ArchitectDashboard() {
                 <Link href="/admin/import" className="dash-card maintenance-card">
                     <div className="card-header">
                         <span className="category-tag">System</span>
-                        <div className="icon-badge dark"><Icons.Sync /></div>
+                        <div className="icon-badge dark"><SyncIcon /></div>
                     </div>
                     <div className="card-body">
                         <h3 className="card-title">Sync Manager</h3>
@@ -107,7 +105,7 @@ export default function ArchitectDashboard() {
                 <Link href="/admin/settings" className="dash-card maintenance-card">
                     <div className="card-header">
                         <span className="category-tag">Identity</span>
-                        <div className="icon-badge dark"><Icons.Settings /></div>
+                        <div className="icon-badge dark"><SettingsIcon /></div>
                     </div>
                     <div className="card-body">
                         <h3 className="card-title">Site Settings</h3>
@@ -185,24 +183,26 @@ export default function ArchitectDashboard() {
 
                 .dash-card {
                     background: white;
-                    border: 1px solid #eee;
+                    border: 1.5px solid #dcd8cd;
                     border-radius: 12px;
                     display: flex;
                     flex-direction: column;
                     text-decoration: none;
                     color: inherit;
                     transition: all 0.3s ease;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
                 }
                 .dash-card:hover {
                     border-color: #d4c8b0;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-                    transform: translateY(-2px);
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+                    transform: translateY(-4px);
                 }
                 .card-header {
-                    padding: 20px 25px 0;
+                    padding: 20px 25px 15px;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    border-bottom: 1px solid #f7f5f0;
                 }
                 .category-tag {
                     font-size: 9px;
@@ -259,7 +259,7 @@ export default function ArchitectDashboard() {
                 }
                 .card-footer {
                     padding: 15px 25px;
-                    border-top: 1px solid #f9f9f9;
+                    border-top: 1px solid #f7f5f0;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;

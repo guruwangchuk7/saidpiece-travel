@@ -27,21 +27,6 @@ export default function EnquiryManager() {
     const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
     const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState(true);
-    const [authChecking, setAuthChecking] = useState(true);
-
-    useEffect(() => {
-        // Give the global AuthContext a moment to resolve the session
-        const timer = setTimeout(() => {
-            setAuthChecking(false);
-        }, 800);
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        if (!authChecking && !isStaff) {
-            router.push('/admin/login');
-        }
-    }, [authChecking, isStaff, router]);
 
     useEffect(() => {
         if (isStaff && supabase) {
@@ -124,7 +109,7 @@ export default function EnquiryManager() {
         }
     };
 
-    if (authChecking || (isStaff && isFetching)) {
+    if (isStaff && isFetching) {
         return (
             <div className="admin-loader">
                 <div className="spinner"></div>

@@ -47,21 +47,24 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
-    // Role check
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+    // Role check - Optimized
+    const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
+    
+    const isEmailStaff = staffEmails.includes(user.email?.toLowerCase() || '');
+    
+    // If they aren't in the email list, we do a single database check
+    if (!isEmailStaff) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
 
-    if (!profile || !['staff', 'admin'].includes(profile.role)) {
-       const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
-         .split(',')
-         .map(e => e.trim().toLowerCase());
-       
-       if (!staffEmails.includes(user.email?.toLowerCase() || '')) {
-         return NextResponse.redirect(new URL('/', request.url))
-       }
+      if (!profile || !['staff', 'admin', 'moderator', 'editor'].includes(profile.role)) {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
     }
   }
 
