@@ -2,24 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function EnquiryManager() {
-    const { user, loading, isStaff, signOut, signInWithGoogle } = useAuth();
-    const router = useRouter();
+interface Enquiry {
+    id: string;
+    firstName: string;
+    email: string;
+    trip: string;
+    date: string;
+    status: string;
+    message: string;
+    description?: string;
+}
 
-    interface Enquiry {
-        id: string;
-        firstName: string;
-        email: string;
-        trip: string;
-        date: string;
-        status: string;
-        message: string;
-    }
+export default function EnquiryManager() {
+    const { user, isStaff, signOut, signInWithGoogle } = useAuth();
+    const router = useRouter();
 
     const [view, setView] = useState<'enquiries' | 'bookings'>('enquiries');
     const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -28,12 +27,21 @@ export default function EnquiryManager() {
     const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
     const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState(true);
+    const [authChecking, setAuthChecking] = useState(true);
 
     useEffect(() => {
-        if (!loading && !isStaff) {
+        // Give the global AuthContext a moment to resolve the session
+        const timer = setTimeout(() => {
+            setAuthChecking(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        if (!authChecking && !isStaff) {
             router.push('/admin/login');
         }
-    }, [loading, isStaff, router]);
+    }, [authChecking, isStaff, router]);
 
     useEffect(() => {
         if (isStaff && supabase) {
@@ -64,6 +72,7 @@ export default function EnquiryManager() {
                     message: item.message || ''
                 }));
                 setEnquiries(mapped);
+                if (mapped.length > 0 && !selectedEnquiry) setSelectedEnquiry(mapped[0]);
             }
         } catch (err) {
             console.error('Error fetching enquiries:', err);
@@ -83,6 +92,7 @@ export default function EnquiryManager() {
 
             if (error) throw error;
             setBookings(data || []);
+            if (data && data.length > 0 && !selectedBooking) setSelectedBooking(data[0]);
         } catch (err) {
             console.error('Error fetching bookings:', err);
         } finally {
@@ -91,16 +101,11 @@ export default function EnquiryManager() {
     };
 
     const handleSendEmail = async (templateName: string) => {
-        if (!selectedEnquiry || !supabase) {
-            return;
-        }
+        if (!selectedEnquiry || !supabase) return;
 
         let newStatus = selectedEnquiry.status;
-        if (templateName === 'Proposal') {
-            newStatus = 'proposed';
-        } else if (templateName === 'Confirm & Pay') {
-            newStatus = 'awaiting_payment';
-        }
+        if (templateName === 'Proposal') newStatus = 'proposed';
+        else if (templateName === 'Confirm & Pay') newStatus = 'awaiting_payment';
 
         try {
             const { error } = await supabase
@@ -110,204 +115,448 @@ export default function EnquiryManager() {
 
             if (error) throw error;
 
-            alert(`Email sent to ${selectedEnquiry.firstName} using "${templateName}" template.\nStatus updated to: ${newStatus}`);
-            
+            alert(`Status updated for ${selectedEnquiry.firstName} to: ${newStatus}`);
             setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: newStatus } : e));
             setSelectedEnquiry(prev => prev ? { ...prev, status: newStatus } : null);
             setActiveTemplate(null);
         } catch (err) {
             console.error('Error updating status:', err);
-            alert('Failed to update status in database.');
         }
     };
 
-    const handleSignOut = async () => {
-        await signOut();
-        router.push('/admin/login');
-    };
-
-    if (loading || (isStaff && isFetching)) {
-        return <div style={{ padding: '100px', textAlign: 'center' }}>Verifying Staff Access & Loading Data...</div>;
-    }
-
-    if (!isStaff) {
+    if (authChecking || (isStaff && isFetching)) {
         return (
-            <div style={{ padding: '100px', textAlign: 'center' }}>
-                <h2 className="serif-title">Access Denied</h2>
-                <p>You are not authorized to access this dashboard. Please log in with a staff Gmail account.</p>
-                <button className="btn btn-primary" style={{ marginTop: '20px' }} onClick={() => signInWithGoogle('/admin/enquiries')}>Sign in with Staff Gmail</button>
+            <div className="admin-loader">
+                <div className="spinner"></div>
+                <p>Establishing Staff Connection...</p>
             </div>
         );
     }
 
+    if (!isStaff) return null;
+
     return (
-        <main className="admin-page page-with-header">
-            <Header theme="light" />
-            <div className="container" style={{ padding: '120px 20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h1 className="serif-title" style={{ margin: 0 }}>Management Dashboard</h1>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <span style={{ fontSize: '14px', color: '#666' }}>Logged in as: <strong>{user?.email}</strong></span>
-                        <button className="btn btn-outline" style={{ padding: '8px 20px' }} onClick={handleSignOut}>Logout</button>
+        <div className="dashboard-container">
+            <header className="admin-page-header">
+                <div className="header-titles">
+                    <h1 className="serif-title">Command Center</h1>
+                    <p className="subtitle">Liaison and management of traveler journeys.</p>
+                </div>
+                <div className="staff-profile">
+                    <div className="staff-info">
+                        <span className="role-tag">Staff Access</span>
+                        <span className="email">{user?.email}</span>
                     </div>
                 </div>
+            </header>
 
-                <div className="view-toggle" style={{ display: 'flex', gap: '10px', marginBottom: '40px' }}>
-                    <button 
-                        className={`btn ${view === 'enquiries' ? 'btn-primary' : 'btn-outline'}`} 
-                        onClick={() => setView('enquiries')}
-                    >
-                        Leads / Enquiries
-                    </button>
-                    <button 
-                        className={`btn ${view === 'bookings' ? 'btn-primary' : 'btn-outline'}`} 
-                        onClick={() => setView('bookings')}
-                    >
-                        Confirmed Bookings
-                    </button>
-                </div>
+            <div className="dashboard-layout">
+                <aside className="view-selector">
+                    <div className="switcher">
+                        <button className={view === 'enquiries' ? 'active' : ''} onClick={() => setView('enquiries')}>
+                            Incoming Leads
+                            <span className="count">{enquiries.length}</span>
+                        </button>
+                        <button className={view === 'bookings' ? 'active' : ''} onClick={() => setView('bookings')}>
+                            Active Bookings
+                            <span className="count">{bookings.length}</span>
+                        </button>
+                    </div>
 
-                <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '40px' }}>
-                    {/* List */}
-                    <aside className="enquiry-list" style={{ borderRight: '1px solid #eee', overflowY: 'auto', maxHeight: '70vh', paddingRight: '10px' }}>
-                        <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>{view === 'enquiries' ? 'Recent Enquiries' : 'Finalized Bookings'}</h3>
-                        
+                    <div className="item-list">
                         {view === 'enquiries' ? (
-                            enquiries.length === 0 ? <p>None found.</p> : enquiries.map(enq => (
-                                <div key={enq.id} className={`enq-item ${selectedEnquiry?.id === enq.id ? 'active' : ''}`} onClick={() => setSelectedEnquiry(enq)} style={{ padding: '15px', borderBottom: '1px solid #f0f0f0', cursor: 'pointer', background: selectedEnquiry?.id === enq.id ? '#f0fafa' : 'transparent', borderRadius: '8px', marginBottom: '10px' }}>
-                                    <div style={{ fontWeight: 600 }}>{enq.firstName}</div>
-                                    <div style={{ fontSize: '12px', color: '#666' }}>{enq.trip} • <span style={{ color: enq.status === 'new' ? '#d32f2f' : '#666' }}>{enq.status.toUpperCase()}</span></div>
+                            enquiries.map(enq => (
+                                <div key={enq.id} className={`list-item ${selectedEnquiry?.id === enq.id ? 'active' : ''}`} onClick={() => setSelectedEnquiry(enq)}>
+                                    <div className="item-main">
+                                        <span className="name">{enq.firstName}</span>
+                                        <span className="date">{enq.date}</span>
+                                    </div>
+                                    <div className="item-meta">
+                                        <span className="trip-tag">{enq.trip}</span>
+                                        <span className={`status-dot ${enq.status}`}></span>
+                                    </div>
                                 </div>
                             ))
                         ) : (
-                            bookings.length === 0 ? <p>No bookings yet.</p> : bookings.map(bk => (
-                                <div key={bk.id} className={`enq-item ${selectedBooking?.id === bk.id ? 'active' : ''}`} onClick={() => setSelectedBooking(bk)} style={{ padding: '15px', borderBottom: '1px solid #f0f0f0', cursor: 'pointer', background: selectedBooking?.id === bk.id ? '#f0fafa' : 'transparent', borderRadius: '8px', marginBottom: '10px' }}>
-                                    <div style={{ fontWeight: 600 }}>{bk.traveler_name}</div>
-                                    <div style={{ fontSize: '12px', color: '#666' }}>{bk.trips?.title} • <span style={{ color: bk.status === 'paid' ? '#008080' : '#666' }}>{bk.status.toUpperCase()}</span></div>
+                            bookings.map(bk => (
+                                <div key={bk.id} className={`list-item ${selectedBooking?.id === bk.id ? 'active' : ''}`} onClick={() => setSelectedBooking(bk)}>
+                                    <div className="item-main">
+                                        <span className="name">{bk.traveler_name}</span>
+                                        <span className="date">{new Date(bk.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="item-meta">
+                                        <span className="trip-tag">{bk.trips?.title}</span>
+                                        <span className={`status-dot ${bk.status}`}></span>
+                                    </div>
                                 </div>
                             ))
                         )}
-                    </aside>
+                    </div>
+                </aside>
 
-                    {/* Details */}
-                    <section className="enquiry-details">
-                        {view === 'enquiries' ? (
-                            selectedEnquiry ? (
-                                <div className="details-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <main className="details-view">
+                    {view === 'enquiries' ? (
+                        selectedEnquiry ? (
+                            <div className="architect-details">
+                                <div className="detail-header">
+                                    <div className="id-card">
+                                        <div className="initials">{selectedEnquiry.firstName[0]}</div>
                                         <div>
-                                            <h2>{selectedEnquiry.firstName}&apos;s Request</h2>
-                                            <p style={{ fontSize: '13px', color: '#666' }}>{selectedEnquiry.email} | Received: {selectedEnquiry.date}</p>
+                                            <h2>{selectedEnquiry.firstName}</h2>
+                                            <p>{selectedEnquiry.email}</p>
                                         </div>
-                                        <div style={{ padding: '5px 15px', borderRadius: '20px', background: '#008080', color: 'white', fontSize: '12px', height: 'fit-content' }}>{selectedEnquiry.status.toUpperCase()}</div>
                                     </div>
-                                    <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '8px', marginBottom: '30px', borderLeft: '4px solid #008080' }}>
-                                        <h4 style={{ fontSize: '11px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Customer Message:</h4>
-                                        <div style={{ whiteSpace: 'pre-wrap' }}>{selectedEnquiry.message}</div>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-                                        <button className="btn btn-outline" onClick={() => setActiveTemplate('Enquiry Received')}>1. Auto-Reply</button>
-                                        <button className="btn btn-outline" onClick={() => setActiveTemplate('Proposal')}>2. Send Proposal</button>
-                                        <button className="btn btn-primary" onClick={() => setActiveTemplate('Confirm & Pay')}>3. Confirm & Pay</button>
-                                    </div>
+                                    <span className={`status-pill ${selectedEnquiry.status}`}>{selectedEnquiry.status.replace(/_/g, ' ')}</span>
+                                </div>
 
-                                    {activeTemplate && (
-                                        <div className="email-preview-box" style={{ background: '#fdfcf9', padding: '30px', borderRadius: '12px', border: '1px solid #d4c8b0' }}>
-                                            <div style={{ marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
-                                                <strong>Subject:</strong> {
-                                                    activeTemplate === 'Enquiry Received' ? 'We’ve received your Bhutan travel enquiry' :
-                                                        activeTemplate === 'Proposal' ? 'Your Bhutan Journey Proposal with Saidpiece Travelers' : 'Confirm & Secure Your Bhutan Journey'
-                                                }
+                                <div className="narrative-section">
+                                    <h4>Traveler Message</h4>
+                                    <div className="message-content">
+                                        {selectedEnquiry.message || 'No additional notes provided.'}
+                                    </div>
+                                </div>
+
+                                <div className="action-hub">
+                                    <h4>Workflow Actions</h4>
+                                    <div className="btn-group">
+                                        <button className="btn-outline-dark" onClick={() => setActiveTemplate('Enquiry Received')}>Generate Acknowledgement</button>
+                                        <button className="btn-outline-dark" onClick={() => setActiveTemplate('Proposal')}>Draft Proposal</button>
+                                        <button className="btn-accent" onClick={() => setActiveTemplate('Confirm & Pay')}>Prepare Secure Payment</button>
+                                    </div>
+                                </div>
+
+                                {activeTemplate && (
+                                    <div className="template-architect">
+                                        <div className="architect-header">
+                                            <span>Document Template: <strong>{activeTemplate}</strong></span>
+                                            <button className="btn-close" onClick={() => setActiveTemplate(null)}>×</button>
+                                        </div>
+                                        <div className="architect-content">
+                                            <div className="preview-subject">
+                                                <strong>Subject:</strong> {activeTemplate === 'Confirm & Pay' ? 'Confirm & Secure Your Bhutan Journey' : 'Your Bhutan Travel Inquiry'}
                                             </div>
-                                            <div className="email-body" style={{ whiteSpace: 'pre-wrap', fontFamily: 'serif', fontSize: '15px', lineHeight: '1.6', color: '#333' }}>
+                                            <div className="preview-body">
                                                 Dear {selectedEnquiry.firstName},<br /><br />
-
-                                                {activeTemplate === 'Enquiry Received' && (
-                                                    <>
-                                                        Thank you for reaching out to Saidpiece Travelers and for your interest in travelling to Bhutan with us. <br /><br />
-                                                        We’ve received your enquiry successfully. <br /><br />
-                                                        <strong>What happens next</strong><br />
-                                                        Over the next 24–48 hours, our team will carefully review the details you shared and prepare:<br />
-                                                        • A draft itinerary tailored to your travel interests and pace<br />
-                                                        • A curated selection of hotel options (standard / luxury / ultra-luxury, where applicable)<br />
-                                                        • A clear cost breakdown, including government fees and visa requirements<br /><br />
-                                                        Bhutan travel is thoughtfully planned and regulated, which is why we design each journey personally rather than offering instant bookings. This ensures your experience is seamless, meaningful, and well-supported from start to finish.<br /><br />
-                                                        If you have any additional preferences, you’d like us to consider—such as travel pace, accommodation style, or special occasions—you’re welcome to reply to this email.
-                                                    </>
-                                                )}
-
-                                                {activeTemplate === 'Proposal' && (
-                                                    <>
-                                                        Thank you for your patience, and for sharing your travel plans with us.<br /><br />
-                                                        Based on the details you provided, we’ve prepared a draft proposal for your journey to Bhutan, designed around your interests, travel pace, and the time you have available.<br /><br />
-                                                        <strong>What we’ve prepared for you</strong><br />
-                                                        Attached to this email, you’ll find:<br />
-                                                        • A proposed itinerary, outlining the flow of your journey day by day<br />
-                                                        • A curated selection of accommodation options (by comfort level, where applicable)<br />
-                                                        • A transparent cost breakdown, including the Sustainable Development Fee (SDF) and visa fees<br /><br />
-                                                        Please take your time reviewing the proposal, and feel free to reply to this email with any questions or feedback. Once you’re comfortable and ready to proceed, we’ll guide you through the next steps to confirm your trip.<br /><br />
-                                                        <strong>ATTACH:</strong> [Itinerary PDF] [Cost Summary Branded PDF]
-                                                    </>
-                                                )}
-
-                                                {activeTemplate === 'Confirm & Pay' && (
-                                                    <>
-                                                        Thank you for confirming that you’d like to proceed with your Bhutan journey.<br /><br />
-                                                        Based on our discussion and the approved itinerary and cost summary, you can now move ahead with confirming your trip.<br /><br />
-                                                        <strong>Next step: Confirm & Pay</strong><br />
-                                                        Please use the secure link below to review your booking details and complete payment.<br /><br />
-                                                        👉 <a href="https://buy.stripe.com/00w6oHc3Daev27M9Bm93y00" style={{ color: 'var(--color-brand)', fontWeight: 700, textDecoration: 'underline' }}>Confirm & Secure My Trip</a><br /><br />
-                                                        Once payment is received, we’ll begin visa processing and secure all on-ground arrangements for your journey.<br /><br />
-                                                        If you have any final questions before completing payment, feel free to reply to this email and we’ll be happy to assist.
-                                                    </>
-                                                )}
-
+                                                {activeTemplate === 'Confirm & Pay' ? 
+                                                    "Thank you for confirming your journey. You can now finalize your booking via our secure payment portal below." : 
+                                                    "We have received your request for a journey to Bhutan. Our team is currently reviewing your details to craft a personalized proposal."
+                                                }
                                                 <br /><br />
-                                                Warm regards,<br />
-                                                <strong>Pema Nyamdrol</strong><br />
-                                                {activeTemplate === 'Enquiry Received' ? 'Travel Planner' : 'Co-Founder'} | Saidpiece Travelers
+                                                Regards,<br /><strong>Staff Operations</strong>
                                             </div>
-                                            <div style={{ marginTop: '30px', display: 'flex', gap: '10px' }}>
-                                                <button className="btn btn-primary" onClick={() => handleSendEmail(activeTemplate)}>Mark as Sent & Update Status</button>
-                                                <button className="btn btn-outline" onClick={() => setActiveTemplate(null)}>Cancel</button>
+                                            <div className="architect-footer">
+                                                <button className="btn-publish" onClick={() => handleSendEmail(activeTemplate)}>Commit Change & Update Status</button>
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-                            ) : <div>Select an enquiry to manage</div>
-                        ) : (
-                            selectedBooking ? (
-                                <div className="details-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                        <h2>Booking: {selectedBooking.traveler_name}</h2>
-                                        <div style={{ padding: '5px 15px', borderRadius: '20px', background: selectedBooking.status === 'paid' ? '#008080' : '#888', color: 'white', fontSize: '12px' }}>{selectedBooking.status.toUpperCase()}</div>
                                     </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                                        <div style={{ background: '#fcfaf7', padding: '20px', borderRadius: '8px' }}>
-                                            <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', textTransform: 'uppercase' }}>Financials</h4>
-                                            <div style={{ fontSize: '24px', fontWeight: 700 }}>{selectedBooking.currency} {selectedBooking.total_amount}</div>
-                                            <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>Method: {selectedBooking.payment_method?.toUpperCase()}</div>
-                                            <div style={{ fontSize: '11px', color: '#888', marginTop: '5px', wordBreak: 'break-all' }}>Ref: {selectedBooking.payment_reference}</div>
-                                        </div>
-                                        <div style={{ background: '#fcfaf7', padding: '20px', borderRadius: '8px' }}>
-                                            <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', textTransform: 'uppercase' }}>Trip Details</h4>
-                                            <div style={{ fontWeight: 600 }}>{selectedBooking.trips?.title}</div>
-                                            <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>Traveler: {selectedBooking.traveler_name}</div>
-                                            <div style={{ fontSize: '12px', color: '#666' }}>Email: {selectedBooking.traveler_email}</div>
+                                )}
+                            </div>
+                        ) : <div className="empty-state">Select a lead to visualize details.</div>
+                    ) : (
+                        selectedBooking ? (
+                            <div className="architect-details">
+                                <div className="detail-header">
+                                    <div className="id-card">
+                                        <div className="initials paid">{selectedBooking.traveler_name[0]}</div>
+                                        <div>
+                                            <h2>{selectedBooking.traveler_name}</h2>
+                                            <p>{selectedBooking.traveler_email}</p>
                                         </div>
                                     </div>
-                                    {selectedBooking.status === 'paid' && (
-                                        <div style={{ marginTop: '30px', padding: '15px', background: '#e6f4f4', borderRadius: '8px', borderLeft: '4px solid #008080' }}>
-                                            <strong>Verified:</strong> Automated confirmation emails have been sent to this traveler via Resend.
-                                        </div>
-                                    )}
+                                    <span className={`status-pill ${selectedBooking.status}`}>{selectedBooking.status}</span>
                                 </div>
-                            ) : <div>Select a booking to view details</div>
-                        )}
-                    </section>
-                </div>
+
+                                <div className="stats-grid">
+                                    <div className="stat-card">
+                                        <label>Net Transaction</label>
+                                        <div className="value">{selectedBooking.currency} ${selectedBooking.total_amount}</div>
+                                        <span className="sub">{selectedBooking.payment_method} • {selectedBooking.payment_reference?.substring(0,12)}...</span>
+                                    </div>
+                                    <div className="stat-card">
+                                        <label>Confirmed Journey</label>
+                                        <div className="value">{selectedBooking.trips?.title}</div>
+                                        <span className="sub">Booking ID: {selectedBooking.id.substring(0,8)}</span>
+                                    </div>
+                                </div>
+
+                                {selectedBooking.status === 'paid' && (
+                                    <div className="security-notice">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                        <div>
+                                            <strong>Verification Complete</strong>
+                                            <p>This transaction is secured. Automated confirmation and tax receipts have been dispatched.</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : <div className="empty-state">Select a confirmed booking for insights.</div>
+                    )}
+                </main>
             </div>
-            <Footer />
-        </main>
+
+            <style jsx>{`
+                .dashboard-container {
+                    padding: 40px 0;
+                }
+                .admin-page-header h1 {
+                    font-size: 32px;
+                    margin: 0;
+                }
+                .admin-page-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-bottom: 50px;
+                    padding-bottom: 30px;
+                    border-bottom: 1px solid #eee;
+                }
+                .subtitle {
+                    color: #888;
+                    font-size: 15px;
+                    margin-top: 5px;
+                }
+                .staff-profile {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+                .staff-info { text-align: right; }
+                .role-tag {
+                    display: block;
+                    font-size: 9px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: 800;
+                    color: #008080;
+                    margin-bottom: 4px;
+                }
+                .email { font-size: 13px; font-weight: 700; color: #111; }
+
+                .dashboard-layout {
+                    display: grid;
+                    grid-template-columns: 320px 1fr;
+                    gap: 60px;
+                    height: calc(100vh - 250px);
+                }
+
+                .view-selector {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 30px;
+                    overflow: hidden;
+                }
+                .switcher {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    background: #f9f9f9;
+                    padding: 8px;
+                    border-radius: 12px;
+                }
+                .switcher button {
+                    padding: 12px 15px;
+                    border: none;
+                    background: none;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #888;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    transition: all 0.2s;
+                }
+                .switcher button.active { background: white; color: #111; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+                .count { font-size: 10px; background: #eee; padding: 2px 8px; border-radius: 10px; color: #666; }
+                .active .count { background: #111; color: white; }
+
+                .item-list {
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    padding-right: 10px;
+                }
+                .list-item {
+                    padding: 18px;
+                    border: 1px solid #eee;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .list-item:hover { background: #fdfdfd; border-color: #d4c8b0; }
+                .list-item.active { border-color: #111; background: #fafafa; }
+                .item-main { display: flex; justify-content: space-between; margin-bottom: 8px; }
+                .name { font-weight: 700; font-size: 14px; color: #111; }
+                .date { font-size: 11px; color: #bbb; }
+                .item-meta { display: flex; justify-content: space-between; align-items: center; }
+                .trip-tag { font-size: 10px; color: #888; font-weight: 600; }
+                .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+                .status-dot.new { background: #ff4d4f; box-shadow: 0 0 8px rgba(255,77,79,0.5); }
+                .status-dot.proposed { background: #faad14; }
+                .status-dot.paid { background: #52c41a; }
+
+                .details-view {
+                    background: white;
+                    border: 1px solid #ebebeb;
+                    border-radius: 20px;
+                    padding: 50px;
+                    overflow-y: auto;
+                }
+                .architect-details { max-width: 800px; }
+                .detail-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 50px;
+                    padding-bottom: 30px;
+                    border-bottom: 1px solid #f5f5f5;
+                }
+                .id-card { display: flex; gap: 20px; align-items: center; }
+                .initials {
+                    width: 50px;
+                    height: 50px;
+                    background: #fdfcf9;
+                    border: 1px solid #eee;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: var(--font-playfair), serif;
+                    font-size: 20px;
+                    font-weight: 700;
+                    border-radius: 12px;
+                    color: #d4c8b0;
+                }
+                .initials.paid { background: #e6fffa; color: #008080; border-color: #b2f5ea; }
+                .id-card h2 { font-family: var(--font-playfair), serif; font-size: 24px; margin: 0; }
+                .id-card p { font-size: 13px; color: #888; margin: 4px 0 0; }
+                .status-pill {
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    background: #f5f5f5;
+                    color: #999;
+                }
+                .status-pill.new { background: #fff1f0; color: #cf1322; }
+                .status-pill.paid { background: #e6f7ff; color: #008080; }
+
+                .narrative-section { margin-bottom: 40px; }
+                .narrative-section h4, .action-hub h4 {
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 900;
+                    color: #d4c8b0;
+                    margin-bottom: 20px;
+                }
+                .message-content {
+                    background: #fdfcf9;
+                    padding: 30px;
+                    border-radius: 12px;
+                    font-size: 15px;
+                    line-height: 1.7;
+                    color: #444;
+                    border: 1px solid #f5f2eb;
+                }
+
+                .btn-group { display: flex; gap: 12px; }
+                .btn-outline-dark {
+                    padding: 12px 20px;
+                    border: 1px solid #111;
+                    background: white;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-outline-dark:hover { background: #111; color: white; }
+                .btn-accent {
+                    padding: 12px 25px;
+                    background: #008080;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    cursor: pointer;
+                }
+
+                .template-architect {
+                    margin-top: 50px;
+                    border: 1px solid #d4c8b0;
+                    border-radius: 16px;
+                    background: #fdfcf9;
+                    overflow: hidden;
+                }
+                .architect-header {
+                    padding: 12px 20px;
+                    background: #fff;
+                    border-bottom: 1px solid #eee;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    color: #999;
+                }
+                .btn-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #ccc; }
+                .architect-content { padding: 30px; }
+                .preview-subject { font-size: 14px; margin-bottom: 20px; border-bottom: 1px solid #f5f2eb; padding-bottom: 15px; }
+                .preview-body { font-family: serif; font-size: 16px; line-height: 1.6; color: #333; }
+                .architect-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #f5f2eb; }
+                .btn-publish {
+                    padding: 10px 25px;
+                    background: #111;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-weight: 700;
+                    cursor: pointer;
+                }
+
+                .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+                .stat-card { padding: 25px; background: #fcfcfc; border: 1px solid #eee; border-radius: 12px; }
+                .stat-card label { display: block; font-size: 10px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; font-weight: 800; }
+                .stat-card .value { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+                .stat-card .sub { font-size: 11px; color: #999; }
+
+                .security-notice {
+                    display: flex;
+                    gap: 15px;
+                    align-items: center;
+                    padding: 20px;
+                    background: #e6f7f7;
+                    border-radius: 12px;
+                    color: #008080;
+                }
+                .security-notice strong { display: block; font-size: 13px; }
+                .security-notice p { font-size: 12px; margin: 4px 0 0; }
+
+                .admin-loader {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 100px;
+                    color: #888;
+                }
+                .spinner {
+                    width: 32px;
+                    height: 32px;
+                    border: 2px solid rgba(0,0,0,0.05);
+                    border-top-color: #d4c8b0;
+                    border-radius: 50%;
+                    animation: spin 1s infinite linear;
+                    margin-bottom: 20px;
+                }
+                @keyframes spin { to { transform: rotate(360deg); } }
+                .empty-state { padding: 100px; text-align: center; color: #ccc; font-size: 15px; }
+            `}</style>
+        </div>
     );
 }

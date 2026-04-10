@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
+
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -36,7 +36,7 @@ export default function FamilyAdventureTrip() {
 
     return (
         <main className="trip-detail-page">
-            <Header theme="light" />
+            
 
             <div className="trip-hero">
                 <Image src="/images/bhutan/9.webp" alt="Bhutan Family Adventure" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
@@ -240,7 +240,8 @@ export default function FamilyAdventureTrip() {
                 </section>
             </div>
 
-            <Footer />
+            
         </main>
     );
 }
+

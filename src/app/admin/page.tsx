@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/hooks/useAuth';
 
 const Icons = {
     Trips: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path></svg>,
@@ -14,31 +16,35 @@ const Icons = {
 };
 
 export default function PermanentMasterDashboard() {
+    const { isStaff } = useAuth();
     const [counts, setCounts] = useState({ trips: 0, blog: 0, dests: 0, msgs: 0, faqs: 0 });
 
     useEffect(() => {
-        fetchCounts();
-    }, []);
-
-    const fetchRaw = async (table: string) => {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-        try {
-            const res = await fetch(`${url}/rest/v1/${table}?select=id`, {
-                headers: { 'apikey': key, 'Authorization': `Bearer ${key}` }
-            });
-            const data = await res.json();
-            return Array.isArray(data) ? data.length : 0;
-        } catch (e) { return 0; }
-    };
+        if (isStaff) fetchCounts();
+    }, [isStaff]);
 
     const fetchCounts = async () => {
-        const t = await fetchRaw('trips');
-        const b = await fetchRaw('blog_posts');
-        const d = await fetchRaw('destinations');
-        const m = await fetchRaw('enquiries');
-        const f = await fetchRaw('faqs');
-        setCounts({ trips: t, blog: b, dests: d, msgs: m, faqs: f });
+        if (!supabase) return;
+        
+        try {
+            const [trips, blog, dests, enquiries, faqs] = await Promise.all([
+                supabase.from('trips').select('*', { count: 'exact', head: true }),
+                supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
+                supabase.from('destinations').select('*', { count: 'exact', head: true }),
+                supabase.from('enquiries').select('*', { count: 'exact', head: true }),
+                supabase.from('faqs').select('*', { count: 'exact', head: true })
+            ]);
+
+            setCounts({
+                trips: trips.count || 0,
+                blog: blog.count || 0,
+                dests: dests.count || 0,
+                msgs: enquiries.count || 0,
+                faqs: faqs.count || 0
+            });
+        } catch (e) {
+            console.error('Failed to fetch dashboard counts:', e);
+        }
     };
 
     const mainStats = [

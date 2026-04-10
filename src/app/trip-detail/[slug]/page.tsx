@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -85,7 +84,7 @@ export default function DynamicTripDetail() {
     };
 
     if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading your adventure...</div>;
-    if (!trip) return <div style={{ padding: '100px', textAlign: 'center' }}>Trip not found. <Link href="/browse">Browse all trips</Link></div>;
+    if (!trip) return <div style={{ padding: '100px', textAlign: 'center' }}>Trip not found. <Link href="/browse" style={{ color: '#008080', fontWeight: 'bold' }}>Browse all trips</Link></div>;
 
     const toggleAccordion = (day: number) => {
         setOpenDay(openDay === day ? null : day);
@@ -93,7 +92,6 @@ export default function DynamicTripDetail() {
 
     return (
         <main className="trip-detail-page">
-            <Header theme="light" />
 
             <div className="trip-hero">
                 <Image src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`} alt={trip.title} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
@@ -198,12 +196,7 @@ export default function DynamicTripDetail() {
                 </div>
             </div>
 
-            <Footer />
         </main>
     );
 }
 
-// Minimal link component for fallback
-function Link({ href, children }: { href: string, children: React.ReactNode }) {
-    return <a href={href} style={{ color: '#008080', fontWeight: 'bold' }}>{children}</a>;
-}

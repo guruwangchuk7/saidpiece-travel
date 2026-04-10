@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
+
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -36,7 +36,6 @@ export default function NatureRetreatTrip() {
 
     return (
         <main className="trip-detail-page">
-            <Header theme="light" />
 
             <div className="trip-hero">
                 <Image src="/images/bhutan/main6.webp" alt="Nature Retreat" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
@@ -238,7 +237,7 @@ export default function NatureRetreatTrip() {
                 </section>
             </div>
 
-            <Footer />
         </main>
     );
 }
+

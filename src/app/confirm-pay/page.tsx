@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useSearchParams } from 'next/navigation';
+import { useUI } from '@/contexts/UIContext';
 
 import { useAuth } from '@/hooks/useAuth';
 import { WalletProvider } from '@/lib/wallet';
@@ -26,6 +25,12 @@ import { confirmPayStyles } from './confirm-pay.styles';
 function ConfirmPayContent() {
     const searchParams = useSearchParams();
     const { user, session, loading, signInWithGoogle } = useAuth();
+    const { setHeaderTheme } = useUI();
+
+    useEffect(() => {
+        setHeaderTheme('light');
+        return () => setHeaderTheme('auto');
+    }, [setHeaderTheme]);
 
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | 'wire' | 'binance' | null>(null);
     const [checkoutStep, setCheckoutStep] = useState<'review' | 'method' | 'pay'>('review');
@@ -67,9 +72,34 @@ function ConfirmPayContent() {
         }
     });
 
+    const [resolvedTripId, setResolvedTripId] = useState<string | null>(tripId);
+
+    // Resolve trip ID if missing (from legacy pages)
+    useEffect(() => {
+        const resolveId = async () => {
+            if (!tripId && tripName && !resolvedTripId) {
+                try {
+                    const { supabase } = await import('@/lib/supabaseClient');
+                    if (!supabase) return;
+                    const { data } = await supabase
+                        .from('trips')
+                        .select('id')
+                        .eq('title', tripName)
+                        .limit(1)
+                        .single();
+                    if (data) setResolvedTripId(data.id);
+                } catch (e) {
+                    console.error('Failed to resolve trip ID by name:', e);
+                }
+            }
+        };
+        resolveId();
+    }, [tripId, tripName, resolvedTripId]);
+
     const ensureBookingRecord = async (targetMethod: string) => {
+        const finalTripId = resolvedTripId || tripId;
         if (currentBookingId) return currentBookingId;
-        if (!tripId) {
+        if (!finalTripId) {
             console.error('Missing tripId for booking record creation');
             return null;
         }
@@ -83,7 +113,7 @@ function ConfirmPayContent() {
                     Authorization: `Bearer ${session?.access_token}`,
                 },
                 body: JSON.stringify({
-                    tripId,
+                    tripId: finalTripId,
                     travelerName,
                     passengersCount: 1, // Defaulting to 1 for this flow
                     paymentMethod: targetMethod
@@ -432,13 +462,11 @@ export default function ConfirmPayPage() {
     return (
         <WalletProvider>
             <div className="min-h-screen bg-white" style={{ position: 'relative', zIndex: 1 }}>
-                <Header theme="light" />
                 <main style={{ backgroundColor: '#fff', minHeight: '100vh', paddingBottom: '120px' }}>
                     <Suspense fallback={<div className="container" style={{ padding: '180px 20px', textAlign: 'center' }}>Loading trip details...</div>}>
                         <ConfirmPayContent />
                     </Suspense>
                 </main>
-                <Footer />
             </div>
         </WalletProvider>
     );
