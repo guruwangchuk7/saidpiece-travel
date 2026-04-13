@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { sendBookingConfirmationEmail, notifyAdminOfNewBooking } from '@/lib/notifications';
+import { validateBodySize } from '@/lib/apiSecurity';
 
 // Helper function to get Stripe client safely
 const getStripe = () => {
@@ -12,6 +13,9 @@ const getStripe = () => {
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 export async function POST(req: NextRequest) {
+  if (!validateBodySize(req, 256_000)) { // 256KB limit for Stripe webhooks
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 });
+  }
   const body = await req.text();
   const signature = req.headers.get('stripe-signature') as string;
 

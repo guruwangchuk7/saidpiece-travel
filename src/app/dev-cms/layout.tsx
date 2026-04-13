@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useEffect, useState } from 'react';
 
 // Clean SVG Icons for the full suite
 const Icons = {
@@ -24,7 +25,38 @@ export default function DevCMSLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const { user } = useAuth();
+    const router = useRouter();
+    const { isStaff, loading, user, supabaseConfigured } = useAuth();
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+        setHasMounted(true);
+        if (!loading && !isStaff) {
+            console.log(`[DevCMSLayout] Unauthorized access attempt. Redirecting...`);
+            router.push('/admin/login');
+        }
+    }, [isStaff, loading, router]);
+
+    if (!supabaseConfigured && !loading && hasMounted) {
+        return <div style={{ padding: '40px', color: 'red' }}>Repository not configured. Please check environment variables.</div>;
+    }
+
+    if (!hasMounted || loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                fontFamily: 'var(--font-lato), sans-serif',
+                background: '#f8f9fa'
+            }}>
+                Initializing Dev Suite...
+            </div>
+        );
+    }
+
+    if (!isStaff) return null;
 
     const menuItems = [
         { label: 'Dashboard', href: '/dev-cms', icon: Icons.Dashboard },

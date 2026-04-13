@@ -1,21 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { verifyBinanceWebhook } from '@/lib/binancePay';
 import { createSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { sendBookingConfirmationEmail, notifyAdminOfNewBooking } from '@/lib/notifications';
+import { validateBodySize } from '@/lib/apiSecurity';
 
 export async function POST(req: NextRequest) {
   try {
+    if (!validateBodySize(req, 100_000)) { // 100KB limit for webhooks
+      return NextResponse.json({ returnCode: 'FAIL', returnMsg: 'Payload too large' }, { status: 413 });
+    }
     const bodyText = await req.text();
-    const headers = {
-      timestamp: req.headers.get('binancepay-timestamp'),
-      nonce: req.headers.get('binancepay-nonce'),
-      signature: req.headers.get('binancepay-signature'),
-      certificate: req.headers.get('binancepay-certificate'),
-    };
+    const timestamp = req.headers.get('binancepay-timestamp') || '';
+    const nonce = req.headers.get('binancepay-nonce') || '';
+    const signature = req.headers.get('binancepay-signature') || '';
 
     // 1. Verify Binance Signature
-    // (Note: In a true production environment, you would use public key verification here)
-    // For now, we verify the bizType and bizStatus which is the payload Binance sends
+    const isVerified = verifyBinanceWebhook(timestamp, nonce, bodyText, signature);
+
+    if (!isVerified) {
+      console.error(`[Binance Webhook] Signature verification failed. Timestamp: ${timestamp}, Nonce: ${nonce}`);
+      return NextResponse.json({ returnCode: 'FAIL', returnMsg: 'Invalid signature' }, { status: 401 });
+    }
     const payload = JSON.parse(bodyText);
 
     if (payload.bizType === 'PAY' && payload.bizStatus === 'PAY_SUCCESS') {

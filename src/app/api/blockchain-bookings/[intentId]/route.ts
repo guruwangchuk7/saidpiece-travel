@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { createSupabaseAdminClient, getAuthenticatedUser } from '@/lib/supabaseAdmin';
-import { jsonNoStore } from '@/lib/apiSecurity';
+import { enforceRateLimit, getClientIp, jsonNoStore } from '@/lib/apiSecurity';
 import { toBookingId } from '@/lib/onchainBooking';
 
 function getBearerToken(request: NextRequest) {
@@ -16,6 +16,20 @@ export async function GET(
   { params }: { params: Promise<{ intentId: string }> },
 ) {
   try {
+    const clientIp = getClientIp(request);
+    const rateLimit = await enforceRateLimit({
+      key: `blockchain-booking-status:${clientIp}`,
+      limit: 30, // 30 requests per minute
+      windowMs: 60_000,
+    });
+
+    if (rateLimit) {
+      return jsonNoStore(
+        { ok: false, error: 'Too many status check requests.' },
+        { status: 429 }
+      );
+    }
+
     const accessToken = getBearerToken(request);
     const user = await getAuthenticatedUser(accessToken);
     const { intentId } = await params;
