@@ -26,15 +26,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isStaff, setIsStaff] = useState(false);
 
+    // Use a ref to prevent concurrent updateAuthState calls
+    const initializationRef = React.useRef<boolean>(false);
+
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) {
-            console.warn('[AuthProvider] Supabase not configured, skipping auth initialization.');
+            console.warn('[AuthProvider] Supabase not configured.');
             setLoading(false);
             return;
         }
 
         const client = supabase;
         let mounted = true;
+
+        // Safety watchdog: ensure loading is NEVER stuck forever
+        const safetyTimeout = setTimeout(() => {
+            if (mounted && loading) {
+                console.warn('[AuthProvider] Safety timeout reached. Forcing loading state to false.');
+                setLoading(false);
+            }
+        }, 6000); 
 
         const fetchProfile = async (userId: string) => {
             try {
@@ -45,12 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     .single();
 
                 if (error) {
-                    console.warn('[AuthProvider] Error fetching profile:', error.message);
+                    console.warn('[AuthProvider] Profile fetch error:', error.message);
                     return 'customer';
                 }
                 return profile?.role ?? 'customer';
             } catch (err) {
-                console.error('[AuthProvider] Exception fetching profile:', err);
+                console.error('[AuthProvider] Profile exception:', err);
                 return 'customer';
             }
         };
@@ -58,18 +69,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const updateAuthState = async (currentSession: Session | null) => {
             if (!mounted) return;
             
+            console.log(`[AuthProvider] Updating auth state. User: ${currentSession?.user?.email ?? 'none'}`);
+            
             setSession(currentSession);
             setUser(currentSession?.user ?? null);
 
             if (currentSession?.user) {
+                // Optimization: Check email list FIRST (faster than DB)
+                const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
+                    .split(',')
+                    .map(e => e.trim().toLowerCase());
+                
+                const isEmailStaff = staffEmails.includes(currentSession.user.email?.toLowerCase() || '');
+                
+                // If they are email-staff, we can optimistically set isStaff=true to prevent UI lag
+                if (isEmailStaff) {
+                    setIsStaff(true);
+                    setIsAdmin(true);
+                }
+
                 const userRole = await fetchProfile(currentSession.user.id);
                 
                 if (mounted) {
-                    const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
-                        .split(',')
-                        .map(e => e.trim().toLowerCase());
-                    
-                    const isEmailStaff = staffEmails.includes(currentSession.user.email?.toLowerCase() || '');
                     const finalRole = (userRole === 'customer' && isEmailStaff) ? 'admin' : userRole;
 
                     setRole(finalRole);
@@ -81,43 +102,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsAdmin(false);
                 setIsStaff(false);
             }
-            setLoading(false);
+            
+            if (mounted) {
+                setLoading(false);
+                initializationRef.current = true;
+                clearTimeout(safetyTimeout);
+            }
         };
 
-        // Initial session check with robust error handling
-        client.auth.getSession()
-            .then(({ data: { session: initialSession }, error }) => {
-                if (error) {
-                    console.error('[AuthProvider] Initial session error:', error.message);
-                    // If refresh token is missing, we should explicitly sign out to clear stale cookies
-                    if (error.message.includes('Refresh Token Not Found') || error.status === 400) {
-                        client.auth.signOut();
-                    }
-                    updateAuthState(null);
-                } else {
-                    updateAuthState(initialSession);
-                }
-            })
-            .catch(err => {
-                console.error('[AuthProvider] Critical error during session fetch:', err);
-                updateAuthState(null);
-            });
-
-        // Listen for changes
-        const { data: { subscription } } = client.auth.onAuthStateChange(async (_event, newSession) => {
-            console.log(`[AuthProvider] Auth state change event: ${_event}`);
+        // Subscription for auth changes
+        const { data: { subscription } } = client.auth.onAuthStateChange(async (event, newSession) => {
+            console.log(`[AuthProvider] onAuthStateChange: ${event}`);
             
-            // Handle cases where the session might be invalid leading to Refresh Token errors
-            try {
+            // If we are already initializing via getSession, don't double-call unless the event is significant
+            if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || !initializationRef.current) {
                 await updateAuthState(newSession);
-            } catch (authError) {
-                console.error('[AuthProvider] Error updating auth state on change:', authError);
-                setLoading(false);
             }
         });
 
+        // initial session check
+        client.auth.getSession()
+            .then(({ data: { session: initialSession }, error }) => {
+                if (!initializationRef.current) {
+                    if (error) {
+                        console.error('[AuthProvider] session error:', error.message);
+                        updateAuthState(null);
+                    } else {
+                        updateAuthState(initialSession);
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('[AuthProvider] session exception:', err);
+                if (!initializationRef.current) updateAuthState(null);
+            });
+
         return () => {
             mounted = false;
+            clearTimeout(safetyTimeout);
             subscription.unsubscribe();
         };
     }, []);

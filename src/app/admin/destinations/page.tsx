@@ -309,6 +309,21 @@ export default function DestinationManager() {
                     padding-bottom: 30px;
                     border-bottom: 1px solid #eee;
                 }
+                @media (max-width: 768px) {
+                    .admin-page-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                        margin-bottom: 30px;
+                    }
+                    .admin-page-header h1 {
+                        font-size: 26px;
+                    }
+                    .btn-add-dest {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                }
                 .subtitle {
                     color: #888;
                     font-size: 15px;
@@ -335,6 +350,11 @@ export default function DestinationManager() {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
                     gap: 30px;
+                }
+                @media (max-width: 360px) {
+                    .dest-inventory-grid {
+                        grid-template-columns: 1fr;
+                    }
                 }
                 .inventory-card {
                     background: white;
@@ -428,12 +448,35 @@ export default function DestinationManager() {
                     overflow-y: auto;
                     padding: 60px;
                 }
+                @media (max-width: 1024px) {
+                    .editor-overlay {
+                        padding: 40px;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .editor-overlay {
+                        padding: 80px 20px 40px;
+                    }
+                }
                 .dest-editor-form {
                     max-width: 1200px;
                     margin: 0 auto;
                     display: grid;
                     grid-template-columns: 350px 1fr;
                     gap: 80px;
+                }
+                @media (max-width: 1100px) {
+                    .dest-editor-form {
+                        gap: 40px;
+                        grid-template-columns: 280px 1fr;
+                    }
+                }
+                @media (max-width: 900px) {
+                    .dest-editor-form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 40px;
+                    }
                 }
                 .image-dropzone {
                     width: 100%;
@@ -519,6 +562,26 @@ export default function DestinationManager() {
                     margin-bottom: 25px;
                 }
                 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                @media (max-width: 640px) {
+                    .form-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    .editor-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 20px;
+                    }
+                    .editor-controls {
+                        width: 100%;
+                        display: flex;
+                        gap: 10px;
+                    }
+                    .btn-cancel, .btn-save {
+                        flex: 1;
+                        padding: 12px 10px;
+                        font-size: 13px;
+                    }
+                }
                 .form-item label {
                     display: block;
                     font-size: 13px;

@@ -3,60 +3,120 @@
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const Icons = {
-    Enquiries: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>,
-    Trips: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
-    Destinations: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
-    Blog: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>,
-    FAQ: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>,
-    Import: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>,
-    Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>,
-};
+const NavDashboardIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>;
+const NavEnquiriesIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>;
+const NavTripsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
+const NavDestinationsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>;
+const NavBlogIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>;
+const NavFAQIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
+const NavImportIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
+const NavSettingsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
+const NavMenuIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>;
+const NavCloseIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const { isStaff, loading, signOut } = useAuth();
+    const { isStaff, loading, signOut, supabaseConfigured } = useAuth();
     const pathname = usePathname();
     const router = useRouter();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
 
-    // Protection logic
+    // Protection logic - centralizing redirection behavior
     useEffect(() => {
+        setHasMounted(true);
         if (!loading && !isStaff && pathname !== '/admin/login') {
+            const currentRole = localStorage.getItem('last_known_role') || 'none';
+            console.log(`[AdminLayout] Access Denied. Role: ${currentRole}. Redirecting...`);
             router.push('/admin/login');
         }
     }, [isStaff, loading, pathname, router]);
+
+    // Track last known state for debugging
+    useEffect(() => {
+        if (!loading && isStaff) {
+            localStorage.setItem('last_known_role', 'staff');
+        }
+    }, [loading, isStaff]);
+
+    // Close sidebar on navigation
+    useEffect(() => {
+        setIsSidebarOpen(false);
+    }, [pathname]);
+
+    // Boundary check for missing configuration
+    if (!supabaseConfigured && !loading && hasMounted) {
+        return <div className="admin-error">Repository not configured. Please check environment variables.</div>;
+    }
 
     if (pathname === '/admin/login') {
         return <>{children}</>;
     }
 
-    if (loading) {
-        return <div className="admin-loading">Loading Admin Panel...</div>;
+    // During SSR and first hydration pass, we bypass the loader to match server HTML
+    // Once mounted, we can show the actual loading state
+    if (!hasMounted || loading) {
+        // If it's the first pass, we return the children but hide them if we know we're loading
+        // to avoid hydration mismatch (server renders content, client must match)
+        return (
+            <div className="admin-loading-container">
+                <div className="admin-loading">
+                    <div className="spinner"></div>
+                    <span>Initializing Management Portal...</span>
+                </div>
+                {/* We render children hidden if we need to match server but know we will redirect */}
+                <div style={{ display: 'none' }}>{children}</div>
+            </div>
+        );
     }
 
     if (!isStaff) {
-        return null; // Will redirect via useEffect
+        return (
+            <div className="admin-redirecting">
+                <p>Establishing identity... verifying credentials.</p>
+            </div>
+        );
     }
 
     const menuItems = [
-        { label: 'Booking Enquiries', href: '/admin/enquiries', icon: Icons.Enquiries },
-        { label: 'Manage Trips', href: '/admin/trips', icon: Icons.Trips },
-        { label: 'Destinations', href: '/admin/destinations', icon: Icons.Destinations },
-        { label: 'Blog Posts', href: '/admin/blog', icon: Icons.Blog },
-        { label: 'Travel FAQs', href: '/admin/faq', icon: Icons.FAQ },
-        { label: 'Import Data', href: '/admin/import', icon: Icons.Import },
-        { label: 'Site Settings', href: '/admin/settings', icon: Icons.Settings },
+        { label: 'Architect Home', href: '/admin', icon: NavDashboardIcon },
+        { label: 'Booking Enquiries', href: '/admin/enquiries', icon: NavEnquiriesIcon },
+        { label: 'Manage Trips', href: '/admin/trips', icon: NavTripsIcon },
+        { label: 'Destinations', href: '/admin/destinations', icon: NavDestinationsIcon },
+        { label: 'Blog Posts', href: '/admin/blog', icon: NavBlogIcon },
+        { label: 'Travel FAQs', href: '/admin/faq', icon: NavFAQIcon },
+        { label: 'Import Data', href: '/admin/import', icon: NavImportIcon },
+        { label: 'Site Settings', href: '/admin/settings', icon: NavSettingsIcon },
     ];
 
     return (
         <div className="admin-container">
-            <aside className="admin-sidebar">
+            {/* Mobile Header */}
+            <header className="admin-mobile-header">
+                <button className="menu-toggle" onClick={() => setIsSidebarOpen(true)}>
+                    <NavMenuIcon />
+                </button>
+                <div className="mobile-brand">
+                    <span className="serif-title">Saidpiece</span>
+                </div>
+                <div style={{ width: 24 }}></div> {/* Spacer */}
+            </header>
+
+            {/* Overlay */}
+            {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
+
+            <aside className={`admin-sidebar ${isSidebarOpen ? 'show' : ''}`}>
                 <div className="sidebar-brand">
-                    <Link href="/">
-                        <span className="serif-title">Saidpiece</span>
-                        <span className="admin-label">Admin Management Portal</span>
-                    </Link>
+                    <div className="brand-header">
+                        <Link href="/">
+                            <span className="serif-title">Saidpiece</span>
+                            <span className="admin-label">Admin Management Portal</span>
+                        </Link>
+                        <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)}>
+                            <NavCloseIcon />
+                        </button>
+                    </div>
                 </div>
                 <nav className="sidebar-nav">
                     {menuItems.map((item) => (
@@ -87,6 +147,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     min-height: 100vh;
                     background: #fdfcf9;
                 }
+                .admin-mobile-header {
+                    display: none;
+                }
                 .admin-sidebar {
                     width: 260px;
                     background: #1a1a1a;
@@ -100,10 +163,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     left: 0;
                     height: 100vh;
                     z-index: 1000;
+                    transition: transform 0.3s ease;
                 }
                 .sidebar-brand {
                     padding: 40px 25px;
                     border-bottom: 1px solid #333;
+                }
+                .brand-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                }
+                .sidebar-close-btn {
+                    display: none;
+                    background: none;
+                    border: none;
+                    color: #666;
+                    cursor: pointer;
+                    padding: 0;
                 }
                 .sidebar-brand a {
                     color: white;
@@ -189,14 +266,103 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     background: #fdfcf9;
                     min-height: 100vh;
                 }
-                .admin-loading {
+                .admin-loading-container, .admin-redirecting, .admin-error {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     height: 100vh;
-                    font-family: var(--font-playfair), serif;
-                    font-size: 20px;
+                    width: 100vw;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
                     background: #fdfcf9;
+                    z-index: 9999;
+                    font-family: var(--font-playfair), serif;
+                }
+                .admin-loading {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px;
+                }
+                .spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 3px solid rgba(212, 200, 176, 0.2);
+                    border-top: 3px solid #d4c8b0;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                .admin-error {
+                    color: #cf1322;
+                    text-align: center;
+                    padding: 40px;
+                }
+
+                @media (max-width: 1024px) {
+                    .admin-main-content {
+                        padding: 40px;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .admin-mobile-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 0 20px;
+                        height: 60px;
+                        background: #1a1a1a;
+                        color: white;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        z-index: 999;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    }
+                    .menu-toggle {
+                        background: none;
+                        border: none;
+                        color: white;
+                        cursor: pointer;
+                        padding: 0;
+                    }
+                    .mobile-brand .serif-title {
+                        font-family: var(--font-playfair), serif;
+                        font-weight: 700;
+                        color: #d4c8b0;
+                        font-size: 20px;
+                    }
+                    .admin-sidebar {
+                        transform: translateX(-100%);
+                        box-shadow: none;
+                    }
+                    .admin-sidebar.show {
+                        transform: translateX(0);
+                        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+                    }
+                    .sidebar-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0,0,0,0.5);
+                        z-index: 998;
+                        backdrop-filter: blur(2px);
+                    }
+                    .sidebar-close-btn {
+                        display: block;
+                    }
+                    .admin-main-content {
+                        margin-left: 0;
+                        padding: 100px 20px 40px;
+                    }
                 }
             `}</style>
         </div>
