@@ -41,6 +41,7 @@ export default function TripManager() {
         destination: 'Bhutan',
         category: 'Cultural'
     });
+    const [isSaving, setIsSaving] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,33 +69,58 @@ export default function TripManager() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSaving) return;
+
         const slug = currentTrip.slug || currentTrip.title?.toLowerCase()
-            .replace(/ /g, '-')
-            .replace(/[^\w-]+/g, '');
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-');
             
         const tripData = {
-            ...currentTrip,
-            slug
+            title: currentTrip.title,
+            slug: slug,
+            duration_days: currentTrip.duration_days || 1,
+            duration_nights: currentTrip.duration_nights || 0,
+            starting_price: currentTrip.starting_price || 0,
+            level: currentTrip.level || 'Moderate',
+            image_url: currentTrip.image_url || '',
+            description: currentTrip.description || '',
+            is_active: currentTrip.is_active ?? true,
+            trip_type: currentTrip.trip_type || 'Private Journey',
+            destination: currentTrip.destination || 'Bhutan',
+            category: currentTrip.category || 'Cultural'
         };
 
-        if (!supabase) return;
-        let result;
-        if (currentTrip.id) {
-            result = await supabase
-                .from('trips')
-                .update(tripData)
-                .eq('id', currentTrip.id);
-        } else {
-            result = await supabase
-                .from('trips')
-                .insert([tripData]);
+        if (!supabase) {
+            alert('Supabase connection missing.');
+            return;
         }
 
-        if (result.error) {
-            alert('Error saving trip: ' + result.error.message);
-        } else {
+        setIsSaving(true);
+        try {
+            let result;
+            if (currentTrip.id) {
+                result = await supabase
+                    .from('trips')
+                    .update(tripData)
+                    .eq('id', currentTrip.id);
+            } else {
+                result = await supabase
+                    .from('trips')
+                    .insert([tripData]);
+            }
+
+            if (result.error) throw result.error;
+
             setIsEditing(false);
             fetchTrips();
+            alert('Trip published successfully.');
+        } catch (error: any) {
+            console.error('Error saving trip:', error);
+            alert('Error saving: ' + (error.message || 'Unknown error'));
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -117,7 +143,6 @@ export default function TripManager() {
             const filePath = `trip-images/${fileName}`;
 
             // We attempt to upload to 'trips' bucket. 
-            // In a real prod environment, ensure this bucket exists and has public access.
             const { error: uploadError } = await supabase.storage
                 .from('trips')
                 .upload(filePath, file);
@@ -135,12 +160,13 @@ export default function TripManager() {
             const reader = new FileReader();
             reader.onload = (e) => {
                 setCurrentTrip(prev => ({ ...prev, image_url: e.target?.result as string }));
+                setIsUploading(false);
             };
             reader.readAsDataURL(file);
-            alert('Note: Storage bucket not configured. Showing local preview only.');
-        } finally {
-            setIsUploading(false);
+            alert('Note: Storage bucket "trips" not found. Using local preview for now.');
+            return;
         }
+        setIsUploading(false);
     };
 
     const normalizeImageUrl = (url: string | undefined): string | null => {
@@ -278,8 +304,10 @@ export default function TripManager() {
                             <div className="editor-header">
                                 <h2 className="serif-title">Trip Architect</h2>
                                 <div className="editor-controls">
-                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
-                                    <button type="submit" className="btn-save">Publish Changes</button>
+                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)} disabled={isSaving}>Cancel</button>
+                                    <button type="submit" className="btn-save" disabled={isSaving || isUploading}>
+                                        {isSaving ? 'Publishing...' : 'Publish Changes'}
+                                    </button>
                                 </div>
                             </div>
 

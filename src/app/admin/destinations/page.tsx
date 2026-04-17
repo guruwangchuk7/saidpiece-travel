@@ -29,6 +29,7 @@ export default function DestinationManager() {
         image_url: '',
         sort_order: 0
     });
+    const [isSaving, setIsSaving] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -56,33 +57,52 @@ export default function DestinationManager() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSaving) return;
+
         const slug = currentDest.slug || currentDest.name?.toLowerCase()
-            .replace(/ /g, '-')
-            .replace(/[^\w-]+/g, '');
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-');
             
         const destData = {
-            ...currentDest,
-            slug
+            name: currentDest.name,
+            title: currentDest.title,
+            slug: slug,
+            description: currentDest.description || '',
+            image_url: currentDest.image_url || '',
+            sort_order: currentDest.sort_order || 0
         };
 
-        if (!supabase) return;
-        let result;
-        if (currentDest.id) {
-            result = await supabase
-                .from('destinations')
-                .update(destData)
-                .eq('id', currentDest.id);
-        } else {
-            result = await supabase
-                .from('destinations')
-                .insert([destData]);
+        if (!supabase) {
+            alert('Supabase connection missing.');
+            return;
         }
 
-        if (result.error) {
-            alert('Error saving destination: ' + result.error.message);
-        } else {
+        setIsSaving(true);
+        try {
+            let result;
+            if (currentDest.id) {
+                result = await supabase
+                    .from('destinations')
+                    .update(destData)
+                    .eq('id', currentDest.id);
+            } else {
+                result = await supabase
+                    .from('destinations')
+                    .insert([destData]);
+            }
+
+            if (result.error) throw result.error;
+
             setIsEditing(false);
             fetchDestinations();
+            alert('Destination saved successfully.');
+        } catch (error: any) {
+            console.error('Error saving destination:', error);
+            alert('Error saving: ' + (error.message || 'Unknown error'));
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -104,6 +124,7 @@ export default function DestinationManager() {
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `destination-images/${fileName}`;
 
+            // We attempt to upload to 'destinations' bucket.
             const { error: uploadError } = await supabase.storage
                 .from('destinations')
                 .upload(filePath, file);
@@ -117,14 +138,17 @@ export default function DestinationManager() {
             setCurrentDest(prev => ({ ...prev, image_url: publicUrl }));
         } catch (error: any) {
             console.error('Upload failed:', error);
+            // Fallback: If bucket doesn't exist, we'll just use a local data URL for preview demonstration
             const reader = new FileReader();
             reader.onload = (e) => {
                 setCurrentDest(prev => ({ ...prev, image_url: e.target?.result as string }));
+                setIsUploading(false);
             };
             reader.readAsDataURL(file);
-        } finally {
-            setIsUploading(false);
+            alert('Note: Storage bucket "destinations" not found. Using local preview for now.');
+            return;
         }
+        setIsUploading(false);
     };
 
     const onDrop = useCallback((e: React.DragEvent) => {
@@ -242,8 +266,10 @@ export default function DestinationManager() {
                             <div className="editor-header">
                                 <h2 className="serif-title">Region Architect</h2>
                                 <div className="editor-controls">
-                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
-                                    <button type="submit" className="btn-save">Save Destination</button>
+                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)} disabled={isSaving}>Cancel</button>
+                                    <button type="submit" className="btn-save" disabled={isSaving || isUploading}>
+                                        {isSaving ? 'Saving Destination...' : 'Save Destination'}
+                                    </button>
                                 </div>
                             </div>
 

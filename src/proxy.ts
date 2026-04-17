@@ -31,13 +31,13 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // 2. Refresh the session (Prevents "Refresh Token Not Found" errors)
-  const { data: { user } } = await supabase.auth.getUser()
-
-  // 3. Protect Admin Routes
+  // 2. Protect Admin Routes
   const pathname = request.nextUrl.pathname
 
   if (pathname.startsWith('/admin')) {
+    // 3. Refresh/Get the session (Only for admin routes to save performance)
+    const { data: { user } } = await supabase.auth.getUser()
+
     // If user is accessing /admin/login, let them proceed
     if (pathname === '/admin/login') {
       // If already logged in and is staff, redirect to /admin
@@ -56,7 +56,6 @@ export async function proxy(request: NextRequest) {
     }
 
     // Role check - Optimized with Cookie Hinting
-    // This avoids slow database calls on every page navigation
     const isStaffHint = request.cookies.get('is_staff_hint')?.value === 'true'
     const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
         .split(',')
@@ -64,8 +63,6 @@ export async function proxy(request: NextRequest) {
     const isEmailStaff = staffEmails.includes(user.email?.toLowerCase() || '');
 
     if (!isStaffHint && !isEmailStaff) {
-       // Only if NO hint and NO email match do we perform a fallback DB check
-       // This handles the first login after cookies are cleared
        const { data: profile } = await supabase
          .from('profiles')
          .select('role')

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
@@ -25,8 +23,6 @@ export default function OurStory() {
 
     return (
         <main className="our-story-page">
-            <Header theme="light" />
-
             <section className="story-hero">
                 <div className="story-hero-bg">
                     <Image
@@ -94,11 +90,8 @@ export default function OurStory() {
                     <h2>{settings.site_name || 'Saidpiece Travelers'} Today</h2>
                     <p className="lead-text">Carrying forward a legacy of mindful exploration into the modern era.</p>
                     <p>Based in Thimphu, we are a Bhutan-based team of specialists who bridge the gap between global curiosity and Himalayan wisdom. Every trip we design is a chapter in an ongoing story of discovery and mutual respect— protecting what is sacred while opening our world to mindful explorers.</p>
-                    <div className="divider-line"></div>
                 </section>
             </div>
-
-            <Footer />
         </main>
     );
 }

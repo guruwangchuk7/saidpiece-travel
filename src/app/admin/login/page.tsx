@@ -1,15 +1,12 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 export default function AdminLogin() {
     const { signInWithGoogle } = useAuth();
 
     return (
         <main className="admin-login-page page-with-header">
-            <Header theme="light" />
             <div className="container" style={{
                 padding: '200px 20px',
                 display: 'flex',
@@ -50,7 +47,6 @@ export default function AdminLogin() {
                     </button>
                 </div>
             </div>
-            <Footer />
         </main>
     );
 }

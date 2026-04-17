@@ -4946,7 +4946,8 @@ select.trip-finder-input {
   }
 
   100% {
-    background-position: -135% 0%;
+    background-position:
+     -135% 0%;
   }
 }
 

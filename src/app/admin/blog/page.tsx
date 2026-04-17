@@ -30,8 +30,9 @@ export default function BlogManager() {
         excerpt: '',
         content: '',
         main_image: '',
-        status: 'draft'
+        status: 'published'
     });
+    const [isSaving, setIsSaving] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,36 +62,55 @@ export default function BlogManager() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSaving) return;
+
         const slug = currentPost.slug || currentPost.title?.toLowerCase()
-            .replace(/ /g, '-')
-            .replace(/[^\w-]+/g, '');
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-');
             
         const postData = {
-            ...currentPost,
-            slug,
+            title: currentPost.title,
+            slug: slug,
+            excerpt: currentPost.excerpt || '',
+            content: currentPost.content || '',
+            main_image: currentPost.main_image || '',
+            status: currentPost.status || 'draft',
             author_id: currentPost.author_id || user?.id,
             updated_at: new Date().toISOString(),
             published_at: currentPost.status === 'published' ? (currentPost.published_at || new Date().toISOString()) : null
         };
 
-        if (!supabase) return;
-        let result;
-        if (currentPost.id) {
-            result = await supabase
-                .from('blog_posts')
-                .update(postData)
-                .eq('id', currentPost.id);
-        } else {
-            result = await supabase
-                .from('blog_posts')
-                .insert([postData]);
+        if (!supabase) {
+            alert('Supabase connection missing.');
+            return;
         }
 
-        if (result.error) {
-            alert('Error saving article: ' + result.error.message);
-        } else {
+        setIsSaving(true);
+        try {
+            let result;
+            if (currentPost.id) {
+                result = await supabase
+                    .from('blog_posts')
+                    .update(postData)
+                    .eq('id', currentPost.id);
+            } else {
+                result = await supabase
+                    .from('blog_posts')
+                    .insert([postData]);
+            }
+
+            if (result.error) throw result.error;
+
             setIsEditing(false);
             fetchPosts();
+            alert('Article saved successfully.');
+        } catch (error: any) {
+            console.error('Error saving article:', error);
+            alert('Error saving article: ' + (error.message || 'Unknown error'));
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -112,6 +132,7 @@ export default function BlogManager() {
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `blog-images/${fileName}`;
 
+            // We attempt to upload to 'blog_posts' bucket.
             const { error: uploadError } = await supabase.storage
                 .from('blog_posts')
                 .upload(filePath, file);
@@ -125,14 +146,17 @@ export default function BlogManager() {
             setCurrentPost(prev => ({ ...prev, main_image: publicUrl }));
         } catch (error: any) {
             console.error('Upload failed:', error);
+            // Fallback: If bucket doesn't exist, we'll just use a local data URL for preview demonstration
             const reader = new FileReader();
             reader.onload = (e) => {
                 setCurrentPost(prev => ({ ...prev, main_image: e.target?.result as string }));
+                setIsUploading(false);
             };
             reader.readAsDataURL(file);
-        } finally {
-            setIsUploading(false);
+            alert('Note: Storage bucket "blog_posts" not found. Using local preview for now.');
+            return; // Exit early to avoid finally setting uploading to false before reader finishes
         }
+        setIsUploading(false);
     };
 
     const onDrop = useCallback((e: React.DragEvent) => {
@@ -254,8 +278,10 @@ export default function BlogManager() {
                             <div className="editor-header">
                                 <h2 className="serif-title">Journal Architect</h2>
                                 <div className="editor-controls">
-                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
-                                    <button type="submit" className="btn-save">Save & Close</button>
+                                    <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)} disabled={isSaving}>Cancel</button>
+                                    <button type="submit" className="btn-save" disabled={isSaving || isUploading}>
+                                        {isSaving ? 'Saving Article...' : 'Save & Close'}
+                                    </button>
                                 </div>
                             </div>
 

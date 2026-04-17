@@ -7,14 +7,19 @@ import { createSupabaseAdminClient } from './supabaseAdmin';
  */
 export const getCachedTrips = unstable_cache(
     async () => {
-        const supabase = createSupabaseAdminClient();
-        const { data, error } = await supabase
-            .from('trips')
-            .select('*')
-            .eq('is_active', true);
-        
-        if (error) throw error;
-        return data || [];
+        try {
+            const supabase = createSupabaseAdminClient();
+            const { data, error } = await supabase
+                .from('trips')
+                .select('*')
+                .eq('is_active', true);
+            
+            if (error) throw error;
+            return data || [];
+        } catch (e) {
+            console.error('Failed to fetch trips:', e);
+            return [];
+        }
     },
     ['all-trips'],
     { revalidate: 3600, tags: ['trips'] }
@@ -63,18 +68,23 @@ export const getCachedItinerary = (tripId: string) => unstable_cache(
  */
 export const getCachedBlogPosts = unstable_cache(
     async () => {
-        const supabase = createSupabaseAdminClient();
-        const { data, error } = await supabase
-            .from('blog_posts')
-            .select('*')
-            .eq('status', 'published')
-            .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        return data || [];
+        try {
+            const supabase = createSupabaseAdminClient();
+            const { data, error } = await supabase
+                .from('blog_posts')
+                .select('*')
+                .eq('status', 'published')
+                .order('created_at', { ascending: false });
+            
+            if (error) throw error;
+            return data || [];
+        } catch (e) {
+            console.error('Failed to fetch blog posts:', e);
+            return [];
+        }
     },
     ['blog-posts'],
-    { revalidate: 3600, tags: ['blog'] }
+    { revalidate: 60, tags: ['blog'] }
 );
 
 /**
@@ -93,7 +103,7 @@ export const getCachedBlogPostBySlug = (slug: string) => unstable_cache(
         return data;
     },
     [`blog-${slug}`],
-    { revalidate: 3600, tags: ['blog', `blog-${slug}`] }
+    { revalidate: 60, tags: ['blog', `blog-${slug}`] }
 )();
 
 /**

@@ -50,9 +50,9 @@ export default function DynamicBlogPost() {
                     <span style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px', color: '#008080' }}>
                         {post.category || 'Field Notes'}
                     </span>
-                    <h1 style={{ 
-                        fontSize: '48px', 
-                        fontFamily: 'var(--font-playfair), serif', 
+                    <h1 style={{
+                        fontSize: '48px',
+                        fontFamily: 'var(--font-playfair), serif',
                         marginTop: '20px',
                         marginBottom: '30px',
                         lineHeight: '1.2'
@@ -64,30 +64,30 @@ export default function DynamicBlogPost() {
                     </div>
                 </header>
 
-                <div style={{ 
-                    position: 'relative', 
-                    height: '500px', 
-                    width: '100vw', 
-                    left: '50%', 
-                    right: '50%', 
-                    marginLeft: '-50vw', 
+                <div style={{
+                    position: 'relative',
+                    height: '500px',
+                    width: '100vw',
+                    left: '50%',
+                    right: '50%',
+                    marginLeft: '-50vw',
                     marginRight: '-50vw',
                     marginBottom: '80px'
                 }}>
-                    <Image 
-                        src={(post.featured_image?.startsWith('http') ? post.featured_image : `/images/bhutan/main2.webp`)} 
-                        alt={post.title} 
-                        fill 
-                        style={{ objectFit: 'cover' }} 
-                        priority 
+                    <Image
+                        src={(post.featured_image?.startsWith('http') ? post.featured_image : `/images/bhutan/main2.webp`)}
+                        alt={post.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        priority
                     />
                 </div>
 
-                <div 
+                <div
                     className="blog-rich-text"
-                    style={{ 
-                        fontSize: '18px', 
-                        lineHeight: '1.8', 
+                    style={{
+                        fontSize: '18px',
+                        lineHeight: '1.8',
                         color: '#333',
                         fontFamily: 'var(--font-lato), sans-serif'
                     }}
