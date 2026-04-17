@@ -4,8 +4,10 @@ import Link from 'next/link';
 export default function CTA() {
     return (
         <section className="cta-section">
-            <div className="cta-bg" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }}>
-                <Image src="/images/bhutan/main2.webp" alt="Bhutan Mountains Background" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+            <div className="cta-bg fixed-bg" style={{ 
+                backgroundImage: "url('/images/bhutan/main2.webp')",
+                position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 
+            }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
             </div>
             <div className="container cta-content">

@@ -54,17 +54,16 @@ export default function Testimonials() {
 
     return (
         <section className="testimonials-section">
-            <div className="container relative">
-                <div style={{ minHeight: '300px' }}>
+            <div className="container testimonial-flex-container">
+                <button className="testimonial-nav-btn prev" onClick={prevTestimonial} aria-label="Previous testimonial">&lt;</button>
+
+                <div className="testimonial-text-content">
                     <div className="testimonial-quote">&quot;{testimonials[testimonialIndex].content}&quot;</div>
                     <div className="testimonial-author">{testimonials[testimonialIndex].client_name}</div>
                     <div className="testimonial-location">{testimonials[testimonialIndex].role}</div>
                 </div>
 
-                <div className="testimonial-controls">
-                    <button onClick={prevTestimonial}>&lt;</button>
-                    <button onClick={nextTestimonial}>&gt;</button>
-                </div>
+                <button className="testimonial-nav-btn next" onClick={nextTestimonial} aria-label="Next testimonial">&gt;</button>
             </div>
         </section>
     );

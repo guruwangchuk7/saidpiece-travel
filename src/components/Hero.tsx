@@ -82,23 +82,30 @@ export default function Hero() {
                     </select>
                 </div>
                 <div className="trip-finder-field date-field">
-                    <span className="trip-finder-label">Date</span>
                     <div className="trip-finder-dates">
-                        <input
-                            type="date"
-                            className="trip-finder-input small-input"
-                            aria-label="Start date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                        />
-                        <span className="date-separator">-</span>
-                        <input
-                            type="date"
-                            className="trip-finder-input small-input"
-                            aria-label="End date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                        />
+                        <div className="date-input-stack">
+                            <span className="trip-finder-label">Start Date</span>
+                            <input
+                                type="date"
+                                className="trip-finder-input small-input"
+                                aria-label="Start date"
+                                value={startDate}
+                                onClick={(e) => (e.target as any).showPicker?.()}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                        </div>
+                        <span className="date-separator" style={{ marginTop: '20px' }}>-</span>
+                        <div className="date-input-stack">
+                            <span className="trip-finder-label">End Date</span>
+                            <input
+                                type="date"
+                                className="trip-finder-input small-input"
+                                aria-label="End date"
+                                value={endDate}
+                                onClick={(e) => (e.target as any).showPicker?.()}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="trip-finder-field">

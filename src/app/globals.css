@@ -630,7 +630,6 @@ ul {
   background: transparent;
   font-weight: 700;
   cursor: pointer;
-  appearance: none;
 }
 
 .trip-finder-input::placeholder {
@@ -638,33 +637,43 @@ ul {
 }
 
 select.trip-finder-input {
-  padding-right: 20px;
-  background: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23222222' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right center;
+  padding-right: 25px;
+  appearance: none;
+  background: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23222222' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 5px center;
 }
 
 .trip-finder-dates {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .trip-finder-input.small-input {
-  width: 100px;
+  width: 140px;
   font-size: 1rem;
 }
 
-.trip-finder-input.small-input::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  display: none;
+/* Ensure the calendar icon is visible and properly styled for better UX */
+.trip-finder-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.4);
+  /* Subtle gray color to match theme */
+  transition: filter 0.2s;
 }
 
-.trip-finder-input.small-input::-webkit-clear-button {
-  display: none;
+.trip-finder-input::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.2);
+  /* Darker on hover */
 }
 
 .date-separator {
   color: #CCCCCC;
   font-weight: 700;
+}
+
+.date-input-stack {
+  display: flex;
+  flex-direction: column;
 }
 
 .trip-finder .trip-finder-btn {
@@ -990,7 +999,7 @@ select.trip-finder-input {
 
 /* Service */
 .service-section {
-  padding: 120px 0;
+  padding: 100px 0;
   text-align: center;
   background-color: var(--color-cream);
 }
@@ -1088,17 +1097,30 @@ select.trip-finder-input {
 .testimonials-section {
   background-color: var(--color-brand);
   color: var(--color-white);
-  padding: 140px 0;
+  padding: 100px 0;
   text-align: center;
   position: relative;
+}
+
+.testimonial-flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  min-height: 450px;
+}
+
+.testimonial-text-content {
+  flex: 1;
+  max-width: 800px;
 }
 
 .testimonial-quote {
   font-family: var(--font-playfair);
   font-size: 2.8rem;
   line-height: 1.4;
-  max-width: 900px;
-  margin: 0 auto 50px;
+  margin-bottom: 30px;
+  /* Reduced from 50px */
 }
 
 .testimonial-author {
@@ -1116,42 +1138,31 @@ select.trip-finder-input {
   letter-spacing: 0.1em;
 }
 
-.testimonial-controls {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 50px;
-  pointer-events: none;
-}
-
-.testimonial-controls button {
-  pointer-events: auto;
+.testimonial-nav-btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--color-white);
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
-.testimonial-controls button:hover {
+.testimonial-nav-btn:hover {
   background: var(--color-white);
   color: var(--color-brand);
 }
 
 /* Featured Trips */
 .featured-section {
-  padding: 120px 0;
+  padding: 100px 0;
 }
 
 .featured-grid {
@@ -1204,7 +1215,8 @@ select.trip-finder-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px; /* Minimum separation */
+  gap: 15px;
+  /* Minimum separation */
 }
 
 .trip-price {
@@ -1238,6 +1250,12 @@ select.trip-finder-input {
   color: var(--color-white);
 }
 
+.fixed-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
+
 .cta-bg {
   position: absolute;
   top: 0;
@@ -1245,10 +1263,6 @@ select.trip-finder-input {
   right: 0;
   bottom: 0;
   z-index: 1;
-  background-color: #555555;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
 }
 
 .cta-content {
@@ -4372,13 +4386,16 @@ select.trip-finder-input {
    ========================================================================== */
 
 @media (max-width: 768px) {
+
   /* 1. Header & Navigation */
   .top-utility-bar {
-    display: none !important; /* Hide secondary utility nav on mobile to focus on core menu */
+    display: none !important;
+    /* Hide secondary utility nav on mobile to focus on core menu */
   }
 
   .nav-container-inner {
-    height: 70px; /* Slimmer header */
+    height: 70px;
+    /* Slimmer header */
   }
 
   .header-logo-img {
@@ -4412,17 +4429,19 @@ select.trip-finder-input {
   }
 
   /* 3. Typography Scaling */
-  h1, .hero-h1, .story-hero-content h1 {
+  h1,
+  .hero-h1,
+  .story-hero-content h1 {
     font-size: 2.75rem !important;
     line-height: 1.15 !important;
     margin-bottom: 20px !important;
   }
 
-  h2, 
-  .intro-content h2, 
-  .dest-controls h2, 
-  .service-section h2, 
-  .catalog-content h2, 
+  h2,
+  .intro-content h2,
+  .dest-controls h2,
+  .service-section h2,
+  .catalog-content h2,
   .cta-content h2,
   .section-header-row h2,
   .split-text h2,
@@ -4433,22 +4452,28 @@ select.trip-finder-input {
     margin-bottom: 25px !important;
   }
 
-  h3, .trip-card-title, .dest-info h3, .connect-card h3 {
+  h3,
+  .trip-card-title,
+  .dest-info h3,
+  .connect-card h3 {
     font-size: 1.6rem !important;
   }
 
   /* 4. Hero Section */
-  .hero-section, .story-hero {
+  .hero-section,
+  .story-hero {
     height: 85dvh !important;
     min-height: 500px !important;
     margin-bottom: 0;
   }
 
   .hero-section {
-    margin-bottom: 200px; /* Space for trip finder */
+    margin-bottom: 200px;
+    /* Space for trip finder */
   }
 
-  .hero-content, .story-hero-content {
+  .hero-content,
+  .story-hero-content {
     padding: 0 25px;
   }
 
@@ -4475,7 +4500,8 @@ select.trip-finder-input {
   }
 
   /* 5. Intro & Split Sections (Our Story, Home) */
-  .intro-block, .story-split {
+  .intro-block,
+  .story-split {
     flex-direction: column !important;
     gap: 40px !important;
   }
@@ -4484,7 +4510,9 @@ select.trip-finder-input {
     flex-direction: column !important;
   }
 
-  .intro-image, .story-image, .split-media {
+  .intro-image,
+  .story-image,
+  .split-media {
     height: 320px !important;
     flex: none;
     width: 100%;
@@ -4605,8 +4633,9 @@ select.trip-finder-input {
   }
 
   .catalog-buttons {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     gap: 15px;
   }
 
@@ -4626,16 +4655,18 @@ select.trip-finder-input {
 
   /* 13. Testimonials */
   .testimonials-section {
-    padding: 80px 20px;
+    padding: 60px 20px;
   }
 
-  .testimonial-quote {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
+  .testimonial-flex-container {
+    flex-direction: column;
+    gap: 30px;
+    min-height: 250px;
   }
 
-  .testimonial-controls {
+  .testimonial-nav-btn {
     display: none;
+    /* Still hiding on mobile for a cleaner look unless user asks to show */
   }
 
   /* 14. CTA section */
@@ -4673,7 +4704,8 @@ select.trip-finder-input {
   }
 
   /* 16. Global Utilities */
-  .sticky-contact-btn, .sticky-contact {
+  .sticky-contact-btn,
+  .sticky-contact {
     bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: 20px !important;
   }
@@ -4791,7 +4823,10 @@ select.trip-finder-input {
 
 /* Small Mobile Devices */
 @media (max-width: 480px) {
-  h1, .hero-h1, .story-hero-content h1 {
+
+  h1,
+  .hero-h1,
+  .story-hero-content h1 {
     font-size: 2.25rem !important;
   }
 
@@ -4812,7 +4847,8 @@ select.trip-finder-input {
     font-size: 0.95rem;
   }
 
-  .catalog-buttons .btn, .cta-buttons .btn {
+  .catalog-buttons .btn,
+  .cta-buttons .btn {
     width: 100% !important;
   }
 
@@ -4828,25 +4864,27 @@ select.trip-finder-input {
    ========================================================================== */
 
 @supports (-webkit-touch-callout: none) {
+
   /* 1. Dynamic Viewport Handling */
-  .hero-section, .story-hero {
+  .hero-section,
+  .story-hero {
     height: 90dvh !important;
   }
-  
+
   .trip-hero {
     height: 80dvh !important;
   }
-  
+
   .wizard-framework {
     min-height: 100dvh !important;
   }
-  
+
   .mobile-nav-drawer {
     height: 100dvh !important;
     padding-top: calc(80px + env(safe-area-inset-top)) !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
   }
-  
+
   .menu-overlay {
     height: 100dvh !important;
     top: 0 !important;
@@ -4856,8 +4894,9 @@ select.trip-finder-input {
   .global-header {
     padding-top: env(safe-area-inset-top);
   }
-  
-  .sticky-contact-btn, .sticky-contact {
+
+  .sticky-contact-btn,
+  .sticky-contact {
     bottom: calc(20px + env(safe-area-inset-bottom)) !important;
     right: max(20px, env(safe-area-inset-right)) !important;
   }
@@ -4875,7 +4914,8 @@ select.trip-finder-input {
   }
 
   /* 3. Visual Stability */
-  html, body {
+  html,
+  body {
     min-height: -webkit-fill-available;
   }
 
@@ -4884,7 +4924,8 @@ select.trip-finder-input {
     padding-right: max(20px, env(safe-area-inset-right)) !important;
   }
 
-  .hero-content, .story-hero-content {
+  .hero-content,
+  .story-hero-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -4900,8 +4941,13 @@ select.trip-finder-input {
 
 /* --- Skeleton & Loading Animations --- */
 @keyframes skeleton-pulse-anim {
-  0% { background-position: 0% 0%; }
-  100% { background-position: -135% 0%; }
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: -135% 0%;
+  }
 }
 
 .skeleton-pulse {
@@ -4914,6 +4960,3 @@ select.trip-finder-input {
 .skeleton-text {
   border-radius: 4px;
 }
-
-
-
