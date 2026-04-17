@@ -8,20 +8,27 @@ export const isSupabaseAdminConfigured = Boolean(
   supabaseUrl && supabaseAnonKey && supabaseServiceRoleKey,
 );
 
+let adminClient: SupabaseClient | null = null;
+
 export function createSupabaseAdminClient(): SupabaseClient {
+  if (adminClient) return adminClient;
+
   if (!isSupabaseAdminConfigured) {
     throw new Error(
       'Supabase admin is not configured. Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY.',
     );
   }
 
-  return createClient(supabaseUrl as string, supabaseServiceRoleKey as string, {
+  adminClient = createClient(supabaseUrl as string, supabaseServiceRoleKey as string, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
   });
+
+  return adminClient;
 }
+
 
 export async function getAuthenticatedUser(accessToken: string): Promise<User> {
   if (!supabaseUrl || !supabaseAnonKey) {

@@ -24,14 +24,16 @@ export default function BrowseTripsClient({
     initialCollection = 'all',
     initialType,
     initialActivity,
+    initialTrips = [],
 }: {
     initialCollection?: string;
     initialType?: string;
     initialActivity?: string;
+    initialTrips?: Trip[];
 }) {
     const { setHeaderTheme } = useUI();
-    const [allTrips, setAllTrips] = useState<Trip[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [allTrips, setAllTrips] = useState<Trip[]>(initialTrips);
+    const [isLoading, setIsLoading] = useState(initialTrips.length === 0);
     const [filters, setFilters] = useState({
         types: initialType ? [initialType] : [] as string[],
         destinations: [] as string[],
@@ -49,7 +51,9 @@ export default function BrowseTripsClient({
 
     useEffect(() => {
         setIsMounted(true);
-        fetchTrips();
+        if (allTrips.length === 0) {
+            fetchTrips();
+        }
     }, []);
 
     const fetchTrips = async () => {
@@ -63,6 +67,7 @@ export default function BrowseTripsClient({
         if (data) setAllTrips(data);
         setIsLoading(false);
     };
+
 
     const handleFilterChange = (category: keyof typeof filters, value: string) => {
         setFilters(prev => {

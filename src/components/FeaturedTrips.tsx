@@ -1,42 +1,11 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
+import { getCachedTrips } from '@/lib/data';
 
-interface Trip {
-    id: string;
-    title: string;
-    duration_days: number;
-    starting_price: number;
-    image_url: string;
-    slug: string;
-}
-
-export default function FeaturedTrips() {
-    const [trips, setTrips] = useState<Trip[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchFeatured = async () => {
-            if (!supabase) return;
-            const { data, error } = await supabase
-                .from('trips')
-                .select('*')
-                .eq('is_active', true)
-                .limit(4);
-
-            if (!error && data) {
-                setTrips(data);
-            }
-            setLoading(false);
-        };
-
-        fetchFeatured();
-    }, []);
-
-    if (loading) return null; // Or a skeleton loader if needed
+export default async function FeaturedTrips() {
+    // Fetch cached trips on the server
+    const allTrips = await getCachedTrips();
+    const trips = allTrips.slice(0, 4);
 
     return (
         <section className="featured-section">
@@ -47,7 +16,7 @@ export default function FeaturedTrips() {
                 </div>
 
                 <div className="featured-grid">
-                    {trips.map((trip) => (
+                    {trips.map((trip: any) => (
                         <div className="trip-card" key={trip.id}>
                             <div className="image-placeholder" style={{ position: 'relative', background: '#f5f5f5' }}>
                                 <Image 
@@ -70,9 +39,14 @@ export default function FeaturedTrips() {
                             </div>
                         </div>
                     ))}
-                    {trips.length === 0 && <p style={{ gridColumn: 'span 4', textAlign: 'center', color: '#999', padding: '40px' }}>Loading live trip packages...</p>}
+                    {trips.length === 0 && (
+                        <p style={{ gridColumn: 'span 4', textAlign: 'center', color: '#999', padding: '40px' }}>
+                            No featured journeys available at the moment.
+                        </p>
+                    )}
                 </div>
             </div>
         </section>
     );
 }
+

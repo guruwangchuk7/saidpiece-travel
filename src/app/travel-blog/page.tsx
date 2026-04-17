@@ -1,40 +1,12 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
+import { getCachedBlogPosts } from '@/lib/data';
 
-interface BlogPost {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string;
-    main_image?: string;
-    status: string;
-    created_at: string;
-}
-
-export default function TravelBlogPage() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchPosts = async () => {
-            if (!supabase) return;
-            const { data } = await supabase
-                .from('blog_posts')
-                .select('*')
-                .eq('status', 'published')
-                .order('created_at', { ascending: false });
-
-            if (data) setPosts(data);
-            setLoading(false);
-        };
-        fetchPosts();
-    }, []);
+export default async function TravelBlogPage() {
+    // Fetch cached blog posts on the server
+    const posts = await getCachedBlogPosts();
 
     return (
         <main className="our-story-page page-with-header">
@@ -57,7 +29,7 @@ export default function TravelBlogPage() {
                     </div>
                     
                     <div className="connect-card-grid">
-                        {posts.map((post) => (
+                        {posts.map((post: any) => (
                             <Link key={post.id} href={`/travel-blog/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <article className="connect-card" style={{ padding: '0', overflow: 'hidden' }}>
                                     <div style={{ position: 'relative', height: '260px' }}>
@@ -76,6 +48,11 @@ export default function TravelBlogPage() {
                                 </article>
                             </Link>
                         ))}
+                        {posts.length === 0 && (
+                            <p style={{ gridColumn: 'span 3', textAlign: 'center', color: '#999', padding: '40px' }}>
+                                No stories have been shared yet. Check back soon.
+                            </p>
+                        )}
                     </div>
                 </section>
             </div>
@@ -83,3 +60,4 @@ export default function TravelBlogPage() {
         </main>
     );
 }
+

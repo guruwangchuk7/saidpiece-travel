@@ -11,48 +11,54 @@ const createBookingSchema = z.object({
   paymentMethod: z.enum(['card', 'crypto', 'binance', 'wire']),
 });
 
+import { logger } from '@/lib/logger';
+
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     if (!validateBodySize(request)) {
       return jsonNoStore({ ok: false, error: 'Payload too large.' }, { status: 413 });
     }
 
     const clientIp = getClientIp(request);
-    const rateLimit = await enforceRateLimit({
-      key: `bookings-create:${clientIp}`,
-      limit: 5,
-      windowMs: 60_000,
-    });
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+    if (!token) {
+      return jsonNoStore({ ok: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Parallelize independent checks
+    const [rateLimit, user, body] = await Promise.all([
+      enforceRateLimit({
+        key: `bookings-create:${clientIp}`,
+        limit: 5,
+        windowMs: 60_000,
+      }),
+      getAuthenticatedUser(token),
+      request.json(),
+    ]);
 
     if (rateLimit) {
+      logger.warn('Booking rate limit exceeded', { clientIp });
       return jsonNoStore(
         { ok: false, error: 'Too many booking attempts. Please wait.' },
         { status: 429 }
       );
     }
 
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return jsonNoStore({ ok: false, error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const user = await getAuthenticatedUser(token);
+    // Next set of sequential dependencies
     await ensureProfile(user);
 
-    const body = await request.json();
     const result = createBookingSchema.safeParse(body);
-
     if (!result.success) {
       return jsonNoStore({ ok: false, error: 'Invalid booking data', details: result.error.format() }, { status: 400 });
     }
 
     const { tripId, departureId, travelerName, passengersCount, paymentMethod } = result.data;
-
     const supabase = createSupabaseAdminClient();
 
-    // 1. Fetch Trusted Pricing
-    // Priority: Departure Price > Starting Price
+    // Fetch pricing
     let finalPrice = 0;
     
     if (departureId) {
@@ -104,9 +110,16 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (bookingError) {
-      console.error('[bookings] Create failed:', bookingError);
+      logger.error('Booking creation failed', bookingError, { userId: user.id, tripId });
       return jsonNoStore({ ok: false, error: 'Failed to initialize booking.' }, { status: 500 });
     }
+
+    const duration = Date.now() - startTime;
+    logger.info('Booking created successfully', { 
+        bookingId: booking.id, 
+        userId: user.id, 
+        durationMs: duration 
+    });
 
     return jsonNoStore({
       ok: true,
@@ -116,7 +129,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[bookings] System error:', error);
+    logger.error('System error in bookings API', error);
     return jsonNoStore({ ok: false, error: 'Internal system error' }, { status: 500 });
   }
 }
+
+
