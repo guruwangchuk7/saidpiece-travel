@@ -23,18 +23,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
-    // Protection logic - centralizing redirection behavior
-    useEffect(() => {
-        setHasMounted(true);
-        if (!loading && !isStaff && pathname !== '/admin/login') {
-            const currentRole = localStorage.getItem('last_known_role') || 'none';
-            console.log(`[AdminLayout] Access Denied. Role: ${currentRole}. Redirecting...`);
-            router.push('/admin/login');
-        }
-    }, [isStaff, loading, pathname, router]);
-
     // Track last known state for debugging
     useEffect(() => {
+        setHasMounted(true);
         if (!loading && isStaff) {
             localStorage.setItem('last_known_role', 'staff');
         }
@@ -50,31 +41,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return <div className="admin-error">Repository not configured. Please check environment variables.</div>;
     }
 
+    // Login page bypasses the admin layout structure
     if (pathname === '/admin/login') {
         return <>{children}</>;
     }
 
-    // During SSR and first hydration pass, we bypass the loader to match server HTML
-    // Once mounted, we can show the actual loading state
-    if (!hasMounted || loading) {
-        // If it's the first pass, we return the children but hide them if we know we're loading
-        // to avoid hydration mismatch (server renders content, client must match)
+    // Middleware already handles the redirection. 
+    // We only show a minimal loader if we're truly deep in an auth check.
+    if (loading && !isStaff) {
         return (
             <div className="admin-loading-container">
                 <div className="admin-loading">
                     <div className="spinner"></div>
-                    <span>Initializing Management Portal...</span>
                 </div>
-                {/* We render children hidden if we need to match server but know we will redirect */}
-                <div style={{ display: 'none' }}>{children}</div>
             </div>
         );
     }
 
-    if (!isStaff) {
+    // If we've reached here, the middleware has verified session, 
+    // and AuthContext is hydrating the final staff roles.
+    if (!isStaff && hasMounted) {
         return (
             <div className="admin-redirecting">
-                <p>Establishing identity... verifying credentials.</p>
+                <p>Verifying Credentials...</p>
             </div>
         );
     }

@@ -109,6 +109,52 @@ export default function EnquiryManager() {
         }
     };
 
+    const handleDeleteEnquiry = async () => {
+        if (!selectedEnquiry || !supabase) return;
+        
+        const confirmed = window.confirm(`Are you sure you want to delete the enquiry from ${selectedEnquiry.firstName}? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            const { error } = await supabase
+                .from('enquiries')
+                .delete()
+                .eq('id', selectedEnquiry.id);
+
+            if (error) throw error;
+
+            setEnquiries(prev => prev.filter(e => e.id !== selectedEnquiry.id));
+            setSelectedEnquiry(null);
+            alert('Enquiry deleted successfully.');
+        } catch (err) {
+            console.error('Error deleting enquiry:', err);
+            alert('Failed to delete enquiry. Please try again.');
+        }
+    };
+
+    const handleDeleteBooking = async () => {
+        if (!selectedBooking || !supabase) return;
+
+        const confirmed = window.confirm(`Are you sure you want to delete the booking for ${selectedBooking.traveler_name}? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            const { error } = await supabase
+                .from('bookings')
+                .delete()
+                .eq('id', selectedBooking.id);
+
+            if (error) throw error;
+
+            setBookings(prev => prev.filter(b => b.id !== selectedBooking.id));
+            setSelectedBooking(null);
+            alert('Booking deleted successfully.');
+        } catch (err) {
+            console.error('Error deleting booking:', err);
+            alert('Failed to delete booking. Please try again.');
+        }
+    };
+
     if (isStaff && isFetching) {
         return (
             <div className="admin-loader">
@@ -191,7 +237,12 @@ export default function EnquiryManager() {
                                             <p>{selectedEnquiry.email}</p>
                                         </div>
                                     </div>
-                                    <span className={`status-pill ${selectedEnquiry.status}`}>{selectedEnquiry.status.replace(/_/g, ' ')}</span>
+                                    <div className="header-actions">
+                                        <span className={`status-pill ${selectedEnquiry.status}`}>{selectedEnquiry.status.replace(/_/g, ' ')}</span>
+                                        <button className="btn-delete" onClick={handleDeleteEnquiry} title="Delete Lead">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="narrative-section">
@@ -248,7 +299,12 @@ export default function EnquiryManager() {
                                             <p>{selectedBooking.traveler_email}</p>
                                         </div>
                                     </div>
-                                    <span className={`status-pill ${selectedBooking.status}`}>{selectedBooking.status}</span>
+                                    <div className="header-actions">
+                                        <span className={`status-pill ${selectedBooking.status}`}>{selectedBooking.status}</span>
+                                        <button className="btn-delete" onClick={handleDeleteBooking} title="Delete Booking">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="stats-grid">
@@ -590,6 +646,29 @@ export default function EnquiryManager() {
                     margin-bottom: 20px;
                 }
                 @keyframes spin { to { transform: rotate(360deg); } }
+                .header-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+                .btn-delete {
+                    background: none;
+                    border: 1px solid #f5f5f5;
+                    color: #ff4d4f;
+                    width: 34px;
+                    height: 34px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-delete:hover {
+                    background: #fff1f0;
+                    border-color: #ffa39e;
+                }
+
                 .empty-state { padding: 100px; text-align: center; color: #ccc; font-size: 15px; }
             `}</style>
         </div>
