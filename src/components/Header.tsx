@@ -82,6 +82,7 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                         <Link href="/browse" onClick={() => setIsMobileMenuOpen(false)}>Browse Trips</Link>
                         <Link href="/wizard" onClick={() => setIsMobileMenuOpen(false)}>Trip Wizard</Link>
                         <Link href="/about/our-story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
+                        <Link href="/travel-blog" onClick={() => setIsMobileMenuOpen(false)}>Travel Blog</Link>
                     </nav>
                     
                     <div className="mobile-nav-bottom">
@@ -308,6 +309,7 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                                     <li><Link href="/about/local-expertise">Local Expertise</Link></li>
                                     <li><Link href="/about/booking-process">Booking Process</Link></li>
                                     <li><Link href="/about/meet-our-team">Meet Our Team</Link></li>
+                                    <li><Link href="/travel-blog">Travel Blog</Link></li>
                                 </ul>
                             </div>
                             <div className="mega-about-bg">

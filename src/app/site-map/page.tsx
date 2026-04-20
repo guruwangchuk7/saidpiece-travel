@@ -29,6 +29,7 @@ const sitemapData = [
       { label: 'Responsible Travel', href: '/about/responsible-travel' },
       { label: 'The Team', href: '/about/meet-our-team' },
       { label: 'Booking Process', href: '/about/booking-process' },
+      { label: 'Travel Blog', href: '/travel-blog' },
     ],
   },
   {

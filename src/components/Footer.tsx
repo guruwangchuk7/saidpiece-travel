@@ -103,7 +103,7 @@ export default function Footer({ isAuto = false }: { isAuto?: boolean }) {
                         <h4>Resources</h4>
                         <div className="footer-links">
                             <Link href="/about/booking-process">Booking Process</Link>
-                            <a href="#">Travel Tips</a>
+                            <Link href="/travel-blog">Travel Blog</Link>
                             <Link href="/terms">Terms & Conditions</Link>
                             <Link href="/wizard">Trip Wizard</Link>
                             <Link href="/faq">FAQ</Link>
