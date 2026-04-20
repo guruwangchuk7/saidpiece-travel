@@ -57,52 +57,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return <>{children}</>;
     }
 
-    // Verification Flow:
-    // If not staff and loading is finished, show the access denied message.
-    if (!loading && !isStaff) {
-        return (
-            <div className="admin-redirecting">
-                <div className="admin-loading">
-                    <div className="spinner"></div>
-                    <p>Access Denied or Session Expired. Redirecting...</p>
-                </div>
-                <style jsx>{`
-                    .admin-redirecting {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100vh;
-                        width: 100vw;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        background: #fdfcf9;
-                        z-index: 9999;
-                        font-family: var(--font-playfair), serif;
-                    }
-                    .admin-loading {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 20px;
-                    }
-                    .spinner {
-                        width: 40px;
-                        height: 40px;
-                        border: 3px solid rgba(212, 200, 176, 0.2);
-                        border-top: 3px solid #d4c8b0;
-                        border-radius: 50%;
-                        animation: spin 1s linear infinite;
-                    }
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                `}</style>
-            </div>
-        );
-    }
-
     return (
         <div className="admin-container">
             {/* Mobile Header (Hidden during loading) */}

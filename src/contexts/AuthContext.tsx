@@ -95,7 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (isUserEmailStaff) {
                     setIsStaff(true);
                     setIsAdmin(true);
-                    document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
                 }
 
                 const userRole = await fetchProfile(newUser.id);
@@ -108,16 +107,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setIsAdmin(finalRole === 'admin');
                     setIsStaff(finalIsStaff);
 
+                    // Sync/Refresh cookie with actual DB role
                     if (finalIsStaff) {
                         document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
-                    } else {
+                    } else if (initializationRef.current) {
+                        // Only clear cookie if we've actually verified they are NOT staff
                         document.cookie = "is_staff_hint=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                     }
                 }
             } else {
-                // Important: If we are still initializing and have an optimistic hint,
-                // don't wipe it out until we are 100% sure the session is null.
-                if (initializationRef.current || !isStaff) {
+                // Important: Only clear state if we are NOT on an admin route 
+                // OR if we've definitively finished initialization and confirmed no session.
+                const isPageAdmin = window.location.pathname.startsWith('/admin');
+                
+                if (!isPageAdmin || (initializationRef.current && !isStaff)) {
                     setRole(null);
                     setIsAdmin(false);
                     setIsStaff(false);
