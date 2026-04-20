@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, [pathname]);
 
     // Boundary check for missing configuration
-    if (!supabaseConfigured && !loading && hasMounted) {
+    if (!supabaseConfigured && !loading) {
         return <div className="admin-error">Repository not configured. Please check environment variables.</div>;
     }
 
@@ -46,24 +46,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return <>{children}</>;
     }
 
-    // Middleware already handles the redirection. 
-    // We only show a minimal loader if we're truly deep in an auth check.
-    if (loading && !isStaff) {
+    // Verification Flow:
+    // 1. If we are still loading the initial session, show the loader.
+    // 2. Once loading is done, if not staff, show a verification message (or let proxy handle redirect).
+    if (loading) {
         return (
             <div className="admin-loading-container">
                 <div className="admin-loading">
                     <div className="spinner"></div>
+                    <p className="loading-hint">Verifying Session...</p>
                 </div>
             </div>
         );
     }
 
-    // If we've reached here, the middleware has verified session, 
-    // and AuthContext is hydrating the final staff roles.
-    if (!isStaff && hasMounted) {
+    if (!isStaff) {
         return (
             <div className="admin-redirecting">
-                <p>Verifying Credentials...</p>
+                <div className="admin-loading">
+                    <div className="spinner"></div>
+                    <p>Access Denied or Session Expired. Redirecting...</p>
+                </div>
             </div>
         );
     }

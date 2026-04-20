@@ -49,9 +49,24 @@ export async function GET(request: Request) {
         },
       }
     );
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${safeNext}`);
+    const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && session?.user) {
+      const email = session.user.email?.toLowerCase();
+      const { isEmailStaff } = await import('@/lib/auth-constants');
+      
+      const isStaff = isEmailStaff(email);
+      const response = NextResponse.redirect(`${origin}${safeNext}`);
+      
+      if (isStaff) {
+          response.cookies.set('is_staff_hint', 'true', {
+              path: '/',
+              maxAge: 31536000,
+              sameSite: 'lax',
+              httpOnly: false, // Must be accessible by client to keep in sync
+          });
+      }
+      
+      return response;
     }
   }
 

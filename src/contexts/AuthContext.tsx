@@ -3,8 +3,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
+import { STAFF_ROLES, isEmailStaff } from '@/lib/auth-constants';
 
-interface AuthContextType {
+export interface AuthContextType {
     user: User | null;
     session: Session | null;
     loading: boolean;
@@ -26,12 +27,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isStaff, setIsStaff] = useState(false);
 
-    // Use a ref to prevent concurrent updateAuthState calls
+    // Cache to prevent redundant profile fetches during the same session
+    const profileCacheRef = React.useRef<{ [key: string]: string }>({});
     const initializationRef = React.useRef<boolean>(false);
 
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) {
-            console.warn('[AuthProvider] Supabase not configured.');
             setLoading(false);
             return;
         }
@@ -39,15 +40,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const client = supabase;
         let mounted = true;
 
-        // Safety watchdog: ensure loading is NEVER stuck forever
+        // Optimized safety watchdog
         const safetyTimeout = setTimeout(() => {
             if (mounted && loading) {
-                console.warn('[AuthProvider] Safety timeout reached. Forcing loading state to false.');
+                console.warn('[AuthProvider] Safety timeout. Forcing loading false.');
                 setLoading(false);
             }
-        }, 6000); 
+        }, 3000); // Reduced to 3s for better responsiveness
 
         const fetchProfile = async (userId: string) => {
+            // Check cache first
+            if (profileCacheRef.current[userId]) {
+                return profileCacheRef.current[userId];
+            }
+
             try {
                 const { data: profile, error } = await client
                     .from('profiles')
@@ -56,12 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     .single();
 
                 if (error) {
-                    console.warn('[AuthProvider] Profile fetch error:', error.message);
                     return 'customer';
                 }
-                return profile?.role ?? 'customer';
+                
+                const result = profile?.role ?? 'customer';
+                profileCacheRef.current[userId] = result;
+                return result;
             } catch (err) {
-                console.error('[AuthProvider] Profile exception:', err);
                 return 'customer';
             }
         };
@@ -69,31 +76,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const updateAuthState = async (currentSession: Session | null) => {
             if (!mounted) return;
             
-            console.log(`[AuthProvider] Updating auth state: ${currentSession?.user?.email ?? 'none'}`);
-            
             const newUser = currentSession?.user ?? null;
             setSession(currentSession);
             setUser(newUser);
 
             if (newUser) {
-                const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || 'saidpiecebhutan@gmail.com,guruwangchuk7@gmail.com,saidpiece@gmail.com')
-                    .split(',')
-                    .map(e => e.trim().toLowerCase());
+                const userEmail = newUser.email?.toLowerCase();
+                const isUserEmailStaff = isEmailStaff(userEmail);
                 
-                const isEmailStaff = staffEmails.includes(newUser.email?.toLowerCase() || '');
-                
-                // If they are email-staff, we set initial staff status to true
-                if (isEmailStaff) {
+                // Optimistic staff status if email is in whitelist
+                if (isUserEmailStaff) {
                     setIsStaff(true);
                     setIsAdmin(true);
+                    // Ensure cookie is set immediately for proxy synchronization
                     document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
                 }
 
                 const userRole = await fetchProfile(newUser.id);
                 
                 if (mounted) {
-                    const finalRole = (userRole === 'customer' && isEmailStaff) ? 'admin' : userRole;
-                    const finalIsStaff = ['admin', 'staff', 'moderator', 'editor'].includes(finalRole);
+                    const finalRole = (userRole === 'customer' && isUserEmailStaff) ? 'admin' : userRole;
+                    const finalIsStaff = STAFF_ROLES.includes(finalRole);
 
                     setRole(finalRole);
                     setIsAdmin(finalRole === 'admin');
@@ -121,8 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Subscription for auth changes
         const { data: { subscription } } = client.auth.onAuthStateChange(async (event, newSession) => {
-            console.log(`[AuthProvider] Event: ${event}`);
-            if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+            if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
                 await updateAuthState(newSession);
             } else if (!initializationRef.current) {
                 await updateAuthState(newSession);
@@ -137,13 +139,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             })
             .catch(err => {
-                console.error('[AuthProvider] Session error:', err);
                 if (mounted) updateAuthState(null);
             });
 
         return () => {
             mounted = false;
             subscription.unsubscribe();
+            clearTimeout(safetyTimeout);
         };
     }, []);
 

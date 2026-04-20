@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthContext, AuthContextType } from '@/contexts/AuthContext';
 
 /**
  * useAuth hook (Refactored to use AuthContext)
@@ -9,6 +9,6 @@ import { useAuthContext } from '@/contexts/AuthContext';
  * Use this in components to access authentication state without
  * triggering multiple session lookups.
  */
-export function useAuth() {
+export function useAuth(): AuthContextType {
   return useAuthContext();
 }
