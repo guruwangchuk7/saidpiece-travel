@@ -34,11 +34,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Hydration-safe optimistic check
     useEffect(() => {
         const hasHint = document.cookie.split(';').some(item => item.trim().startsWith('is_staff_hint=true'));
-        if (hasHint && !initializationRef.current) {
+        if (hasHint) {
             setIsStaff(true);
             setIsAdmin(true);
             setRole('staff');
-            setLoading(false);
+            // We don't set loading(false) here anymore to prevent the "Access Denied" race.
+            // loading will be set to false by the real auth check below.
         }
     }, []);
 
@@ -57,10 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 console.warn('[AuthProvider] Safety timeout. Forcing loading false.');
                 setLoading(false);
             }
-        }, 3000); // Reduced to 3s for better responsiveness
+        }, 3000);
 
         const fetchProfile = async (userId: string) => {
-            // Check cache first
             if (profileCacheRef.current[userId]) {
                 return profileCacheRef.current[userId];
             }
@@ -72,10 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     .eq('id', userId)
                     .single();
 
-                if (error) {
-                    return 'customer';
-                }
-                
+                if (error) return 'customer';
                 const result = profile?.role ?? 'customer';
                 profileCacheRef.current[userId] = result;
                 return result;
@@ -95,11 +92,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const userEmail = newUser.email?.toLowerCase();
                 const isUserEmailStaff = isEmailStaff(userEmail);
                 
-                // Optimistic staff status if email is in whitelist
                 if (isUserEmailStaff) {
                     setIsStaff(true);
                     setIsAdmin(true);
-                    // Ensure cookie is set immediately for proxy synchronization
                     document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
                 }
 
@@ -113,7 +108,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setIsAdmin(finalRole === 'admin');
                     setIsStaff(finalIsStaff);
 
-                    // Sync cookie with actual DB role
                     if (finalIsStaff) {
                         document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
                     } else {
@@ -121,10 +115,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     }
                 }
             } else {
-                setRole(null);
-                setIsAdmin(false);
-                setIsStaff(false);
-                document.cookie = "is_staff_hint=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // Important: If we are still initializing and have an optimistic hint,
+                // don't wipe it out until we are 100% sure the session is null.
+                if (initializationRef.current || !isStaff) {
+                    setRole(null);
+                    setIsAdmin(false);
+                    setIsStaff(false);
+                    document.cookie = "is_staff_hint=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                }
             }
             
             if (mounted) {
@@ -133,23 +131,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         };
 
-        // Subscription for auth changes
         const { data: { subscription } } = client.auth.onAuthStateChange(async (event, newSession) => {
-            if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
+            if (['SIGNED_OUT', 'SIGNED_IN', 'USER_UPDATED', 'TOKEN_REFRESHED'].includes(event)) {
                 await updateAuthState(newSession);
             } else if (!initializationRef.current) {
                 await updateAuthState(newSession);
             }
         });
 
-        // initial session check
         client.auth.getSession()
             .then(({ data: { session: initialSession } }) => {
                 if (mounted && !initializationRef.current) {
                     updateAuthState(initialSession);
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 if (mounted) updateAuthState(null);
             });
 
