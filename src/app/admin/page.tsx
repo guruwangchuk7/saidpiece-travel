@@ -23,8 +23,11 @@ export default function ArchitectDashboard() {
     }, [isStaff]);
 
     const fetchCounts = async () => {
-        if (!supabase) return;
         setLoading(true);
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         try {
             const [trips, blog, dests, enquiries, faqs] = await Promise.all([
                 supabase.from('trips').select('*', { count: 'exact', head: true }),

@@ -40,19 +40,27 @@ export default function DestinationManager() {
     }, [isStaff]);
 
     const fetchDestinations = async () => {
-        if (!supabase) return;
         setLoading(true);
-        const { data, error } = await supabase
-            .from('destinations')
-            .select('*')
-            .order('sort_order', { ascending: true });
-
-        if (error) {
-            console.error('Error fetching destinations:', error);
-        } else {
-            setDestinations(data || []);
+        if (!supabase) {
+            setLoading(false);
+            return;
         }
-        setLoading(false);
+        try {
+            const { data, error } = await supabase
+                .from('destinations')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching destinations:', error);
+            } else {
+                setDestinations(data || []);
+            }
+        } catch (e) {
+            console.error('Exception in fetchDestinations:', e);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSave = async (e: React.FormEvent) => {

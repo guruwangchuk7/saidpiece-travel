@@ -43,8 +43,11 @@ export default function BlogManager() {
     }, [isStaff]);
 
     const fetchPosts = async () => {
-        if (!supabase) return;
         setLoading(true);
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('blog_posts')

@@ -30,8 +30,11 @@ export default function FAQManager() {
     }, [isStaff]);
 
     const fetchFaqs = async () => {
-        if (!supabase) return;
         setLoading(true);
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('faqs')

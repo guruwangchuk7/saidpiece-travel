@@ -36,8 +36,11 @@ export default function EnquiryManager() {
     }, [isStaff, view]);
 
     const fetchEnquiries = async () => {
-        if (!supabase) return;
         setIsFetching(true);
+        if (!supabase) {
+            setIsFetching(false);
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('enquiries')
@@ -67,8 +70,11 @@ export default function EnquiryManager() {
     };
 
     const fetchBookings = async () => {
-        if (!supabase) return;
         setIsFetching(true);
+        if (!supabase) {
+            setIsFetching(false);
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('bookings')

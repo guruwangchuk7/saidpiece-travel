@@ -52,19 +52,27 @@ export default function TripManager() {
     }, [isStaff]);
 
     const fetchTrips = async () => {
-        if (!supabase) return;
         setLoading(true);
-        const { data, error } = await supabase
-            .from('trips')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Error fetching trips:', error);
-        } else {
-            setTrips(data || []);
+        if (!supabase) {
+            setLoading(false);
+            return;
         }
-        setLoading(false);
+        try {
+            const { data, error } = await supabase
+                .from('trips')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching trips:', error);
+            } else {
+                setTrips(data || []);
+            }
+        } catch (e) {
+            console.error('Exception in fetchTrips:', e);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSave = async (e: React.FormEvent) => {

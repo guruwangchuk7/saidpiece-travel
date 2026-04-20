@@ -23,6 +23,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
+    const menuItems = [
+        { label: 'Architect Home', href: '/admin', icon: NavDashboardIcon },
+        { label: 'Booking Enquiries', href: '/admin/enquiries', icon: NavEnquiriesIcon },
+        { label: 'Manage Trips', href: '/admin/trips', icon: NavTripsIcon },
+        { label: 'Destinations', href: '/admin/destinations', icon: NavDestinationsIcon },
+        { label: 'Blog Posts', href: '/admin/blog', icon: NavBlogIcon },
+        { label: 'Travel FAQs', href: '/admin/faq', icon: NavFAQIcon },
+        { label: 'Import Data', href: '/admin/import', icon: NavImportIcon },
+        { label: 'Site Settings', href: '/admin/settings', icon: NavSettingsIcon },
+    ];
+
     // Track last known state for debugging
     useEffect(() => {
         setHasMounted(true);
@@ -47,90 +58,128 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // Verification Flow:
-    // 1. If we are still loading the initial session, show the loader.
-    // 2. Once loading is done, if not staff, show a verification message (or let proxy handle redirect).
-    if (loading) {
-        return (
-            <div className="admin-loading-container">
-                <div className="admin-loading">
-                    <div className="spinner"></div>
-                    <p className="loading-hint">Verifying Session...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (!isStaff) {
+    // If not staff and loading is finished, show the access denied message.
+    if (!loading && !isStaff) {
         return (
             <div className="admin-redirecting">
                 <div className="admin-loading">
                     <div className="spinner"></div>
                     <p>Access Denied or Session Expired. Redirecting...</p>
                 </div>
+                <style jsx>{`
+                    .admin-redirecting {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        width: 100vw;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        background: #fdfcf9;
+                        z-index: 9999;
+                        font-family: var(--font-playfair), serif;
+                    }
+                    .admin-loading {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 20px;
+                    }
+                    .spinner {
+                        width: 40px;
+                        height: 40px;
+                        border: 3px solid rgba(212, 200, 176, 0.2);
+                        border-top: 3px solid #d4c8b0;
+                        border-radius: 50%;
+                        animation: spin 1s linear infinite;
+                    }
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `}</style>
             </div>
         );
     }
 
-    const menuItems = [
-        { label: 'Architect Home', href: '/admin', icon: NavDashboardIcon },
-        { label: 'Booking Enquiries', href: '/admin/enquiries', icon: NavEnquiriesIcon },
-        { label: 'Manage Trips', href: '/admin/trips', icon: NavTripsIcon },
-        { label: 'Destinations', href: '/admin/destinations', icon: NavDestinationsIcon },
-        { label: 'Blog Posts', href: '/admin/blog', icon: NavBlogIcon },
-        { label: 'Travel FAQs', href: '/admin/faq', icon: NavFAQIcon },
-        { label: 'Import Data', href: '/admin/import', icon: NavImportIcon },
-        { label: 'Site Settings', href: '/admin/settings', icon: NavSettingsIcon },
-    ];
-
     return (
         <div className="admin-container">
-            {/* Mobile Header */}
+            {/* Mobile Header (Hidden during loading) */}
             <header className="admin-mobile-header">
-                <button className="menu-toggle" onClick={() => setIsSidebarOpen(true)}>
-                    <NavMenuIcon />
-                </button>
-                <div className="mobile-brand">
-                    <span className="serif-title">Saidpiece</span>
-                </div>
-                <div style={{ width: 24 }}></div> {/* Spacer */}
+                {!loading && (
+                    <>
+                        <button className="menu-toggle" onClick={() => setIsSidebarOpen(true)}>
+                            <NavMenuIcon />
+                        </button>
+                        <div className="mobile-brand">
+                            <span className="serif-title">Saidpiece</span>
+                        </div>
+                        <div style={{ width: 24 }}></div> {/* Spacer */}
+                    </>
+                )}
             </header>
 
             {/* Overlay */}
             {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
 
-            <aside className={`admin-sidebar ${isSidebarOpen ? 'show' : ''}`}>
+            <aside className={`admin-sidebar ${loading ? '' : (isSidebarOpen ? 'show' : '')}`}>
                 <div className="sidebar-brand">
                     <div className="brand-header">
                         <Link href="/">
                             <span className="serif-title">Saidpiece</span>
                             <span className="admin-label">Admin Management Portal</span>
                         </Link>
-                        <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)}>
-                            <NavCloseIcon />
-                        </button>
+                        {!loading && (
+                            <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)}>
+                                <NavCloseIcon />
+                            </button>
+                        )}
                     </div>
                 </div>
                 <nav className="sidebar-nav">
-                    {menuItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`nav-item ${pathname === item.href ? 'active' : ''}`}
-                        >
-                            <span className="nav-icon"><item.icon /></span>
-                            <span className="nav-label">{item.label}</span>
-                        </Link>
-                    ))}
+                    {loading ? (
+                        menuItems.map((item, idx) => (
+                            <div key={idx} className="nav-item skeleton-item">
+                                <div className="skeleton-icon"></div>
+                                <div className="skeleton-text" style={{ width: idx % 2 === 0 ? '60%' : '45%' }}></div>
+                            </div>
+                        ))
+                    ) : (
+                        menuItems.map((item) => (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`nav-item ${pathname === item.href ? 'active' : ''}`}
+                            >
+                                <span className="nav-icon"><item.icon /></span>
+                                <span className="nav-label">{item.label}</span>
+                            </Link>
+                        ))
+                    )}
                 </nav>
-                <div className="sidebar-footer">
-                    <button onClick={() => signOut()} className="btn-logout">
-                        Logout
-                    </button>
-                    <Link href="/" className="btn-view-site">View Website</Link>
-                </div>
+                {!loading && (
+                    <div className="sidebar-footer">
+                        <button onClick={() => signOut()} className="btn-logout">
+                            Logout
+                        </button>
+                        <Link href="/" className="btn-view-site">View Website</Link>
+                    </div>
+                )}
             </aside>
+
             <main className="admin-main-content">
-                {children}
+                {loading ? (
+                    <div className="skeleton-dashboard">
+                        <div className="skeleton-header"></div>
+                        <div className="skeleton-grid">
+                            {[1, 2, 3, 4].map(i => <div key={i} className="skeleton-card"></div>)}
+                        </div>
+                        <div className="skeleton-table"></div>
+                    </div>
+                ) : (
+                    children
+                )}
             </main>
 
             <style jsx>{`
@@ -293,6 +342,62 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     color: #cf1322;
                     text-align: center;
                     padding: 40px;
+                }
+
+                /* Skeleton Loader Styles */
+                .skeleton-item {
+                    opacity: 0.7;
+                    cursor: default;
+                }
+                .skeleton-icon {
+                    width: 18px;
+                    height: 18px;
+                    background: #333;
+                    border-radius: 4px;
+                }
+                .skeleton-text {
+                    height: 12px;
+                    background: #333;
+                    border-radius: 2px;
+                }
+                .skeleton-dashboard {
+                    width: 100%;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                .skeleton-header {
+                    height: 40px;
+                    width: 300px;
+                    background: #eee;
+                    border-radius: 4px;
+                    margin-bottom: 40px;
+                    animation: skeleton-pulse 1.5s infinite ease-in-out;
+                }
+                .skeleton-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                    gap: 30px;
+                    margin-bottom: 40px;
+                }
+                .skeleton-card {
+                    height: 140px;
+                    background: white;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    animation: skeleton-pulse 1.5s infinite ease-in-out;
+                }
+                .skeleton-table {
+                    height: 400px;
+                    background: white;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    animation: skeleton-pulse 1.5s infinite ease-in-out;
+                }
+
+                @keyframes skeleton-pulse {
+                    0% { opacity: 1; }
+                    50% { opacity: 0.4; }
+                    100% { opacity: 1; }
                 }
 
                 @media (max-width: 1024px) {

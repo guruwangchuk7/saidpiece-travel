@@ -18,13 +18,22 @@ export default function SettingsManager() {
     const [activeTab, setActiveTab] = useState<'branding' | 'home' | 'story' | 'social'>('branding');
 
     const fetchSettings = async () => {
-        if (!supabase) return;
         setLoading(true);
-        const { data, error } = await supabase.from('site_settings').select('*');
-        if (data && data.length > 0) {
-            setSettings(data);
+        if (!supabase) {
+            setLoading(false);
+            return;
         }
-        setLoading(false);
+        try {
+            const { data, error } = await supabase.from('site_settings').select('*');
+            if (error) throw error;
+            if (data && data.length > 0) {
+                setSettings(data);
+            }
+        } catch (e) {
+            console.error('Failed to fetch settings:', e);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

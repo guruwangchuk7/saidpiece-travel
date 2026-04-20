@@ -23,13 +23,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
-    const [role, setRole] = useState<string | null>(null);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [isStaff, setIsStaff] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [role, setRole] = useState<string | null>(null);
 
     // Cache to prevent redundant profile fetches during the same session
     const profileCacheRef = React.useRef<{ [key: string]: string }>({});
     const initializationRef = React.useRef<boolean>(false);
+
+    // Hydration-safe optimistic check
+    useEffect(() => {
+        const hasHint = document.cookie.split(';').some(item => item.trim().startsWith('is_staff_hint=true'));
+        if (hasHint && !initializationRef.current) {
+            setIsStaff(true);
+            setIsAdmin(true);
+            setRole('staff');
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         if (!isSupabaseConfigured || !supabase) {
