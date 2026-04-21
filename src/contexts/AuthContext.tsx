@@ -164,17 +164,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             alert('Authentication is not configured.');
             return;
         }
-        const baseUrl = typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL ?? '';
+
+        // Get the current origin at runtime (favors window.location.origin on client)
+        const origin = typeof window !== 'undefined' 
+            ? window.location.origin 
+            : (process.env.NEXT_PUBLIC_APP_URL || '');
+            
+        // Sanitize baseUrl (remove trailing slash if present)
+        const baseUrl = origin.endsWith('/') ? origin.slice(0, -1) : origin;
         const nextPath = redirectTo || '/';
         const redirectUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`;
         
-        await supabase.auth.signInWithOAuth({
+        console.log('[Auth] Attempting Google Sign-In', { 
+            origin, 
+            nextPath, 
+            redirectUrl,
+            envUrl: process.env.NEXT_PUBLIC_APP_URL 
+        });
+        
+        const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: redirectUrl,
                 queryParams: { access_type: 'offline', prompt: 'consent' },
             },
         });
+
+        if (error) {
+            console.error('[Auth] OAuth Error:', error.message);
+            alert(`Authentication Error: ${error.message}`);
+        }
     };
 
     const signOut = async () => {

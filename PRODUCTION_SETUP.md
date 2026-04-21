@@ -30,15 +30,23 @@ When you have finished testing and are ready for real customers:
 - [ ] **Live Link**: Update `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` to your **live** Payment Link.
 - [ ] **Live Webhook**: Ensure your Webhook in Stripe is pointing to your live URL and you have updated the `STRIPE_WEBHOOK_SECRET` with the the **Live Signing Secret**.
 
-## 3. 🌐 Application Settings
-- [ ] **Production URL**: Ensure `NEXT_PUBLIC_APP_URL` is set to your live domain (e.g., `https://saidpiecetravels.com`).
+## 4. 🔑 Supabase Authentication
+To prevent redirects to `localhost:3000` in production:
+
+1.  **Find your URL**: Open your live deployment (e.g., `https://saidpiece-travel.vercel.app`) in your browser.
+2.  **Open Supabase Dashboard** -> Your Project -> **Authentication** -> **URL Configuration**.
+3.  **Site URL**: Set this to your current deployment URL (e.g., `https://saidpiece-travel.vercel.app`).
+4.  **Redirect URLs**: Add your deployment URL with the callback path and wildcard:
+    *   `https://saidpiece-travel.vercel.app/auth/callback*`
+    *   **Note**: If you use a custom domain later, you must update these URLs here.
 
 ---
 
 ## 🛠 Vercel Implementation
 1. Go to **Vercel Dashboard** -> **saidpiece-travel** project -> **Settings** -> **Environment Variables**.
 2. Add all the keys defined above.
-3. **Important**: Re-deploy the project in Vercel to activate the new keys.
+3. **Important**: Set `NEXT_PUBLIC_APP_URL` to your current `.vercel.app` URL (no trailing slash).
+4. **Re-deploy** the project in Vercel to activate the new keys.
 
 ## 📂 Database Activation
 - [ ] Run the SQL migration in `supabase/migrations/20260409_production_bookings.sql` using the Supabase SQL Editor to ensure the `bookings` table is production-ready.
