@@ -26,6 +26,8 @@ export default function FAQManager() {
     useEffect(() => {
         if (isStaff) {
             fetchFaqs();
+        } else if (isStaff === false) {
+            setLoading(false);
         }
     }, [isStaff]);
 

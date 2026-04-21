@@ -48,6 +48,9 @@ export default function TripManager() {
     useEffect(() => {
         if (isStaff) {
             fetchTrips();
+        } else if (isStaff === false) {
+            // Ensure we don't stay stuck if not staff
+            setLoading(false);
         }
     }, [isStaff]);
 

@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Cache to prevent redundant profile fetches during the same session
     const profileCacheRef = React.useRef<{ [key: string]: string }>({});
+    // Track initialization to prevent redundant calls
     const initializationRef = React.useRef<boolean>(false);
 
     // Hydration-safe optimistic check
@@ -38,8 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setIsStaff(true);
             setIsAdmin(true);
             setRole('staff');
-            // We don't set loading(false) here anymore to prevent the "Access Denied" race.
-            // loading will be set to false by the real auth check below.
         }
     }, []);
 
@@ -51,14 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const client = supabase;
         let mounted = true;
-
-        // Optimized safety watchdog
-        const safetyTimeout = setTimeout(() => {
-            if (mounted && loading) {
-                console.warn('[AuthProvider] Safety timeout. Forcing loading false.');
-                setLoading(false);
-            }
-        }, 3000);
 
         const fetchProfile = async (userId: string) => {
             if (profileCacheRef.current[userId]) {
@@ -92,11 +83,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const userEmail = newUser.email?.toLowerCase();
                 const isUserEmailStaff = isEmailStaff(userEmail);
                 
-                if (isUserEmailStaff) {
+                // Set initial optimistic role if email matches
+                if (isUserEmailStaff && !isStaff) {
                     setIsStaff(true);
                     setIsAdmin(true);
+                    setRole('admin');
                 }
 
+                // Deep verify profile
                 const userRole = await fetchProfile(newUser.id);
                 
                 if (mounted) {
@@ -107,20 +101,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setIsAdmin(finalRole === 'admin');
                     setIsStaff(finalIsStaff);
 
-                    // Sync/Refresh cookie with actual DB role
+                    // Sync cookie
                     if (finalIsStaff) {
                         document.cookie = "is_staff_hint=true; path=/; max-age=31536000; SameSite=Lax";
-                    } else if (initializationRef.current) {
-                        // Only clear cookie if we've actually verified they are NOT staff
+                    } else {
                         document.cookie = "is_staff_hint=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                     }
                 }
             } else {
-                // Important: Only clear state if we are NOT on an admin route 
-                // OR if we've definitively finished initialization and confirmed no session.
                 const isPageAdmin = window.location.pathname.startsWith('/admin');
-                
-                if (!isPageAdmin || (initializationRef.current && !isStaff)) {
+                if (!isPageAdmin || initializationRef.current) {
                     setRole(null);
                     setIsAdmin(false);
                     setIsStaff(false);
@@ -134,23 +124,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         };
 
-        const { data: { subscription } } = client.auth.onAuthStateChange(async (event, newSession) => {
-            if (['SIGNED_OUT', 'SIGNED_IN', 'USER_UPDATED', 'TOKEN_REFRESHED'].includes(event)) {
-                await updateAuthState(newSession);
-            } else if (!initializationRef.current) {
-                await updateAuthState(newSession);
+        // Safety watchdog: ensure loading doesn't stay true forever
+        const safetyTimeout = setTimeout(() => {
+            if (mounted && loading) {
+                console.warn('[AuthProvider] Safety watchdog triggered.');
+                setLoading(false);
+            }
+        }, 5000);
+
+        // Single point of initialization
+        client.auth.getSession().then(({ data: { session: initialSession } }) => {
+            if (mounted) {
+                updateAuthState(initialSession);
             }
         });
 
-        client.auth.getSession()
-            .then(({ data: { session: initialSession } }) => {
-                if (mounted && !initializationRef.current) {
-                    updateAuthState(initialSession);
-                }
-            })
-            .catch(() => {
-                if (mounted) updateAuthState(null);
-            });
+        const { data: { subscription } } = client.auth.onAuthStateChange(async (event, newSession) => {
+            if (['SIGNED_IN', 'SIGNED_OUT', 'USER_UPDATED', 'TOKEN_REFRESHED'].includes(event)) {
+                updateAuthState(newSession);
+            }
+        });
 
         return () => {
             mounted = false;

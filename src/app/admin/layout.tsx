@@ -131,6 +131,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         </div>
                         <div className="skeleton-table"></div>
                     </div>
+                ) : !isStaff ? (
+                    <div className="unauthorized-access">
+                        <div className="error-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" /><path d="M12 8V12" /><path d="M12 16H12.01" /></svg>
+                        </div>
+                        <h2 className="serif-title">Architect Access Required</h2>
+                        <p>Your account does not have the necessary permissions to access the management portal.</p>
+                        <div className="error-actions">
+                            <button onClick={() => signOut()} className="btn-logout">Try Different Account</button>
+                            <Link href="/" className="btn-view-site">Return to Website</Link>
+                        </div>
+                    </div>
                 ) : (
                     children
                 )}
@@ -296,6 +308,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     color: #cf1322;
                     text-align: center;
                     padding: 40px;
+                }
+
+                .unauthorized-access {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 80px 20px;
+                    background: white;
+                    border-radius: 20px;
+                    border: 1px solid #f5f2eb;
+                    max-width: 600px;
+                    margin: 40px auto;
+                }
+                .error-icon {
+                    color: #d32f2f;
+                    margin-bottom: 24px;
+                }
+                .unauthorized-access h2 {
+                    font-size: 32px;
+                    margin-bottom: 16px;
+                }
+                .unauthorized-access p {
+                    color: #666;
+                    font-size: 16px;
+                    margin-bottom: 32px;
+                    max-width: 400px;
+                }
+                .error-actions {
+                    display: flex;
+                    gap: 16px;
+                }
+                .error-actions .btn-logout {
+                    background: #111;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-weight: 700;
                 }
 
                 /* Skeleton Loader Styles */

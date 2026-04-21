@@ -32,6 +32,8 @@ export default function EnquiryManager() {
         if (isStaff && supabase) {
             if (view === 'enquiries') fetchEnquiries();
             else fetchBookings();
+        } else if (isStaff === false) {
+            setIsFetching(false);
         }
     }, [isStaff, view]);
 

@@ -39,6 +39,8 @@ export default function BlogManager() {
     useEffect(() => {
         if (isStaff) {
             fetchPosts();
+        } else if (isStaff === false) {
+            setLoading(false);
         }
     }, [isStaff]);
 

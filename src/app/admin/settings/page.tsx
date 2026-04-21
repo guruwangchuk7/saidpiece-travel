@@ -39,6 +39,8 @@ export default function SettingsManager() {
     useEffect(() => {
         if (isStaff) {
             fetchSettings();
+        } else if (isStaff === false) {
+            setLoading(false);
         }
     }, [isStaff]);
 

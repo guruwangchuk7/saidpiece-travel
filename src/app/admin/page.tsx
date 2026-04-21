@@ -19,7 +19,11 @@ export default function ArchitectDashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (isStaff) fetchCounts();
+        if (isStaff) {
+            fetchCounts();
+        } else if (isStaff === false) {
+            setLoading(false);
+        }
     }, [isStaff]);
 
     const fetchCounts = async () => {

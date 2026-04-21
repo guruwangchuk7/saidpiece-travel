@@ -36,6 +36,8 @@ export default function DestinationManager() {
     useEffect(() => {
         if (isStaff) {
             fetchDestinations();
+        } else if (isStaff === false) {
+            setLoading(false);
         }
     }, [isStaff]);
 
