@@ -15,7 +15,9 @@ export default function SettingsManager() {
     const [settings, setSettings] = useState<Setting[]>([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'branding' | 'home' | 'story' | 'social'>('branding');
+    const [activeTab, setActiveTab] = useState<'branding' | 'home' | 'story' | 'social' | 'access'>('branding');
+    const [profiles, setProfiles] = useState<any[]>([]);
+    const [searchEmail, setSearchEmail] = useState('');
 
     const fetchSettings = async () => {
         setLoading(true);
@@ -36,17 +38,83 @@ export default function SettingsManager() {
         }
     };
 
+    const fetchProfiles = async () => {
+        if (!supabase) return;
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+            setProfiles(data || []);
+        } catch (e) {
+            console.error('Failed to fetch profiles:', e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearchUser = async () => {
+        if (!supabase || !searchEmail) return;
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('email', searchEmail.toLowerCase().trim())
+                .single();
+
+            if (error) {
+                alert('User not found in registry.');
+                return;
+            }
+            if (data) {
+                setProfiles([data]);
+            }
+        } catch (e) {
+            console.error('Search failed:', e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateUserRole = async (userId: string, newRole: string) => {
+        if (!supabase) return;
+        setUpdating(userId);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ role: newRole })
+                .eq('id', userId);
+
+            if (error) throw error;
+            setProfiles(prev => prev.map(p => p.id === userId ? { ...p, role: newRole } : p));
+            alert(`Role updated to ${newRole} successfully.`);
+        } catch (e: any) {
+            console.error('Role update failed:', e);
+            alert('Access update failed: ' + (e.message || 'Check permissions'));
+        }
+        setUpdating(null);
+    };
+
     useEffect(() => {
         if (isStaff) {
-            fetchSettings();
+            if (activeTab === 'access') {
+                fetchProfiles();
+            } else {
+                fetchSettings();
+            }
         } else if (isStaff === false) {
             setLoading(false);
         }
-    }, [isStaff]);
+    }, [isStaff, activeTab]);
 
     const handleUpdate = async (key: string, value: string) => {
         if (!supabase) return;
-        
+
         // Find existing value to compare
         const existing = settings.find(s => s.key === key);
         if (existing?.value === value) return;
@@ -86,15 +154,15 @@ export default function SettingsManager() {
                 </div>
                 <div className="input-group">
                     {isTextarea ? (
-                        <textarea 
-                            defaultValue={setting.value} 
+                        <textarea
+                            defaultValue={setting.value}
                             onBlur={(e) => handleUpdate(key, e.target.value)}
                             placeholder={`Enter ${label.toLowerCase()}...`}
                         />
                     ) : (
-                        <input 
-                            type="text" 
-                            defaultValue={setting.value} 
+                        <input
+                            type="text"
+                            defaultValue={setting.value}
                             onBlur={(e) => handleUpdate(key, e.target.value)}
                             placeholder={`Enter ${label.toLowerCase()}...`}
                         />
@@ -139,6 +207,9 @@ export default function SettingsManager() {
                         </button>
                         <button className={activeTab === 'social' ? 'active' : ''} onClick={() => setActiveTab('social')}>
                             <span className="nav-dot"></span> Social & Connectivity
+                        </button>
+                        <button className={activeTab === 'access' ? 'active' : ''} onClick={() => setActiveTab('access')}>
+                            <span className="nav-dot"></span> Staff & Access
                         </button>
                     </nav>
 
@@ -193,6 +264,69 @@ export default function SettingsManager() {
                                 {renderSetting('instagram_url', 'Instagram Profile URL')}
                                 {renderSetting('facebook_url', 'Facebook Page URL')}
                                 {renderSetting('whatsapp_number', 'WhatsApp Connectivity')}
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'access' && (
+                        <div className="setting-section">
+                            <h4>Staff & Access Control</h4>
+                            <div className="access-manager">
+                                <div className="user-search-box">
+                                    <input
+                                        type="text"
+                                        placeholder="Search user by email..."
+                                        value={searchEmail}
+                                        onChange={(e) => setSearchEmail(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearchUser()}
+                                    />
+                                    <button onClick={handleSearchUser}>Search Registry</button>
+                                </div>
+
+                                <div className="profiles-table-wrapper">
+                                    <table className="profiles-table">
+                                        <thead>
+                                            <tr>
+                                                <th>User Identity</th>
+                                                <th>Current Authority</th>
+                                                <th>Reassign Role</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {profiles.map(profile => (
+                                                <tr key={profile.id}>
+                                                    <td>
+                                                        <div className="user-identity">
+                                                            <span className="user-name">{profile.full_name || 'Anonymous Traveler'}</span>
+                                                            <span className="user-email">{profile.email}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span className={`role-badge ${profile.role}`}>
+                                                            {profile.role}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div className="role-actions">
+                                                            <select
+                                                                value={profile.role}
+                                                                onChange={(e) => updateUserRole(profile.id, e.target.value)}
+                                                                disabled={updating === profile.id}
+                                                            >
+                                                                <option value="customer">Customer</option>
+                                                                <option value="staff">Staff</option>
+                                                                <option value="admin">Admin</option>
+                                                                <option value="editor">Editor</option>
+                                                                <option value="moderator">Moderator</option>
+                                                            </select>
+                                                            {updating === profile.id && <span className="updating-spinner"></span>}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -485,7 +619,116 @@ export default function SettingsManager() {
                     .hide-mobile { display: none; }
                 }
 
+                /* Access Manager Styles */
+                .access-manager {
+                    margin-top: -10px;
+                }
+                .user-search-box {
+                    display: flex;
+                    gap: 15px;
+                    margin-bottom: 40px;
+                }
+                .user-search-box input {
+                    flex-grow: 1;
+                    padding: 18px 25px;
+                    font-size: 16px !important;
+                    background: #fdfcf9 !important;
+                }
+                .user-search-box button {
+                    background: #111;
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    padding: 0 30px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .user-search-box button:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+
+                .profiles-table-wrapper {
+                    background: #fdfcf9;
+                    border-radius: 16px;
+                    border: 1px solid #f5f2eb;
+                    overflow: hidden;
+                }
+                .profiles-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    text-align: left;
+                }
+                .profiles-table th {
+                    padding: 20px 25px;
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    letter-spacing: 1.5px;
+                    color: #aaa;
+                    border-bottom: 1px solid #f5f2eb;
+                }
+                .profiles-table td {
+                    padding: 20px 25px;
+                    border-bottom: 1px solid #f5f2eb;
+                    vertical-align: middle;
+                }
+                .user-identity {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                }
+                .user-name {
+                    font-weight: 700;
+                    color: #1a1a1a;
+                    font-size: 15px;
+                }
+                .user-email {
+                    font-size: 12px;
+                    color: #888;
+                }
+
+                .role-badge {
+                    display: inline-block;
+                    padding: 4px 12px;
+                    border-radius: 6px;
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .role-badge.admin { background: #111; color: white; }
+                .role-badge.staff { background: #f0fdf4; color: #166534; }
+                .role-badge.customer { background: #f8fafc; color: #475569; }
+                .role-badge.editor { background: #fef2f2; color: #991b1b; }
+                .role-badge.moderator { background: #eff6ff; color: #1e40af; }
+
+                .role-actions select {
+                    background: white;
+                    border: 1px solid #eee;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    width: 100%;
+                    max-width: 140px;
+                }
+                .updating-spinner {
+                    display: inline-block;
+                    width: 14px;
+                    height: 14px;
+                    border: 2px solid rgba(0,0,0,0.1);
+                    border-top-color: #d4c8b0;
+                    border-radius: 50%;
+                    animation: spin 0.8s infinite linear;
+                    margin-left: 10px;
+                    vertical-align: middle;
+                }
+
                 @media (max-width: 768px) {
+                    .user-search-box { flex-direction: column; }
+                    .user-search-box button { padding: 18px; }
                     .admin-page-header { margin-bottom: 40px; padding-bottom: 25px; }
                     .settings-grid { grid-template-columns: 1fr; gap: 30px; }
                     input[type="text"], textarea { font-size: 18px; padding: 18px 24px; }
