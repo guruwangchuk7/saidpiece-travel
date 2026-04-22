@@ -79,14 +79,42 @@ export default function CulturalCrossroadsTrip() {
                         <h2>Journey Overview</h2>
                         <p className="lead-text">Experience Bhutan your way. This 10-day private journey focuses on the intersections of art, religion, and daily life in the Dragon Kingdom.</p>
                         <p>With your private guide, explore the hidden corners of Thimphu and the spiritual monuments of Punakha, tailoring the experience to your specific interests.</p>
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Private</strong> guided tours of Bhutan\'s most sacred sites</li>
-                                <li><strong>Exclusive</strong> access to local artisan workshops</li>
-                                <li><strong>Bespoke</strong> itinerary tailored to your preferences</li>
-                                <li><strong>In-depth</strong> cultural immersion and spiritual discovery</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/main3.webp" 
+                                        alt="Cultural Crossroads Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>An exclusive private journey designed for those who value depth and personalization.</li>
+                                    <li>Private guided tours of Bhutan&apos;s most sacred and historically significant sites.</li>
+                                    <li>Exclusive access to local artisan workshops and private cultural collections.</li>
+                                    <li>A bespoke itinerary that can be tailored to your specific spiritual or artistic interests.</li>
+                                    <li>In-depth cultural immersion through private ceremonies and village encounters.</li>
+                                    <li>Seamless travel arrangements with your dedicated private vehicle and expert guide.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
                 </div>

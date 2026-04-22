@@ -13,10 +13,10 @@ const sitemapData = [
   {
     category: 'Bhutan Itineraries',
     links: [
-        { label: 'Bhutan Discovery', href: '/trips/bhutan-discovery' },
-        { label: 'Cultural Immersion', href: '/trips/cultural-immersion' },
-        { label: 'Nature Retreat', href: '/trips/nature-retreat' },
-        { label: 'Family Adventure', href: '/trips/bhutan-family-adventure' },
+        { label: 'Bhutan Discovery', href: '/trips/discovery' },
+        { label: 'Cultural Immersion', href: '/trips/cultural' },
+        { label: 'Nature Retreat', href: '/trips/nature' },
+        { label: 'Family Adventure', href: '/trips/family' },
     ],
   },
   {

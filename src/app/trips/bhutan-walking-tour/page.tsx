@@ -79,14 +79,42 @@ export default function BhutanWalkingTourTrip() {
                         <h2>Journey Overview</h2>
                         <p className="lead-text">Discover Bhutan on foot. This 12-day walking tour takes you through emerald valleys, across suspension bridges, and up to ancient monasteries.</p>
                         <p>Immerse yourself in the local way of life as you traverse the trails of the Dragon Kingdom, enjoying the perfect blend of activity and cultural discovery.</p>
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Walk</strong> through pristine forests and remote villages</li>
-                                <li><strong>Engage</strong> with local monks and artisans</li>
-                                <li><strong>Stay</strong> in handpicked boutique lodges</li>
-                                <li><strong>Marvel</strong> at the architectural wonders of the Dzongs</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/main2.webp" 
+                                        alt="Walking Tour Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>A meticulously planned walking adventure through Bhutan&apos;s most scenic valleys.</li>
+                                    <li>Walk through pristine ancient forests and remote, high-altitude villages.</li>
+                                    <li>Engage in meaningful conversations with local monks and master artisans.</li>
+                                    <li>Stay in handpicked boutique lodges that blend comfort with tradition.</li>
+                                    <li>Marvel at the sheer architectural scale and detail of Bhutan&apos;s historic Dzongs.</li>
+                                    <li>Experience the perfect balance of physical activity and spiritual discovery.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
                 </div>

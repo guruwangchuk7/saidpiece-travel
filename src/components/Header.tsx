@@ -297,9 +297,9 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                                 </Link>
                                 <ul className="mega-list-curated">
                                     <li><Link href="/trips/new-trips-2026" onClick={handleMenuLinkClick}>New Trips for 2026</Link></li>
-                                    <li><Link href="/trips/cultural-immersion" onClick={handleMenuLinkClick}>Cultural Immersion</Link></li>
-                                    <li><Link href="/trips/bhutan-family-adventure">Bhutan Family Adventure</Link></li>
-                                    <li><Link href="/trips/nature-retreat">Nature Retreat</Link></li>
+                                    <li><Link href="/trips/cultural" onClick={handleMenuLinkClick}>Cultural Immersion</Link></li>
+                                    <li><Link href="/trips/family">Bhutan Family Adventure</Link></li>
+                                    <li><Link href="/trips/nature">Nature Retreat</Link></li>
                                 </ul>
                             </div>
                         </div>

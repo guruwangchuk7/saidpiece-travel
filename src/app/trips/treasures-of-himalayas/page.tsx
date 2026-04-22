@@ -79,14 +79,42 @@ export default function TreasuresHimalayasTrip() {
                         <h2>Journey Overview</h2>
                         <p className="lead-text">Experience the ultimate Himalayan odyssey. This 15-day journey takes you through the spiritual heart of Tibet, the vibrant valleys of Nepal, and the pristine Dragon Kingdom of Bhutan.</p>
                         <p>From the Potala Palace in Lhasa to the sacred temples of Kathmandu and the iconic Tiger\'s Nest in Paro, this is a journey of a lifetime.</p>
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Explore</strong> the Potala Palace, former home of the Dalai Lama</li>
-                                <li><strong>Witness</strong> sunrise over the Himalayas in Nepal</li>
-                                <li><strong>Hike</strong> to Taktsang (Tiger\'s Nest) in Bhutan</li>
-                                <li><strong>Experience</strong> traditional Buddhist ceremonies</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/main1.webp" 
+                                        alt="Himalayan Odyssey Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Kathmandu, Nepal</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>A grand 15-day odyssey spanning the three most sacred kingdoms of the Himalayas.</li>
+                                    <li>Explore the majestic Potala Palace in Lhasa, the former winter home of the Dalai Lama.</li>
+                                    <li>Witness a breathtaking sunrise over the Himalayas from the Kathmandu Valley in Nepal.</li>
+                                    <li>Conclude your epic journey with the sacred pilgrimage hike to the Tiger&apos;s Nest in Bhutan.</li>
+                                    <li>Participate in traditional Buddhist ceremonies across three distinct Himalayan cultures.</li>
+                                    <li>Expertly managed logistics across international borders for a seamless expedition.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
                 </div>

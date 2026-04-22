@@ -79,14 +79,42 @@ export default function BhutanPeaksValleysTrip() {
                         <h2>Journey Overview</h2>
                         <p className="lead-text">For the truly adventurous. This 14-day expedition reaches the highest peaks and deepest valleys of Bhutan, offering unparalleled views of the Himalayas.</p>
                         <p>Challenge yourself with high-altitude treks and be rewarded with the raw, untouched beauty of Bhutan\'s most remote landscapes.</p>
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Trek</strong> to high Himalayan passes with sweeping views</li>
-                                <li><strong>Camp</strong> under the stars in pristine wilderness</li>
-                                <li><strong>Visit</strong> remote mountain communities</li>
-                                <li><strong>Experience</strong> the sheer scale and beauty of the peaks</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/main4.webp" 
+                                        alt="Peaks & Valleys Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>An ambitious 14-day expedition designed for experienced trekkers and mountain lovers.</li>
+                                    <li>Trek to multiple high Himalayan passes with sweeping, panoramic views of 7,000m+ peaks.</li>
+                                    <li>Camp under the brilliant starlit skies in the most pristine and remote wilderness on Earth.</li>
+                                    <li>Visit isolated mountain communities and learn about their resilient, high-altitude way of life.</li>
+                                    <li>Experience the sheer scale and raw beauty of Bhutan&apos;s untouched alpine landscapes.</li>
+                                    <li>Full support from our expert mountain crews, including specialized guides and equipment.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
                 </div>

@@ -56,15 +56,149 @@ export default function BrowseTripsClient({
         }
     }, []);
 
+    const DEMO_TRIPS: Trip[] = [
+        {
+            id: 'c1',
+            title: "Cultural Immersion",
+            slug: "cultural",
+            duration_days: 12,
+            level: "Moderate",
+            starting_price: 3800,
+            image_url: "bhutan/main5.webp",
+            trip_type: "Cultural",
+            destination: "Central Bhutan",
+            category: "Heritage",
+            is_active: true
+        },
+        {
+            id: 'nr1',
+            title: "Nature Retreat",
+            slug: "nature",
+            duration_days: 10,
+            level: "Easy",
+            starting_price: 6500,
+            image_url: "bhutan/main6.webp",
+            trip_type: "Nature",
+            destination: "Western Bhutan",
+            category: "Wilderness",
+            is_active: true
+        },
+        {
+            id: 'bd1',
+            title: "Bhutan Discovery",
+            slug: "discovery",
+            duration_days: 8,
+            level: "Easy",
+            starting_price: 2400,
+            image_url: "bhutan/main4.webp",
+            trip_type: "Discovery",
+            destination: "Paro",
+            category: "Classic",
+            is_active: true
+        },
+        {
+            id: 'bd-p',
+            title: "Bhutan Discovery (Private Journey)",
+            slug: "discovery-private",
+            duration_days: 8,
+            level: "Easy Active",
+            starting_price: 2400,
+            image_url: "bhutan/main4.webp",
+            trip_type: "Private Journey",
+            destination: "Paro",
+            is_active: true
+        },
+        {
+            id: 'ci-p',
+            title: "Cultural Immersion (Private Journey)",
+            slug: "cultural-private",
+            duration_days: 12,
+            level: "Cultural",
+            starting_price: 3600,
+            image_url: "bhutan/main5.webp",
+            trip_type: "Private Journey",
+            destination: "Central Bhutan",
+            is_active: true
+        },
+        {
+            id: 'nw-r',
+            title: "Nature & Wellness Retreat",
+            slug: "wellness",
+            duration_days: 10,
+            level: "Wellness",
+            starting_price: 3000,
+            image_url: "bhutan/main6.webp",
+            trip_type: "Nature",
+            destination: "Phobjikha",
+            is_active: true
+        },
+        {
+            id: 'bf-a',
+            title: "Bhutan Family Adventure",
+            slug: "family",
+            duration_days: 10,
+            level: "Family Friendly",
+            starting_price: 3000,
+            image_url: "bhutan/9.webp",
+            trip_type: "Family",
+            destination: "Western Bhutan",
+            is_active: true
+        },
+        {
+            id: 're-l',
+            title: "Romantic Escape",
+            slug: "romantic",
+            duration_days: 10,
+            level: "Luxury",
+            starting_price: 3800,
+            image_url: "bhutan/main4.webp",
+            trip_type: "Luxury",
+            destination: "Paro",
+            is_active: true
+        },
+        {
+            id: 'dp-t',
+            title: "Druk Path Trek",
+            slug: "druk-path",
+            duration_days: 6,
+            level: "Moderate",
+            starting_price: 1800,
+            image_url: "bhutan/main2.webp",
+            trip_type: "Trek",
+            destination: "Paro",
+            is_active: true
+        },
+        {
+            id: 'ft-c',
+            title: "Festival Tours",
+            slug: "festivals",
+            duration_days: 10,
+            level: "Cultural",
+            starting_price: 3000,
+            image_url: "bhutan/main5.webp",
+            trip_type: "Cultural",
+            destination: "Punakha",
+            is_active: true
+        }
+    ];
+
     const fetchTrips = async () => {
-        if (!supabase) return;
+        if (!supabase) {
+            setAllTrips(DEMO_TRIPS);
+            setIsLoading(false);
+            return;
+        }
         setIsLoading(true);
         const { data, error } = await supabase
             .from('trips')
             .select('*')
             .eq('is_active', true);
 
-        if (data) setAllTrips(data);
+        if (data && data.length > 0) {
+            setAllTrips(data);
+        } else {
+            setAllTrips(DEMO_TRIPS);
+        }
         setIsLoading(false);
     };
 
@@ -202,7 +336,7 @@ export default function BrowseTripsClient({
                                             </div>
                                             <div className="trip-card-footer" style={{ borderTop: '1px solid #eee', marginTop: '20px', paddingTop: '15px' }}>
                                                 <span className="trip-price">From ${trip.starting_price}</span>
-                                                <Link href={`/trip-detail/${trip.slug}`} className="link-btn-small">View Trip</Link>
+                                                <Link href={`/trips/${trip.slug}`} className="link-btn-small">View Trip</Link>
                                             </div>
                                         </div>
                                     </div>

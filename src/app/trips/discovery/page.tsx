@@ -5,19 +5,18 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 
-
 import { useAuth } from '@/hooks/useAuth';
 
-export default function NatureRetreatTrip() {
+export default function BhutanDiscoveryTrip() {
     const router = useRouter();
     const { user, signInWithGoogle } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1); // 1 = days 1-3
 
     const tripData = {
-        name: "Nature Retreat",
-        price: "3000",
-        image: "/images/bhutan/main6.webp"
+        name: "Bhutan Discovery",
+        price: "2400",
+        image: "/images/bhutan/main4.webp"
     };
 
     const handleBookOnline = () => {
@@ -36,14 +35,15 @@ export default function NatureRetreatTrip() {
 
     return (
         <main className="trip-detail-page">
+            
 
             <div className="trip-hero">
-                <Image src="/images/bhutan/main6.webp" alt="Nature Retreat" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
+                <Image src="/images/bhutan/main4.webp" alt="Bhutan Discovery" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
 
                 <div className="trip-hero-content container">
-                    <h1>Nature Retreat</h1>
-                    <p className="hero-subtitle">Disconnect and Recharge in the Himalayas</p>
+                    <h1>Bhutan Discovery</h1>
+                    <p className="hero-subtitle">Perfect First-Time Journey to Paro, Thimphu & Punakha</p>
                 </div>
 
                 <div className="quick-info-bar">
@@ -55,15 +55,15 @@ export default function NatureRetreatTrip() {
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Duration</span>
-                                <span className="value">10 Days / 9 Nights</span>
+                                <span className="value">8 Days / 7 Nights</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Starting From</span>
-                                <span className="value">$3,000</span>
+                                <span className="value">$2,400</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Level</span>
-                                <span className="value">Moderate Trekking</span>
+                                <span className="value">Easy</span>
                             </div>
                         </div>
                         <div className="quick-info-ctas">
@@ -91,22 +91,49 @@ export default function NatureRetreatTrip() {
                     {/* Overview Content */}
                     <section id="overview" className={`content-section ${activeTab === 'overview' ? 'active' : 'hidden'}`}>
                         <h2>Journey Overview</h2>
-                        <p className="lead-text">Step off the map and into some of the most pristine wilderness remaining on Earth. Bhutan is the world&apos;s only carbon-negative country, proudly protecting its ancient old-growth forests and alpine meadows.</p>
+                        <p className="lead-text">Bhutan is one of the few places where travel still feels meaningful— quiet monasteries above pine forests, rivers flowing through fertile valleys, and a culture guided by the philosophy of Gross National Happiness.</p>
 
-                        <p>This 7-day retreat is perfect for nature lovers, bird watchers, and those who want to reset their minds away from the noise of the modern world. You will spend your days hiking through rhododendron forests and your evenings in eco-lodges or glamping under the Himalayan stars.</p>
+                        <p>This journey is designed for first-time visitors who want to experience Bhutan&apos;s iconic destinations without feeling rushed, while enjoying private guiding, seamless travel arrangements, and comfortable boutique stays.</p>
 
-                        <p>Guided by our local naturalists, you&apos;ll discover the rich biodiversity of the Paro and Haa Valleys, learning about Bhutan&apos;s unique approaches to conservation and environmental harmony.</p>
+                        <p>You will explore the gateway valley of Paro, the vibrant capital Thimphu, and the warm river valley of Punakha— discovering Bhutan&apos;s traditions, landscapes, and spiritual heritage along the way.</p>
 
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Hike</strong> the untouched trails of the remote Haa Valley</li>
-                                <li><strong>Spot</strong> rare Himalayan bird species with expert naturalist guides</li>
-                                <li><strong>Meditate</strong> in a secluded alpine nunnery overlooking the valley</li>
-                                <li><strong>Stay</strong> in sustainable eco-lodges and luxury canvas tents</li>
-                                <li><strong>Drive</strong> across the spectacular Chele La pass (3,988m)</li>
-                                <li><strong>Disconnect</strong> fully with dedicated digital detox days</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/main4.webp" 
+                                        alt="Bhutan Discovery Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>The perfect introduction to Bhutan, covering the essential cultural heartlands.</li>
+                                    <li>Hike to the legendary Tiger&apos;s Nest Monastery, Bhutan&apos;s most iconic landmark.</li>
+                                    <li>Explore the vibrant capital city, Thimphu, blending tradition with modernity.</li>
+                                    <li>Visit the majestic Punakha Dzong, widely considered the most beautiful in the country.</li>
+                                    <li>Drive across the scenic Dochula Pass with stunning panoramic Himalayan views.</li>
+                                    <li>Engage in hands-on cultural experiences, from archery to traditional crafts.</li>
+                                    <li>Unwind with wellness moments, including guided meditation and traditional hot stone baths.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
 
@@ -117,7 +144,7 @@ export default function NatureRetreatTrip() {
                         {/* Fake Map implementation to match design spec */}
                         <div className="interactive-map-placeholder" style={{ position: 'relative', height: '300px', backgroundColor: '#e9ecef', borderRadius: '8px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Image src="/images/bhutan/main2.webp" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
-                            <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Haa Valley → Paro</div>
+                            <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha</div>
                         </div>
 
                         <div className="itinerary-accordion">
@@ -125,40 +152,40 @@ export default function NatureRetreatTrip() {
                             <div className={`accordion-item ${openDay === 1 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(1)}>
                                     <div className="day-badge">Days 1-3</div>
-                                    <span className="day-title">Arrival & Spirit of Paro</span>
+                                    <span className="day-title">Arrival & Paro Valley Heritage</span>
                                     <svg className={`chevron ${openDay === 1 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 1 — Arrive in Paro:</strong> Take in the freshest air in the world. Welcome dinner with organic local ingredients.</p>
-                                    <p><strong>Day 2 — Paro Valley Slow Day:</strong> Gentle walk to Zuri Dzong for panoramic views. Afternoon meditation session.</p>
-                                    <p><strong>Day 3 — Paro to Thimphu:</strong> Scenic drive to the capital. Visit Buddha Dordenma for a sunset mindfulness moment.</p>
+                                    <p><strong>Day 1 — Arrive in Paro:</strong> Arrive in Paro and transfer to your hotel. Enjoy a gentle acclimatisation walk and a welcome dinner.</p>
+                                    <p><strong>Day 2 — Paro Valley Heritage:</strong> Visit Rinpung Dzong viewpoint and explore Bhutanese heritage sites. Optional farmhouse lunch and quiet monastery visit.</p>
+                                    <p><strong>Day 3 — Tiger&apos;s Nest Monastery Hike:</strong> Hike to the famous Taktsang Monastery, Bhutan&apos;s most sacred pilgrimage site.</p>
                                 </div>
                             </div>
 
+                            {/* Accordion Item 2 */}
                             <div className={`accordion-item ${openDay === 2 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(2)}>
-                                    <div className="day-badge">Days 4-6</div>
-                                    <span className="day-title">Thimphu & Punakha Valleys</span>
+                                    <div className="day-badge">Days 4-5</div>
+                                    <span className="day-title">Thimphu Culture & Crafts</span>
                                     <svg className={`chevron ${openDay === 2 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 4 — Thimphu Nature & Spirit:</strong> Explore Sangaygang for views and visit the Cheri Monastery hike— Bhutan’s first monastery.</p>
-                                    <p><strong>Day 5 — Thimphu to Punakha:</strong> Cross Dochula Pass (3,100m). Visit the architectural masterpiece of Punakha Dzong.</p>
-                                    <p><strong>Day 6 — Punakha Valley Leisure:</strong> A slow day by the Mo Chhu river. Optional riverside picnic and village walk.</p>
+                                    <p><strong>Day 4 — Paro to Thimphu:</strong> Drive to Thimphu and visit Buddha Dordenma overlooking the valley.</p>
+                                    <p><strong>Day 5 — Thimphu Culture & Crafts:</strong> Explore Bhutan’s traditional crafts, markets, and cultural heritage.</p>
                                 </div>
                             </div>
 
+                            {/* Accordion Item 3 */}
                             <div className={`accordion-item ${openDay === 3 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(3)}>
-                                    <div className="day-badge">Days 7-10</div>
-                                    <span className="day-title">Phobjikha Wildlife & The Tiger&apos;s Nest</span>
+                                    <div className="day-badge">Days 6-8</div>
+                                    <span className="day-title">Punakha Valley & Departure</span>
                                     <svg className={`chevron ${openDay === 3 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 7 — Punakha to Phobjikha:</strong> Drive to the stunning glacial valley of Phobjikha, home to black-necked cranes.</p>
-                                    <p><strong>Day 8 — Phobjikha Slow Pacing:</strong> Wander through the valley trails. Visit Gangtey Goemba monastery.</p>
-                                    <p><strong>Day 9 — Phobjikha to Paro:</strong> Return to Paro. Conclude with a traditional hot stone bath infused with mountain herbs.</p>
-                                    <p><strong>Day 10 — Departure:</strong> Say goodbye to the Dragon Kingdom as you fly onward.</p>
+                                    <p><strong>Day 6 — Thimphu to Punakha:</strong> Cross Dochula Pass and descend into the Punakha Valley.</p>
+                                    <p><strong>Day 7 — Punakha Valley Exploration:</strong> Gentle hike to Khamsum Chorten and explore the valley.</p>
+                                    <p><strong>Day 8 — Departure:</strong> Transfer to Paro airport for departure.</p>
                                 </div>
                             </div>
                         </div>
@@ -180,25 +207,25 @@ export default function NatureRetreatTrip() {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Mar 15, 2026</td>
-                                        <td>Mar 24, 2026</td>
-                                        <td><span className="status-badge space">Spring Blooms</span></td>
-                                        <td>$3,000</td>
+                                        <td>Mar 12, 2026</td>
+                                        <td>Mar 19, 2026</td>
+                                        <td><span className="status-badge space">Space Available</span></td>
+                                        <td>$2,400</td>
                                         <td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td>
                                     </tr>
                                     <tr>
-                                        <td>May 10, 2026</td>
-                                        <td>May 19, 2026</td>
-                                        <td><span className="status-badge space">Space Available</span></td>
-                                        <td>$3,250</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3250`)}>Book Now</button></td>
+                                        <td>Apr 05, 2026</td>
+                                        <td>Apr 12, 2026</td>
+                                        <td><span className="status-badge last-call">Limited Space</span></td>
+                                        <td>$2,650</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=2650`)}>Book Now</button></td>
                                     </tr>
                                     <tr>
-                                        <td>Sep 20, 2026</td>
-                                        <td>Sep 29, 2026</td>
-                                        <td><span className="status-badge last-call">Limited Space</span></td>
-                                        <td>$3,800</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3800`)}>Book Now</button></td>
+                                        <td>Oct 10, 2026</td>
+                                        <td>Oct 17, 2026</td>
+                                        <td><span className="status-badge guaranteed">Guaranteed</span></td>
+                                        <td>$3,100</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3100`)}>Book Now</button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -226,6 +253,32 @@ export default function NatureRetreatTrip() {
                     </div>
                 </section>
 
+                <section className="related-trips container">
+                    <h2 className="text-center">Other Trips You Might Like</h2>
+                    <div className="related-carousel">
+                        <div className="trip-result-card small-card">
+                            <Image src="/images/bhutan/main5.webp" alt="Cultural Immersion" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <div className="card-padding">
+                                <h4>Bhutan Cultural Immersion</h4>
+                                <span>12 Days</span>
+                            </div>
+                        </div>
+                        <div className="trip-result-card small-card">
+                            <Image src="/images/bhutan/main6.webp" alt="Nature Retreat" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <div className="card-padding">
+                                <h4>Bhutan Nature Retreat</h4>
+                                <span>10 Days</span>
+                            </div>
+                        </div>
+                        <div className="trip-result-card small-card">
+                            <Image src="/images/bhutan/9.webp" alt="Romantic Escape" width={300} height={200} style={{ objectFit: 'cover' }} />
+                            <div className="card-padding">
+                                <h4>Romantic Escape</h4>
+                                <span>10 Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
                 {/* Final Dark CTA */}
                 <section className="final-dark-cta">
@@ -237,6 +290,7 @@ export default function NatureRetreatTrip() {
                 </section>
             </div>
 
+            
         </main>
     );
 }

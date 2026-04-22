@@ -8,16 +8,16 @@ import Image from 'next/image';
 
 import { useAuth } from '@/hooks/useAuth';
 
-export default function CulturalImmersionTrip() {
+export default function FamilyAdventureTrip() {
     const router = useRouter();
     const { user, signInWithGoogle } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1); // 1 = days 1-3
 
     const tripData = {
-        name: "Cultural Immersion",
-        price: "3600",
-        image: "/images/bhutan/main5.webp"
+        name: "Bhutan Family Adventure",
+        price: "3000",
+        image: "/images/bhutan/9.webp"
     };
 
     const handleBookOnline = () => {
@@ -39,12 +39,12 @@ export default function CulturalImmersionTrip() {
             
 
             <div className="trip-hero">
-                <Image src="/images/bhutan/main5.webp" alt="Cultural Immersion" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
+                <Image src="/images/bhutan/9.webp" alt="Bhutan Family Adventure" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
 
                 <div className="trip-hero-content container">
-                    <h1>Cultural Immersion</h1>
-                    <p className="hero-subtitle">Deep dive into Bhutan&apos;s living traditions</p>
+                    <h1>Bhutan Family Adventure</h1>
+                    <p className="hero-subtitle">A Memorable Journey for All Ages</p>
                 </div>
 
                 <div className="quick-info-bar">
@@ -56,15 +56,15 @@ export default function CulturalImmersionTrip() {
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Duration</span>
-                                <span className="value">12 Days / 11 Nights</span>
+                                <span className="value">10 Days / 9 Nights</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Starting From</span>
-                                <span className="value">$3,600</span>
+                                <span className="value">$3,000</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Level</span>
-                                <span className="value">Moderate Cultural</span>
+                                <span className="value">Family Friendly</span>
                             </div>
                         </div>
                         <div className="quick-info-ctas">
@@ -92,22 +92,49 @@ export default function CulturalImmersionTrip() {
                     {/* Overview Content */}
                     <section id="overview" className={`content-section ${activeTab === 'overview' ? 'active' : 'hidden'}`}>
                         <h2>Journey Overview</h2>
-                        <p className="lead-text">Experience the beating heart of Bhutanese tradition. This journey goes beyond the surface, offering profound encounters with monks, artisans, and remote villagers whose way of life has remained unchanged for centuries.</p>
+                        <p className="lead-text">A journey crafted for families seeking meaningful adventure. Discover a kingdom where success is measured in happiness, nature is revered, and children are welcomed with open arms.</p>
 
-                        <p>Designed for travelers who seek authentic connection, this 12-day immersion takes you into the hidden valleys of central Bhutan. You will witness vibrant Tshechu festivals, learn the intricate art of Thangka painting, and partake in private ceremonies with local lamas.</p>
+                        <p>This 10-day family adventure balances cultural discovery with engaging outdoor activities designed to keep all generations entertained. From learning traditional archery to hiking through enchanted pine forests, every day brings a new hands-on experience.</p>
 
-                        <p>We trace the ancient trading routes through Paro, Thimphu, Punakha, and the spiritual heartland of Bumthang, blending deep cultural insight with breathtaking Himalayan landscapes.</p>
+                        <p>Our expert guides are specially trained to engage younger travelers, turning temples into magical castles and hikes into exciting explorations of Himalayan wildlife.</p>
 
-                        <div className="highlights-box">
-                            <h3>Key Highlights</h3>
-                            <ul className="highlights-list">
-                                <li><strong>Participate</strong> in a private Buddhist butter lamp blessing ceremony</li>
-                                <li><strong>Explore</strong> the spiritual valley of Bumthang and its ancient monasteries</li>
-                                <li><strong>Visit</strong> local weaving and traditional paper-making workshops</li>
-                                <li><strong>Stay</strong> overnight in a traditional Bhutanese farmhouse</li>
-                                <li><strong>Witness</strong> masked dances at a local Tsechu (festival dependent)</li>
-                                <li><strong>Hike</strong> to the iconic Tiger&apos;s Nest as a concluding pilgrimage</li>
-                            </ul>
+                        <div className="premium-highlights-frame">
+                            <div className="highlights-map-side">
+                                <div className="map-visual-wrap">
+                                    <Image 
+                                        src="/images/bhutan/9.webp" 
+                                        alt="Family Journey Visualization" 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                    <div className="map-overlay-zoom">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                                    </div>
+                                </div>
+                                <div className="highlights-travel-meta">
+                                    <div className="meta-row">
+                                        <span className="meta-label">Arrive:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                    <div className="meta-row">
+                                        <span className="meta-label">Depart:</span>
+                                        <span className="meta-value">Paro, Bhutan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="highlights-text-side">
+                                <h3>Highlights</h3>
+                                <ul className="premium-highlights-list">
+                                    <li>With years of experience guiding families, we&apos;ve created the ultimate balanced itinerary.</li>
+                                    <li>Learn the national sport of archery with traditional bamboo bows.</li>
+                                    <li>Visit the Takin Preserve to see Bhutan&apos;s unique and legendary national animal.</li>
+                                    <li>Hike gently through the Phobjikha Valley, home to rare black-necked cranes.</li>
+                                    <li>Create your own personalized Bhutanese stamps at the National Post Office.</li>
+                                    <li>River raft on the gentle, sparkling waters of the Mo Chhu River in Punakha.</li>
+                                    <li>Enjoy a private family picnic in the pristine Himalayan countryside.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
 
@@ -117,8 +144,8 @@ export default function CulturalImmersionTrip() {
 
                         {/* Fake Map implementation to match design spec */}
                         <div className="interactive-map-placeholder" style={{ position: 'relative', height: '300px', backgroundColor: '#e9ecef', borderRadius: '8px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Image src="/images/bhutan/main5.webp" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
-                            <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha → Bumthang</div>
+                            <Image src="/images/bhutan/main2.webp" alt="Route Map" fill sizes="(max-width: 768px) 100vw, 900px" style={{ objectFit: 'cover', opacity: 0.6, borderRadius: '8px' }} />
+                            <div style={{ position: 'relative', zIndex: 1, backgroundColor: 'white', padding: '15px 30px', borderRadius: '4px', fontWeight: 'bold' }}>Interactive Route Map: Paro → Thimphu → Punakha → Phobjikha</div>
                         </div>
 
                         <div className="itinerary-accordion">
@@ -126,43 +153,42 @@ export default function CulturalImmersionTrip() {
                             <div className={`accordion-item ${openDay === 1 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(1)}>
                                     <div className="day-badge">Days 1-3</div>
-                                    <span className="day-title">Arrival & The Capital&apos;s Culture</span>
+                                    <span className="day-title">Arrival & Thimphu Fun</span>
                                     <svg className={`chevron ${openDay === 1 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 1 — Arrive in Paro to Thimphu:</strong> Arrive in Paro and drive straight to Thimphu. Evening welcome dinner with traditional music.</p>
-                                    <p><strong>Day 2 — Thimphu Textile & Arts:</strong> Visit the National Institute for Zorig Chusum (13 Traditional Arts) and the vast weekend market.</p>
-                                    <p><strong>Day 3 — Monastic Life:</strong> Private audience with a local monk to discuss Buddhism, followed by a visit to the giant Buddha Dordenma.</p>
+                                    <p><strong>Day 1 — Welcome to Bhutan:</strong> Arrive in Paro. Drive to Thimphu and settle into your family-friendly hotel.</p>
+                                    <p><strong>Day 2 — Takins & Stamps:</strong> Visit the Motithang Takin Preserve. Head to the General Post office where kids can make stamps featuring their own faces!</p>
+                                    <p><strong>Day 3 — Folk Heritage:</strong> Visit the Simply Bhutan museum for interactive demonstrations of traditional life and archery.</p>
                                 </div>
                             </div>
 
                             {/* Accordion Item 2 */}
                             <div className={`accordion-item ${openDay === 2 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(2)}>
-                                    <div className="day-badge">Days 4-7</div>
-                                    <span className="day-title">Punakha & Trongsa Valleys</span>
+                                    <div className="day-badge">Days 4-6</div>
+                                    <span className="day-title">Punakha Adventures & Phobjikha</span>
                                     <svg className={`chevron ${openDay === 2 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 4 — Dochula Pass to Punakha:</strong> Cross the 3,100m Dochula Pass. Visit the stunning architecture of Punakha Dzong.</p>
-                                    <p><strong>Day 5 — Rural Life:</strong> Hike to Khamsum Yulley Namgyal Chorten. Afternoon archery session with local villagers.</p>
-                                    <p><strong>Day 6 — Journey to Trongsa:</strong> Drive into central Bhutan via Pele La Pass. Stop at Chendebji Chorten.</p>
-                                    <p><strong>Day 7 — Trongsa Dzong:</strong> Explore the ancestral home of the royal family before continuing to Bumthang.</p>
+                                    <p><strong>Day 4 — Dochula pass & Punakha:</strong> See the 108 memorial chortens. Descend into Punakha for a mild river rafting experience perfect for families.</p>
+                                    <p><strong>Day 5 — Punakha Dzong & Villages:</strong> Walk across the longest suspension bridge in Bhutan. Picnic lunch by the river.</p>
+                                    <p><strong>Day 6 — Phobjikha Valley:</strong> Drive to the glacial valley of Phobjikha. Visit the Black-Necked Crane Information Centre.</p>
                                 </div>
                             </div>
 
                             {/* Accordion Item 3 */}
                             <div className={`accordion-item ${openDay === 3 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(3)}>
-                                    <div className="day-badge">Days 8-12</div>
-                                    <span className="day-title">Bumthang Heartland & Departure</span>
+                                    <div className="day-badge">Days 7-10</div>
+                                    <span className="day-title">Paro Valley & The Tiger&apos;s Nest</span>
                                     <svg className={`chevron ${openDay === 3 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p><strong>Day 8-9 — Bumthang Exploration:</strong> Two full days exploring Bhutan&apos;s most sacred district. Visit Jambay Lhakhang and Kurjey Lhakhang. Evening farmhouse stay.</p>
-                                    <p><strong>Day 10 — Domestic Flight to Paro:</strong> Take a short scenic flight from Bumthang back to Paro valley to avoid the long drive.</p>
-                                    <p><strong>Day 11 — Tiger&apos;s Nest:</strong> Conclude your cultural journey with the essential pilgrimage hike to Taktsang Monastery.</p>
-                                    <p><strong>Day 12 — Departure:</strong> Our team will see you off at Paro International Airport.</p>
+                                    <p><strong>Day 7 — Return to Paro:</strong> Enjoy the scenic drive back to Paro valley. Evening free for souvenir shopping.</p>
+                                    <p><strong>Day 8 — Explorations:</strong> Visit the massive ruins of Drukgyel Dzong. Try a traditional hot stone bath to relax.</p>
+                                    <p><strong>Day 9 — The Big Hike:</strong> A family achievement—hiking to the legendary Tiger&apos;s Nest monastery. Ponies can be arranged for younger children for the first half.</p>
+                                    <p><strong>Day 10 — Departure:</strong> Say goodbye to the Dragon Kingdom as you fly onward.</p>
                                 </div>
                             </div>
                         </div>
@@ -184,25 +210,25 @@ export default function CulturalImmersionTrip() {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>May 10, 2026</td>
-                                        <td>May 21, 2026</td>
-                                        <td><span className="status-badge space">Space Available</span></td>
-                                        <td>$3,600</td>
+                                        <td>Jul 10, 2026</td>
+                                        <td>Jul 19, 2026</td>
+                                        <td><span className="status-badge space">School Holidays</span></td>
+                                        <td>$3,000</td>
                                         <td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td>
                                     </tr>
                                     <tr>
-                                        <td>Sep 15, 2026</td>
-                                        <td>Sep 26, 2026</td>
-                                        <td><span className="status-badge last-call">Festival Dates</span></td>
-                                        <td>$3,900</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3900`)}>Book Now</button></td>
+                                        <td>Aug 05, 2026</td>
+                                        <td>Aug 14, 2026</td>
+                                        <td><span className="status-badge last-call">Limited Space</span></td>
+                                        <td>$3,000</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3000`)}>Book Now</button></td>
                                     </tr>
                                     <tr>
-                                        <td>Oct 05, 2026</td>
-                                        <td>Oct 16, 2026</td>
+                                        <td>Dec 20, 2026</td>
+                                        <td>Dec 29, 2026</td>
                                         <td><span className="status-badge guaranteed">Guaranteed</span></td>
-                                        <td>$4,500</td>
-                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=4500`)}>Book Now</button></td>
+                                        <td>$3,400</td>
+                                        <td><button className="btn btn-outline small" onClick={() => router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=3400`)}>Book Now</button></td>
                                     </tr>
                                 </tbody>
                             </table>

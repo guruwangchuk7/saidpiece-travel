@@ -5670,3 +5670,117 @@ select.trip-finder-input {
 .trip-detail-page {
     padding-top: 90px;
 }
+
+/* Premium Highlights Section */
+.premium-highlights-frame {
+    border: 1px solid #d3c4b0;
+    padding: 50px;
+    margin: 40px 0;
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 50px;
+    position: relative;
+}
+
+.highlights-map-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.map-visual-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 30px;
+    background: #f8f8f8;
+    overflow: hidden;
+}
+
+.highlights-travel-meta {
+    margin-top: auto;
+}
+
+.meta-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.meta-row .meta-label {
+    font-weight: 700;
+    color: #111;
+    min-width: 80px;
+}
+
+.meta-row .meta-value {
+    color: #555;
+}
+
+.highlights-text-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.highlights-text-side h3 {
+    font-family: var(--font-playfair);
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #111;
+    font-weight: 400;
+}
+
+.premium-highlights-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.premium-highlights-list li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 25px;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #444;
+}
+
+.premium-highlights-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.5rem;
+    color: #111;
+    line-height: 1;
+}
+
+@media (max-width: 992px) {
+    .premium-highlights-frame {
+        grid-template-columns: 1fr;
+        padding: 30px;
+        gap: 40px;
+    }
+    
+    .highlights-text-side h3 {
+        font-size: 2rem;
+    }
+}
+
+.map-overlay-zoom {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    color: #111;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+

@@ -8,28 +8,28 @@ export default function Top10CuratedPage() {
             title: 'Bhutan Discovery',
             image: '/images/bhutan/main1.webp',
             description: 'A comprehensive journey through the heart of the Dragon Kingdom, visiting the iconic Tiger\'s Nest and the serene valleys of Paro and Punakha.',
-            link: '/trips/bhutan-discovery'
+            link: '/trips/discovery'
         },
         {
             id: 'cultural-immersion',
             title: 'Cultural Immersion',
             image: '/images/bhutan/main2.webp',
             description: 'Dive deep into the living traditions of Bhutan. Experience village life, traditional arts, and ancient festivals that have remained unchanged for centuries.',
-            link: '/trips/cultural-immersion'
+            link: '/trips/cultural'
         },
         {
             id: 'bhutan-family-adventure',
             title: 'Bhutan Family Adventure',
             image: '/images/bhutan/main3.webp',
             description: 'An engaging itinerary designed for all ages, featuring archery, light hikes, and interactive cultural experiences that bring the family together.',
-            link: '/trips/bhutan-family-adventure'
+            link: '/trips/family'
         },
         {
             id: 'nature-retreat',
             title: 'Nature Retreat',
             image: '/images/bhutan/main4.webp',
             description: 'Find serenity in the pristine landscapes of Phobjikha and Bumthang. A journey focused on wellness, meditation, and the untouched natural beauty of the Himalayas.',
-            link: '/trips/nature-retreat'
+            link: '/trips/nature'
         }
     ];
 
