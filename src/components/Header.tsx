@@ -25,7 +25,7 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
         isScrolled || 
         openMenu !== null || 
         (isMobileMenuOpen && isMounted) ||
-        ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/travel-blog', '/catalog', '/about/meet-our-team'].some(path => pathname?.startsWith(path));
+        ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/travel-blog', '/catalog', '/about/meet-our-team', '/trips'].some(path => pathname?.startsWith(path));
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -296,8 +296,8 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                                     <h5>Top 10 Curated</h5>
                                 </Link>
                                 <ul className="mega-list-curated">
-                                    <li><Link href="/trips/bhutan-discovery">Bhutan Discovery</Link></li>
-                                    <li><Link href="/trips/cultural-immersion">Cultural Immersion</Link></li>
+                                    <li><Link href="/trips/new-trips-2026" onClick={handleMenuLinkClick}>New Trips for 2026</Link></li>
+                                    <li><Link href="/trips/cultural-immersion" onClick={handleMenuLinkClick}>Cultural Immersion</Link></li>
                                     <li><Link href="/trips/bhutan-family-adventure">Bhutan Family Adventure</Link></li>
                                     <li><Link href="/trips/nature-retreat">Nature Retreat</Link></li>
                                 </ul>
