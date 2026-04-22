@@ -5186,6 +5186,139 @@ select.trip-finder-input {
   }
 }
 
+/* Featured Conservation Grid Redesign */
+.featured-tours-section {
+  background-color: #f8f8f8;
+  padding: 100px 0;
+}
+
+.conservation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.cons-trip-card {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+  transition: transform 0.3s ease;
+}
+
+.cons-trip-card:hover {
+  transform: translateY(-5px);
+}
+
+.cons-image-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+.cons-content {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.cons-tag {
+  display: inline-block;
+  background: #eeeae0;
+  color: #666;
+  font-size: 10px;
+  padding: 4px 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cons-title {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: #111;
+  margin-bottom: 20px;
+  height: 3.4rem;
+  overflow: hidden;
+}
+
+.cons-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.cons-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #444;
+}
+
+.cons-meta-item svg {
+  color: #111;
+}
+
+.cons-footer {
+  display: flex;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+}
+
+.cons-price-box {
+  flex: 1;
+  padding: 15px;
+  font-size: 12px;
+  color: #666;
+  border-right: 1px solid #eee;
+}
+
+.cons-price-box span {
+  display: block;
+  font-weight: 400;
+}
+
+.cons-price-val {
+  color: #111;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.cons-view-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #004b7a;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.cons-view-link:hover {
+  background: #fcfcfc;
+}
+
+@media (max-width: 1200px) {
+  .conservation-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .conservation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Utilities used in Story Page */
 .flex { display: flex; }
 .items-center { align-items: center; }
