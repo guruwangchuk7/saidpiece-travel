@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
@@ -54,7 +52,6 @@ export default function DynamicBlogPost() {
     if (loading) {
         return (
             <main className="blog-post-page page-with-header bg-white">
-                <Header theme="light" />
                 <div className="blog-article skeleton-load">
                     <header className="blog-header container">
                         <div className="skeleton category-skeleton"></div>
@@ -74,7 +71,6 @@ export default function DynamicBlogPost() {
                         <div className="skeleton text-line short"></div>
                     </div>
                 </div>
-                <Footer />
                 <style jsx>{`
                     .skeleton {
                         background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
@@ -118,7 +114,6 @@ export default function DynamicBlogPost() {
 
     return (
         <main className="blog-post-page page-with-header bg-white">
-            <Header theme="light" />
             
             {/* Scroll Progress Bar */}
             <div className="scroll-progress-container" style={{
@@ -180,7 +175,6 @@ export default function DynamicBlogPost() {
                 </footer>
             </article>
 
-            <Footer />
 
             <style jsx>{`
                 .blog-article {

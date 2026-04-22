@@ -21,7 +21,11 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
 
     const isAutoMount = propTheme === 'auto';
 
-    const isLightState = theme === 'light' || isScrolled || openMenu !== null || (isMobileMenuOpen && isMounted);
+    const isLightState = theme === 'light' || 
+        isScrolled || 
+        openMenu !== null || 
+        (isMobileMenuOpen && isMounted) ||
+        ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/travel-blog', '/catalog', '/about/meet-our-team'].some(path => pathname?.startsWith(path));
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -306,7 +310,6 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                                 <ul className="mega-list-large">
                                     <li><Link href="/about/our-story">Our Story</Link></li>
                                     <li><Link href="/about/responsible-travel">Responsible Travel</Link></li>
-                                    <li><Link href="/about/local-expertise">Local Expertise</Link></li>
                                     <li><Link href="/about/booking-process">Booking Process</Link></li>
                                     <li><Link href="/about/meet-our-team">Meet Our Team</Link></li>
                                     <li><Link href="/travel-blog">Travel Blog</Link></li>

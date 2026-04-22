@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Header from '@/components/Header';
 import { supabase } from '@/lib/supabaseClient';
 
 const steps = 6;
@@ -272,13 +271,10 @@ Interests: ${selectedTags.join(', ')}`;
 
     return (
         <div className="wizard-framework">
-            {/* Header Navigation fixed to Top */}
-            <Header theme="light">
-                {/* Progress Bar under Header */}
-                <div className="wizard-progress-track">
-                    <div className="wizard-progress-fill" style={{ width: `${((currentStep / steps) * 100).toFixed(1)}%` }}></div>
-                </div>
-            </Header>
+            {/* Progress Bar fixed under Global Header */}
+            <div className="wizard-progress-track" style={{ position: 'fixed', top: '90px', left: 0, width: '100%', zIndex: 1000 }}>
+                <div className="wizard-progress-fill" style={{ width: `${((currentStep / steps) * 100).toFixed(1)}%` }}></div>
+            </div>
 
             {/* Main Content Area */}
             <main className="wizard-main" style={{ paddingTop: '120px' }}>

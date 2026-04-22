@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -48,7 +46,6 @@ export default function ContactPage() {
 
     return (
         <main className="contact-page page-with-header">
-            <Header theme="light" />
 
             <div className="contact-content-scaffold">
                 <div className="container">
@@ -193,7 +190,6 @@ export default function ContactPage() {
                 </div>
             </section>
 
-            <Footer />
         </main>
     );
 }

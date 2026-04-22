@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -48,7 +46,6 @@ export default function CatalogPage() {
 
     return (
         <main className="catalog-page page-with-header">
-            <Header theme="light" />
 
             <div className="contact-content-scaffold">
                 <div className="container">
@@ -146,7 +143,6 @@ export default function CatalogPage() {
                 </div>
             </div>
 
-            <Footer />
         </main>
     );
 }

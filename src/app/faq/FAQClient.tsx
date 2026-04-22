@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Link from 'next/link';
 
 interface FAQ {
@@ -23,7 +21,6 @@ export default function FAQClient({ initialFaqs }: { initialFaqs: FAQ[] }) {
 
     return (
         <main className="faq-page page-with-header">
-            <Header theme="light" />
 
             <section className="faq-hero" style={{ background: '#fcfaf7', padding: '120px 20px 80px', textAlign: 'center' }}>
                 <div className="container">
@@ -80,7 +77,6 @@ export default function FAQClient({ initialFaqs }: { initialFaqs: FAQ[] }) {
                 </section>
             </div>
 
-            <Footer />
         </main>
     );
 }

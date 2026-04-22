@@ -1,10 +1,6 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-
 export default function TermsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
       <main className="flex-grow container mx-auto px-4 pt-40 pb-20 max-w-4xl">
         <h1 className="serif-title text-4xl mb-8">Booking Terms & Conditions</h1>
         <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
@@ -36,7 +32,6 @@ export default function TermsPage() {
           </section>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

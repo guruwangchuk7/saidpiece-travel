@@ -1,14 +1,11 @@
 'use client';
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function MeetOurTeam() {
     return (
         <main className="our-story-page page-with-header">
-            <Header theme="light" />
 
             <section className="story-hero-refined">
                 <div className="story-hero-bg">
@@ -124,7 +121,6 @@ export default function MeetOurTeam() {
                 </section>
             </div>
 
-            <Footer />
         </main>
     );
 }

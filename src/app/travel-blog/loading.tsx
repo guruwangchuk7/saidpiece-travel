@@ -1,12 +1,9 @@
 'use client';
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 export default function BlogLoading() {
     return (
         <main className="our-story-page page-with-header bg-white">
-            <Header theme="light" />
 
             <section className="story-hero-refined" style={{ opacity: 0.5 }}>
                 <div className="story-hero-bg">
@@ -38,7 +35,6 @@ export default function BlogLoading() {
                     </div>
                 </section>
             </div>
-            <Footer />
             <style jsx>{`
                 .skeleton {
                     background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);

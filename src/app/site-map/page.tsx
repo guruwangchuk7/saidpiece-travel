@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Link from 'next/link';
 
 const sitemapData = [
@@ -25,7 +23,6 @@ const sitemapData = [
     category: 'About Saidpiece',
     links: [
       { label: 'Our Story', href: '/about/our-story' },
-      { label: 'Local Expertise', href: '/about/local-expertise' },
       { label: 'Responsible Travel', href: '/about/responsible-travel' },
       { label: 'The Team', href: '/about/meet-our-team' },
       { label: 'Booking Process', href: '/about/booking-process' },
@@ -54,7 +51,6 @@ const sitemapData = [
 export default function SitemapPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
       <main className="flex-grow container mx-auto px-4 pt-40 pb-20 max-w-5xl">
         <h1 className="serif-title text-4xl mb-12">Website Sitemap</h1>
         
@@ -89,7 +85,6 @@ export default function SitemapPage() {
             </a>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
