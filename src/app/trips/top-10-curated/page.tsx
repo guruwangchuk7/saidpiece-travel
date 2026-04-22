@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function Top10CuratedPage() {
     const curatedTrips = [
@@ -34,10 +35,11 @@ export default function Top10CuratedPage() {
     ];
 
     return (
-        <main className="top-10-page">
+        <main className="top-10-page pt-0">
+            <HeaderThemeHandler theme="auto" />
             {/* Hero Section */}
             <section className="top-10-hero">
-                <div className="hero-bg-overlay">
+                <div className="hero-bg-wrapper">
                     <Image
                         src="/images/bhutan/main1.webp"
                         alt="Bhutan Landscape"
@@ -45,25 +47,27 @@ export default function Top10CuratedPage() {
                         style={{ objectFit: 'cover' }}
                         priority
                     />
+                    <div className="hero-overlay-subtle"></div>
                 </div>
-                <div className="container hero-content-inner">
-                    <h1>Top 10 Curated Trips for 2026</h1>
+                <div className="container hero-content-center">
+                    <h1 className="hero-title">Top 10 Curated Trips for 2026</h1>
                 </div>
             </section>
 
             {/* Intro Section */}
             <section className="top-10-intro container">
-                <div className="intro-text-block">
-                    <p>
-                        Discover our most inspiring destinations for 2026, handpicked by Regional Specialists and seasoned
-                        Trip Leaders to guarantee off-the-beaten-path delights and cultural immersion. Expect a balance of
-                        hidden gems and iconic destinations reinvigorated by new momentum.
-                    </p>
-                    <p>
-                        Our curated collection represents the pinnacle of travel in Bhutan, focusing on authenticity,
-                        luxury, and profound connection to the land and its people. From the sacred heights of the Himalayas
-                        to the lush valleys of the south, these are the journeys that will define your 2026 travel story.
-                    </p>
+                <div className="intro-grid-premium">
+                    <div className="intro-title-col">
+                        <h2 className="premium-heading">Handpicked for the Discerning Explorer</h2>
+                        <div className="accent-line"></div>
+                    </div>
+                    <div className="intro-content-col">
+                        <div className="intro-text-main">
+                            Discover our most inspiring destinations for 2026, handpicked by Regional Specialists and seasoned
+                            Trip Leaders to guarantee off-the-beaten-path delights and cultural immersion. Expect a balance of
+                            hidden gems and iconic destinations reinvigorated by new momentum. Our curated collection represents the pinnacle of travel in Bhutan, focusing on authenticity, luxury, and profound connection to the land and its people.
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -88,7 +92,7 @@ export default function Top10CuratedPage() {
             </section>
 
             {/* CTA Section */}
-            <section className="top-10-cta container">
+            <section className="top-10-cta container" style={{ marginBottom: '100px' }}>
                 <div className="cta-card">
                     <div className="cta-image-side">
                         <Image src="/images/bhutan/main2.webp" alt="Catalog" width={400} height={300} />
@@ -106,8 +110,6 @@ export default function Top10CuratedPage() {
                     </div>
                 </div>
             </section>
-
-
         </main>
     );
 }

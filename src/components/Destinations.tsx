@@ -68,8 +68,8 @@ export default function Destinations() {
                     <div className="dest-info">
                         <h3>{activeDest.title}</h3>
                         <p>{activeDest.description}</p>
-                        <Link href={`/browse?dest=${encodeURIComponent(activeDest.name)}`} className="btn btn-primary">
-                            View All {activeDest.name} Trips
+                        <Link href={`/destinations/${activeDest.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} className="btn btn-primary">
+                            View {activeDest.name} Region
                         </Link>
                     </div>
                 </div>

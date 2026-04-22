@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function NewTrips2026Page() {
     const newTrips = [
+        // ... (existing data)
         {
             id: 'treasures-of-himalayas',
             title: 'Treasures of the Himalayas: Tibet, Nepal & Bhutan',
@@ -50,10 +52,11 @@ export default function NewTrips2026Page() {
     ];
 
     return (
-        <main className="new-trips-page">
+        <main className="new-trips-page pt-0">
+            <HeaderThemeHandler theme="auto" />
             {/* Hero Section */}
             <section className="new-trips-hero">
-                <div className="hero-bg-overlay">
+                <div className="hero-bg-wrapper">
                     <Image 
                         src="/images/bhutan/main4.webp" 
                         alt="Himalayan Mountains" 
@@ -61,25 +64,29 @@ export default function NewTrips2026Page() {
                         style={{ objectFit: 'cover' }}
                         priority
                     />
+                    <div className="hero-overlay-subtle"></div>
                 </div>
-                <div className="container hero-content-inner">
-                    <span className="hero-category">INSPIRATION</span>
-                    <h1>New Trips for 2026</h1>
+                <div className="container hero-content-center">
+                    <h1 className="hero-title">New Trips for 2026</h1>
                 </div>
             </section>
 
             {/* Intro Section */}
             <section className="new-trips-intro container">
-                <div className="intro-text-block">
-                    <p>
-                        We’re thrilled to share our new adventures for 2026 and beyond! This epic collection includes first-time 
-                        exploratories, rugged expeditions, classic destinations, and dream trips inspired by our phenomenal Trip Leaders.
-                    </p>
-                    <p>
-                        Hike footpaths between ancient villages, dine in world-renowned restaurants, meet Tibetan monks in 
-                        Lhasa’s famed Potala Palace, and explore the hidden trails of the Himalayas. No matter your passions, 
-                        2026 (and 2027!) has an unforgettable adventure in store for you. Take a look below at our active journeys.
-                    </p>
+                <div className="intro-grid-premium">
+                    <div className="intro-title-col">
+                        <h2 className="premium-heading">A New Era of Exploration</h2>
+                        <div className="accent-line"></div>
+                    </div>
+                    <div className="intro-content-col">
+                        <div className="intro-text-main">
+                            We’re thrilled to share our new adventures for 2026 and beyond! This epic collection includes first-time 
+                            exploratories, rugged expeditions, classic destinations, and dream trips inspired by our phenomenal Trip Leaders.
+                            Hike footpaths between ancient villages, meet Tibetan monks in 
+                            Lhasa’s famed Potala Palace, and explore the hidden trails of the Himalayas. No matter your passions, 
+                            2026 has an unforgettable adventure in store for you.
+                        </div>
+                    </div>
                 </div>
             </section>
 

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
+import { useUI } from '@/contexts/UIContext';
+import { useEffect } from 'react';
 
 const steps = 6;
 
@@ -13,6 +15,12 @@ export default function TripWizard() {
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [duration, setDuration] = useState('10');
+    const { setHeaderTheme } = useUI();
+
+    useEffect(() => {
+        setHeaderTheme('light');
+        return () => setHeaderTheme('auto');
+    }, [setHeaderTheme]);
 
     // User Form state
     const [firstName, setFirstName] = useState('');
@@ -272,12 +280,12 @@ Interests: ${selectedTags.join(', ')}`;
     return (
         <div className="wizard-framework">
             {/* Progress Bar fixed under Global Header */}
-            <div className="wizard-progress-track" style={{ position: 'fixed', top: '90px', left: 0, width: '100%', zIndex: 1000 }}>
+            <div className="wizard-progress-track" style={{ position: 'fixed', top: '130px', left: 0, width: '100%', zIndex: 1000 }}>
                 <div className="wizard-progress-fill" style={{ width: `${((currentStep / steps) * 100).toFixed(1)}%` }}></div>
             </div>
 
             {/* Main Content Area */}
-            <main className="wizard-main" style={{ paddingTop: '120px' }}>
+            <main className="wizard-main" style={{ paddingTop: '160px' }}>
                 {renderStepContent()}
             </main>
 

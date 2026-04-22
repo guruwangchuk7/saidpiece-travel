@@ -4,17 +4,18 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
-export default function RomanticEscapeTrip() {
+export default function NatureWellnessRetreatTrip() {
     const router = useRouter();
     const { user, signInWithGoogle } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1);
 
     const tripData = {
-        name: "Romantic Escape",
-        price: "3800",
-        image: "/images/bhutan/main4.webp"
+        name: "Nature & Wellness Retreat",
+        price: "3000",
+        image: "/images/bhutan/main6.webp"
     };
 
     const handleBookOnline = () => {
@@ -32,14 +33,15 @@ export default function RomanticEscapeTrip() {
     };
 
     return (
-        <main className="trip-detail-page">
+        <main className="trip-detail-page pt-0">
+            <HeaderThemeHandler theme="auto" />
+            
             <div className="trip-hero">
                 <Image src={tripData.image} alt={tripData.name} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
-                <div className="trip-hero-overlay"></div>
+                <div className="hero-overlay-subtle"></div>
 
-                <div className="trip-hero-content container">
-                    <h1>{tripData.name}</h1>
-                    <p className="hero-subtitle">Luxury and intimacy in the Last Shangri-La</p>
+                <div className="container hero-content-center">
+                    <h1 className="hero-title">{tripData.name}</h1>
                 </div>
 
                 <div className="quick-info-bar">
@@ -47,7 +49,7 @@ export default function RomanticEscapeTrip() {
                         <div className="quick-info-items">
                             <div className="quick-info-item">
                                 <span className="label">Location</span>
-                                <span className="value">Paro, Bhutan</span>
+                                <span className="value">Phobjikha, Bhutan</span>
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Duration</span>
@@ -59,7 +61,7 @@ export default function RomanticEscapeTrip() {
                             </div>
                             <div className="quick-info-item">
                                 <span className="label">Level</span>
-                                <span className="value">Luxury</span>
+                                <span className="value">Wellness</span>
                             </div>
                         </div>
                         <div className="quick-info-ctas">
@@ -84,14 +86,14 @@ export default function RomanticEscapeTrip() {
                 <div className="trip-main-content">
                     <section id="overview" className={`content-section ${activeTab === 'overview' ? 'active' : 'hidden'}`}>
                         <h2>Journey Overview</h2>
-                        <p className="lead-text">Celebrate your love in the most spiritual and serene landscape on Earth. Our Romantic Escape is a meticulously curated journey for couples seeking luxury, privacy, and profound shared experiences.</p>
+                        <p className="lead-text">Discover the restorative power of Bhutan&apos;s untouched nature. This wellness retreat blends gentle wilderness exploration with traditional healing practices and mindful meditation.</p>
 
-                        <p>From private candlelit dinners overlooking ancient dzongs to luxury lodge stays with world-class spas, every detail is designed to foster connection and create unforgettable memories in the heart of the Himalayas.</p>
+                        <p>Set in the high-altitude glacial valley of Phobjikha, you will find sanctuary in eco-luxury lodges, practicing yoga as the sun rises over the Himalayas and ending your days with traditional hot stone baths infused with medicinal herbs.</p>
 
                         <div className="premium-highlights-frame">
                             <div className="highlights-map-side">
                                 <div className="map-visual-wrap">
-                                    <Image src="/images/bhutan/main4.webp" alt="Romantic Journey" fill style={{ objectFit: 'cover' }} />
+                                    <Image src="/images/bhutan/main6.webp" alt="Wellness Journey" fill style={{ objectFit: 'cover' }} />
                                     <div className="map-overlay-zoom">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                                     </div>
@@ -104,11 +106,11 @@ export default function RomanticEscapeTrip() {
                             <div className="highlights-text-side">
                                 <h3>Highlights</h3>
                                 <ul className="premium-highlights-list">
-                                    <li>Private gourmet dinners in exclusive locations, from pine forests to riverbanks.</li>
-                                    <li>Luxury boutique lodge stays with private balconies and stunning mountain views.</li>
-                                    <li>Traditional Bhutanese blessing ceremony for your relationship.</li>
-                                    <li>Couples&apos; spa treatments and private hot stone baths for ultimate relaxation.</li>
-                                    <li>Tailored daily activities that balance adventure with plenty of private time.</li>
+                                    <li>Daily guided meditation and yoga in breathtaking alpine settings.</li>
+                                    <li>Traditional Bhutanese hot stone baths using local medicinal herbs.</li>
+                                    <li>Mindful nature walks through the glacial Phobjikha Valley.</li>
+                                    <li>Consultation with a traditional Sowa Rigpa (Bhutanese medicine) practitioner.</li>
+                                    <li>Digital detox focus with structured quiet time and starlit evenings.</li>
                                 </ul>
                             </div>
                         </div>
@@ -119,12 +121,12 @@ export default function RomanticEscapeTrip() {
                         <div className="itinerary-accordion">
                             <div className={`accordion-item ${openDay === 1 ? 'open' : ''}`}>
                                 <button className="accordion-header" onClick={() => toggleAccordion(1)}>
-                                    <div className="day-badge">Days 1-3</div>
-                                    <span className="day-title">Arrival & Alpine Luxury</span>
+                                    <div className="day-badge">Days 1-5</div>
+                                    <span className="day-title">Acclimatization & Valley Sanctuary</span>
                                     <svg className={`chevron ${openDay === 1 ? 'rotate' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
                                 <div className="accordion-content">
-                                    <p>Your journey begins in Paro, where you will settle into one of Bhutan&apos;s most exclusive luxury lodges.</p>
+                                    <p>Begin your wellness journey in the quietest corners of Paro before heading deep into the Phobjikha sanctuary.</p>
                                 </div>
                             </div>
                         </div>
@@ -135,10 +137,10 @@ export default function RomanticEscapeTrip() {
                         <div className="table-responsive">
                             <table className="dates-pricing-table">
                                 <thead>
-                                    <tr><th>Month</th><th>Availability</th><th>Starting Price</th><th></th></tr>
+                                    <tr><th>Departure</th><th>Availability</th><th>Starting Price</th><th></th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Flexible</td><td><span className="status-badge space">Available Daily</span></td><td>$3,800</td><td><button className="btn btn-outline small" onClick={handleBookOnline}>Inquire Now</button></td></tr>
+                                    <tr><td>Oct 12, 2026</td><td><span className="status-badge space">Space Available</span></td><td>$3,000</td><td><button className="btn btn-outline small" onClick={handleBookOnline}>Book Now</button></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -148,9 +150,9 @@ export default function RomanticEscapeTrip() {
 
             <section className="final-dark-cta">
                 <div className="container text-center">
-                    <h2>Ready for your Himalayan escape?</h2>
-                    <p>Let us create the perfect romantic journey for you.</p>
-                    <button className="btn btn-primary large-btn" onClick={handleBookOnline}>Inquire Now</button>
+                    <h2>Ready to reconnect?</h2>
+                    <p>Start your wellness journey in the heart of the Himalayas.</p>
+                    <button className="btn btn-primary large-btn" onClick={handleBookOnline}>Book Your Retreat</button>
                 </div>
             </section>
         </main>

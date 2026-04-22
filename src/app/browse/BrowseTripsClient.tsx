@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useUI } from '@/contexts/UIContext';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 interface Trip {
     id: string;
@@ -45,11 +46,6 @@ export default function BrowseTripsClient({
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
     useEffect(() => {
-        setHeaderTheme('light');
-        return () => setHeaderTheme('auto');
-    }, [setHeaderTheme]);
-
-    useEffect(() => {
         setIsMounted(true);
         if (allTrips.length === 0) {
             fetchTrips();
@@ -60,7 +56,7 @@ export default function BrowseTripsClient({
         {
             id: 'c1',
             title: "Cultural Immersion",
-            slug: "cultural",
+            slug: "cultural-immersion",
             duration_days: 12,
             level: "Moderate",
             starting_price: 3800,
@@ -73,7 +69,7 @@ export default function BrowseTripsClient({
         {
             id: 'nr1',
             title: "Nature Retreat",
-            slug: "nature",
+            slug: "nature-retreat",
             duration_days: 10,
             level: "Easy",
             starting_price: 6500,
@@ -86,7 +82,7 @@ export default function BrowseTripsClient({
         {
             id: 'bd1',
             title: "Bhutan Discovery",
-            slug: "discovery",
+            slug: "bhutan-discovery",
             duration_days: 8,
             level: "Easy",
             starting_price: 2400,
@@ -123,7 +119,7 @@ export default function BrowseTripsClient({
         {
             id: 'nw-r',
             title: "Nature & Wellness Retreat",
-            slug: "wellness",
+            slug: "nature-wellness-retreat",
             duration_days: 10,
             level: "Wellness",
             starting_price: 3000,
@@ -135,7 +131,7 @@ export default function BrowseTripsClient({
         {
             id: 'bf-a',
             title: "Bhutan Family Adventure",
-            slug: "family",
+            slug: "bhutan-family-adventure",
             duration_days: 10,
             level: "Family Friendly",
             starting_price: 3000,
@@ -147,7 +143,7 @@ export default function BrowseTripsClient({
         {
             id: 're-l',
             title: "Romantic Escape",
-            slug: "romantic",
+            slug: "romantic-escape",
             duration_days: 10,
             level: "Luxury",
             starting_price: 3800,
@@ -159,7 +155,7 @@ export default function BrowseTripsClient({
         {
             id: 'dp-t',
             title: "Druk Path Trek",
-            slug: "druk-path",
+            slug: "druk-path-trek",
             duration_days: 6,
             level: "Moderate",
             starting_price: 1800,
@@ -171,7 +167,7 @@ export default function BrowseTripsClient({
         {
             id: 'ft-c',
             title: "Festival Tours",
-            slug: "festivals",
+            slug: "festival-tours",
             duration_days: 10,
             level: "Cultural",
             starting_price: 3000,
@@ -238,14 +234,28 @@ export default function BrowseTripsClient({
     const levelOptions = Array.from(new Set(allTrips.map(t => t.level))).filter(Boolean) as string[];
 
     return (
-        <main>
-            <div className="browse-page-layout">
-                <div className="breadcrumbs">
-                    <div className="container">
-                        <Link href="/">Home</Link> &gt; <span>Browse Trips</span>
-                    </div>
+        <main className="browse-page-wrapper pt-0">
+            <HeaderThemeHandler theme="auto" />
+            
+            {/* Hero Section */}
+            <section className="new-trips-hero" style={{ height: '90vh', minHeight: '700px' }}>
+                <div className="hero-bg-wrapper">
+                    <Image 
+                        src="/images/bhutan/main4.webp" 
+                        alt="Explore Bhutan" 
+                        fill 
+                        style={{ objectFit: 'cover' }}
+                        priority
+                    />
+                    <div className="hero-overlay-subtle"></div>
                 </div>
+                <div className="container hero-content-inner">
+                    <span className="hero-category">BROWSE TRIPS</span>
+                    <h1>Explore Bhutan Journeys</h1>
+                </div>
+            </section>
 
+            <div className="browse-page-layout" style={{ paddingTop: '40px' }}>
                 <div className="mobile-filter-trigger-bar">
                     <div className="search-bar-mini">
                         <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -305,8 +315,7 @@ export default function BrowseTripsClient({
                     <div className="results-area">
                         <div className="results-header">
                             <div>
-                                <h2 style={{ fontSize: '32px', fontFamily: 'var(--font-playfair), serif' }}>Explore Bhutan Journeys</h2>
-                                <p style={{ margin: '8px 0 0', color: '#666' }}>Find the perfect pace and style for your journey.</p>
+                                {/* Title is now in the Hero section */}
                             </div>
                             <div className="sort-dropdown">
                                 <select className="trip-finder-input" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>

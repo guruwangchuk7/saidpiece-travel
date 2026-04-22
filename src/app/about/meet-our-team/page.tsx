@@ -2,25 +2,26 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function MeetOurTeam() {
     return (
-        <main className="our-story-page page-with-header">
+        <main className="our-story-page pt-0">
+            <HeaderThemeHandler theme="auto" />
 
-            <section className="story-hero-refined">
-                <div className="story-hero-bg">
+            <section className="story-hero-new">
+                <div className="hero-bg-wrapper">
                     <Image
                         src="/images/bhutan/main6.webp"
                         alt="Saidpiece Travel team in Bhutan"
                         fill
-                        sizes="100vw"
                         style={{ objectFit: 'cover' }}
                         priority
                     />
-                    <div className="story-hero-overlay-refined"></div>
+                    <div className="hero-overlay-subtle"></div>
                 </div>
-                <div className="container story-hero-content-refined">
-                    <h1 className="serif-title">Meet Our Team</h1>
+                <div className="container hero-content-center">
+                    <h1 className="hero-title">Meet Our Team</h1>
                 </div>
             </section>
 

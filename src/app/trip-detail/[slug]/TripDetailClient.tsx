@@ -38,7 +38,7 @@ export default function TripDetailClient({
 }) {
     const router = useRouter();
     const { user, signInWithGoogle } = useAuth();
-    
+
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1);
 
@@ -59,13 +59,13 @@ export default function TripDetailClient({
     return (
         <main className="trip-detail-page">
             <div className="trip-hero">
-                <Image 
-                    src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`} 
-                    alt={trip.title} 
-                    fill 
-                    sizes="100vw" 
-                    style={{ objectFit: 'cover' }} 
-                    priority 
+                <Image
+                    src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`}
+                    alt={trip.title}
+                    fill
+                    sizes="100vw"
+                    style={{ objectFit: 'cover' }}
+                    priority
                 />
                 <div className="trip-hero-overlay"></div>
 
@@ -116,7 +116,7 @@ export default function TripDetailClient({
                     <section id="overview" className={`content-section ${activeTab === 'overview' ? 'active' : 'hidden'}`}>
                         <h2>Journey Overview</h2>
                         <p className="lead-text">{trip.description}</p>
-                        
+
                         <div className="highlights-box">
                             <h3>Trip Experience</h3>
                             <ul className="highlights-list">
@@ -130,7 +130,7 @@ export default function TripDetailClient({
 
                     <section id="itinerary" className={`content-section ${activeTab === 'itinerary' ? 'active' : 'hidden'}`}>
                         <h2>Detailed Itinerary</h2>
-                        
+
                         {children ? children : (
                             <div className="itinerary-accordion">
                                 {itinerary?.map((item) => (

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function CulturalImmersionPrivateTrip() {
     const router = useRouter();
@@ -32,14 +33,15 @@ export default function CulturalImmersionPrivateTrip() {
     };
 
     return (
-        <main className="trip-detail-page">
+        <main className="trip-detail-page pt-0">
+            <HeaderThemeHandler theme="auto" />
+            
             <div className="trip-hero">
                 <Image src={tripData.image} alt={tripData.name} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
-                <div className="trip-hero-overlay"></div>
+                <div className="hero-overlay-subtle"></div>
 
-                <div className="trip-hero-content container">
-                    <h1>{tripData.name}</h1>
-                    <p className="hero-subtitle">An exclusive deep-dive into living traditions</p>
+                <div className="container hero-content-center">
+                    <h1 className="hero-title">{tripData.name}</h1>
                 </div>
 
                 <div className="quick-info-bar">

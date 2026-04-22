@@ -25,7 +25,7 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
         isScrolled ||
         openMenu !== null ||
         (isMobileMenuOpen && isMounted) ||
-        ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/travel-blog', '/catalog', '/about/meet-our-team', '/trips'].some(path => pathname?.startsWith(path));
+        ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/catalog', '/wizard'].some(path => pathname?.startsWith(path));
 
     const handleMouseEnter = (menuId: string) => {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
@@ -226,13 +226,13 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                         <div className="mega-menu-container">
                             <div className="destinations-left">
                                 <ul className="mega-list">
-                                    <li><Link href="/browse?destination=Paro%20Valley" onClick={handleMenuLinkClick}>Paro Valley</Link></li>
-                                    <li><Link href="/browse?destination=Thimphu" onClick={handleMenuLinkClick}>Thimphu</Link></li>
-                                    <li><Link href="/browse?destination=Punakha" onClick={handleMenuLinkClick}>Punakha</Link></li>
-                                    <li><Link href="/browse?destination=Bumthang" onClick={handleMenuLinkClick}>Bumthang</Link></li>
-                                    <li><Link href="/browse?destination=Gangtey%20%26%20Phobjikha" onClick={handleMenuLinkClick}>Gangtey & Phobjikha</Link></li>
-                                    <li><Link href="/browse?destination=Haa%20Valley" onClick={handleMenuLinkClick}>Haa Valley</Link></li>
-                                    <li><Link href="/browse?destination=Eastern%20Bhutan" onClick={handleMenuLinkClick}>Eastern Bhutan</Link></li>
+                                    <li><Link href="/destinations/paro-valley" onClick={handleMenuLinkClick}>Paro Valley</Link></li>
+                                    <li><Link href="/destinations/thimphu" onClick={handleMenuLinkClick}>Thimphu</Link></li>
+                                    <li><Link href="/destinations/punakha" onClick={handleMenuLinkClick}>Punakha</Link></li>
+                                    <li><Link href="/destinations/bumthang" onClick={handleMenuLinkClick}>Bumthang</Link></li>
+                                    <li><Link href="/destinations/gangtey-phobjikha" onClick={handleMenuLinkClick}>Gangtey & Phobjikha</Link></li>
+                                    <li><Link href="/destinations/haa-valley" onClick={handleMenuLinkClick}>Haa Valley</Link></li>
+                                    <li><Link href="/destinations/eastern-bhutan" onClick={handleMenuLinkClick}>Eastern Bhutan</Link></li>
                                 </ul>
                             </div>
                             <div className="destinations-right">

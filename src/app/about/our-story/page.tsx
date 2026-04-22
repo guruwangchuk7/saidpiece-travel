@@ -4,15 +4,14 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { useUI } from '@/contexts/UIContext';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function OurStory() {
     const [settings, setSettings] = useState<any>({});
     const { setHeaderTheme } = useUI();
 
     useEffect(() => {
-        // We use 'auto' to allow the header to be transparent (state-dark) over our hero image.
-        // We will ensure visibility by adding a dark gradient overlay in the CSS.
-        setHeaderTheme('auto');
+        // Handled by HeaderThemeHandler now
         
         const fetchSettings = async () => {
             if (!supabase) return;
@@ -30,6 +29,7 @@ export default function OurStory() {
 
     return (
         <main className="our-story-page pt-0">
+            <HeaderThemeHandler theme="auto" />
             {/* Hero Section - Using main2.webp from the project's public/images directory */}
             <section className="story-hero-new">
                 <div className="hero-bg-wrapper">
