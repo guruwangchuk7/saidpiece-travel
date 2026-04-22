@@ -38,10 +38,10 @@ export default function Top10CuratedPage() {
             {/* Hero Section */}
             <section className="top-10-hero">
                 <div className="hero-bg-overlay">
-                    <Image 
-                        src="/images/bhutan/main1.webp" 
-                        alt="Bhutan Landscape" 
-                        fill 
+                    <Image
+                        src="/images/bhutan/main1.webp"
+                        alt="Bhutan Landscape"
+                        fill
                         style={{ objectFit: 'cover' }}
                         priority
                     />
@@ -55,13 +55,13 @@ export default function Top10CuratedPage() {
             <section className="top-10-intro container">
                 <div className="intro-text-block">
                     <p>
-                        Discover our most inspiring destinations for 2026, handpicked by Regional Specialists and seasoned 
-                        Trip Leaders to guarantee off-the-beaten-path delights and cultural immersion. Expect a balance of 
+                        Discover our most inspiring destinations for 2026, handpicked by Regional Specialists and seasoned
+                        Trip Leaders to guarantee off-the-beaten-path delights and cultural immersion. Expect a balance of
                         hidden gems and iconic destinations reinvigorated by new momentum.
                     </p>
                     <p>
-                        Our curated collection represents the pinnacle of travel in Bhutan, focusing on authenticity, 
-                        luxury, and profound connection to the land and its people. From the sacred heights of the Himalayas 
+                        Our curated collection represents the pinnacle of travel in Bhutan, focusing on authenticity,
+                        luxury, and profound connection to the land and its people. From the sacred heights of the Himalayas
                         to the lush valleys of the south, these are the journeys that will define your 2026 travel story.
                     </p>
                 </div>
@@ -96,7 +96,7 @@ export default function Top10CuratedPage() {
                     <div className="cta-text-side">
                         <h3>Plan Your 2026 Journey</h3>
                         <p>
-                            Our specialists are ready to help you craft the perfect itinerary. 
+                            Our specialists are ready to help you craft the perfect itinerary.
                             Contact us today to start planning your bespoke Bhutanese adventure.
                         </p>
                         <div className="cta-buttons">

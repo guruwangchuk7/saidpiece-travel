@@ -21,9 +21,9 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
 
     const isAutoMount = propTheme === 'auto';
 
-    const isLightState = theme === 'light' || 
-        isScrolled || 
-        openMenu !== null || 
+    const isLightState = theme === 'light' ||
+        isScrolled ||
+        openMenu !== null ||
         (isMobileMenuOpen && isMounted) ||
         ['/site-map', '/terms', '/terms-of-use', '/privacy', '/cancellation', '/contact', '/faq', '/newsletter', '/travel-blog', '/catalog', '/about/meet-our-team', '/trips'].some(path => pathname?.startsWith(path));
 
@@ -88,14 +88,14 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                         <Link href="/about/our-story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
                         <Link href="/travel-blog" onClick={() => setIsMobileMenuOpen(false)}>Travel Blog</Link>
                     </nav>
-                    
+
                     <div className="mobile-nav-bottom">
                         <div className="mobile-social-wrap">
                             <a href="#" className="social-link">Instagram</a>
                             <a href="#" className="social-link">Facebook</a>
                             <a href="#" className="social-link">YouTube</a>
                         </div>
-                        
+
                         <div className="mobile-auth-zone">
                             {user ? (
                                 <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="btn btn-outline w-full">Logout</button>

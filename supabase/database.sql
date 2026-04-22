@@ -1,160 +1,212 @@
--- 0. Cleanup (Optional: Run this if you want a fresh start)
--- DROP FUNCTION IF EXISTS public.is_staff() CASCADE;
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
--- 1. Create Custom Types & Enums (Idempotent)
-DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('customer', 'staff', 'admin');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
-DO $$ BEGIN
-    CREATE TYPE enquiry_status AS ENUM ('new', 'proposed', 'awaiting_payment', 'confirmed', 'cancelled');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
-DO $$ BEGIN
-    CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'refunded');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
-DO $$ BEGIN
-    CREATE TYPE departure_status AS ENUM ('available', 'guaranteed', 'limited_space', 'sold_out');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
-DO $$ BEGIN
-    CREATE TYPE crypto_payment_status AS ENUM ('pending', 'paid', 'failed', 'expired', 'underpaid');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
-DO $$ BEGIN
-    CREATE TYPE blockchain_booking_status AS ENUM ('draft', 'created', 'deposited', 'confirmed', 'refunded', 'cancelled');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
-
--- 2. Helper Function to Prevent RLS Recursion (CRITICAL)
-CREATE OR REPLACE FUNCTION public.is_staff()
-RETURNS BOOLEAN AS $$
-BEGIN
-  RETURN (
-    SELECT (role IN ('staff', 'admin'))
-    FROM public.profiles
-    WHERE id = auth.uid()
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- 3. Tables
-CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    full_name VARCHAR(255),
-    role user_role DEFAULT 'customer'::user_role NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+CREATE TABLE public.audit_logs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  table_name character varying NOT NULL,
+  record_id uuid NOT NULL,
+  operation character varying NOT NULL,
+  old_data jsonb,
+  new_data jsonb,
+  changed_by uuid,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT audit_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT audit_logs_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES auth.users(id)
 );
-
-CREATE TABLE IF NOT EXISTS public.trips (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(255) NOT NULL,
-    slug VARCHAR(255) NOT NULL UNIQUE,
-    duration_days INTEGER NOT NULL CHECK (duration_days > 0),
-    duration_nights INTEGER NOT NULL CHECK (duration_nights >= 0),
-    starting_price DECIMAL(10, 2) NOT NULL CHECK (starting_price >= 0),
-    level VARCHAR(100),
-    image_url VARCHAR(500),
-    description TEXT,
-    is_active BOOLEAN DEFAULT true NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+CREATE TABLE public.blockchain_bookings (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  payment_intent_id uuid UNIQUE,
+  user_id uuid,
+  booking_id character varying NOT NULL UNIQUE,
+  chain_id bigint NOT NULL,
+  status character varying NOT NULL DEFAULT 'draft'::character varying,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blockchain_bookings_pkey PRIMARY KEY (id),
+  CONSTRAINT blockchain_bookings_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
 );
-
-CREATE TABLE IF NOT EXISTS public.trip_departures (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    trip_id UUID NOT NULL REFERENCES public.trips(id) ON DELETE CASCADE,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
-    status departure_status DEFAULT 'available'::departure_status NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    CONSTRAINT chk_end_after_start CHECK (end_date >= start_date)
+CREATE TABLE public.blog_posts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title character varying NOT NULL,
+  slug character varying NOT NULL UNIQUE,
+  excerpt text,
+  content text,
+  main_image character varying,
+  author_id uuid,
+  status character varying NOT NULL DEFAULT 'draft'::character varying CHECK (status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying]::text[])),
+  published_at timestamp with time zone,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT blog_posts_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_posts_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.profiles(id)
 );
-
-CREATE TABLE IF NOT EXISTS public.enquiries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    trip_id UUID REFERENCES public.trips(id) ON DELETE SET NULL,
-    departure_id UUID REFERENCES public.trip_departures(id) ON DELETE SET NULL,
-    first_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    passengers_count INTEGER DEFAULT 1 NOT NULL CHECK (passengers_count > 0),
-    message TEXT,
-    trip_name_fallback VARCHAR(255),
-    proposed_date DATE,
-    total_amount DECIMAL(10, 2) CHECK (total_amount >= 0),
-    status enquiry_status DEFAULT 'new'::enquiry_status NOT NULL,
-    payment_status payment_status DEFAULT 'pending'::payment_status NOT NULL,
-    stripe_session_id VARCHAR(255) UNIQUE,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+CREATE TABLE public.bookings (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  trip_id uuid,
+  departure_id uuid,
+  total_amount numeric NOT NULL,
+  currency character varying DEFAULT 'USD'::character varying,
+  status character varying DEFAULT 'pending'::character varying,
+  payment_method character varying,
+  payment_reference_id character varying,
+  traveler_details jsonb,
+  created_at timestamp with time zone DEFAULT now(),
+  traveler_name character varying NOT NULL,
+  traveler_email character varying NOT NULL,
+  payment_reference character varying,
+  metadata jsonb DEFAULT '{}'::jsonb,
+  updated_at timestamp with time zone DEFAULT now(),
+  passengers_count integer NOT NULL DEFAULT 1,
+  CONSTRAINT bookings_pkey PRIMARY KEY (id),
+  CONSTRAINT bookings_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT bookings_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(id),
+  CONSTRAINT bookings_departure_id_fkey FOREIGN KEY (departure_id) REFERENCES public.trip_departures(id)
 );
-
-CREATE TABLE IF NOT EXISTS public.crypto_payment_intents (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    enquiry_id UUID REFERENCES public.enquiries(id) ON DELETE SET NULL,
-    user_email VARCHAR(255) NOT NULL,
-    traveler_name VARCHAR(255) NOT NULL,
-    trip_name VARCHAR(255) NOT NULL,
-    fiat_currency VARCHAR(16) NOT NULL,
-    fiat_amount DECIMAL(12, 2) NOT NULL CHECK (fiat_amount >= 0),
-    token_symbol VARCHAR(32) NOT NULL,
-    token_address VARCHAR(255) NOT NULL,
-    token_decimals INTEGER NOT NULL CHECK (token_decimals >= 0),
-    expected_token_amount DECIMAL(24, 8) NOT NULL CHECK (expected_token_amount >= 0),
-    expected_token_amount_base_units VARCHAR(255) NOT NULL,
-    received_token_amount DECIMAL(24, 8),
-    received_token_amount_base_units VARCHAR(255),
-    chain_id BIGINT NOT NULL,
-    recipient_address VARCHAR(255) NOT NULL,
-    sender_address VARCHAR(255),
-    tx_hash VARCHAR(255) UNIQUE,
-    status crypto_payment_status DEFAULT 'pending'::crypto_payment_status NOT NULL,
-    quote_expires_at TIMESTAMPTZ NOT NULL,
-    verified_at TIMESTAMPTZ,
-    failure_code VARCHAR(100),
-    failure_reason TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+CREATE TABLE public.crypto_payment_intents (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  enquiry_id uuid,
+  user_email character varying NOT NULL,
+  traveler_name character varying NOT NULL,
+  trip_name character varying NOT NULL,
+  fiat_currency character varying NOT NULL,
+  fiat_amount numeric NOT NULL CHECK (fiat_amount >= 0::numeric),
+  token_symbol character varying NOT NULL,
+  token_address character varying NOT NULL,
+  token_decimals integer NOT NULL CHECK (token_decimals >= 0),
+  expected_token_amount numeric NOT NULL CHECK (expected_token_amount >= 0::numeric),
+  expected_token_amount_base_units character varying NOT NULL,
+  received_token_amount numeric,
+  received_token_amount_base_units character varying,
+  chain_id bigint NOT NULL,
+  recipient_address character varying NOT NULL,
+  sender_address character varying,
+  tx_hash character varying UNIQUE,
+  status USER-DEFINED NOT NULL DEFAULT 'pending'::crypto_payment_status,
+  quote_expires_at timestamp with time zone NOT NULL,
+  verified_at timestamp with time zone,
+  failure_code character varying,
+  failure_reason text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  booking_id uuid,
+  CONSTRAINT crypto_payment_intents_pkey PRIMARY KEY (id),
+  CONSTRAINT crypto_payment_intents_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT crypto_payment_intents_enquiry_id_fkey FOREIGN KEY (enquiry_id) REFERENCES public.enquiries(id),
+  CONSTRAINT crypto_payment_intents_booking_id_fkey FOREIGN KEY (booking_id) REFERENCES public.bookings(id)
 );
-
--- 4. Security Policies (FIXED RECURSION)
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.enquiries ENABLE ROW LEVEL SECURITY;
-
--- Profiles: Users see own, staff see all.
-DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
-CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
-
-DROP POLICY IF EXISTS "Staff can view all profiles" ON public.profiles;
-CREATE POLICY "Staff can view all profiles" ON public.profiles FOR SELECT USING (public.is_staff());
-
--- Enquiries: Users see own, guest insert, staff manage.
-DROP POLICY IF EXISTS "Users can insert enquiries" ON public.enquiries;
-CREATE POLICY "Users can insert enquiries" ON public.enquiries FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
-
-DROP POLICY IF EXISTS "Users can view own enquiries" ON public.enquiries;
-CREATE POLICY "Users can view own enquiries" ON public.enquiries FOR SELECT USING (auth.uid() = user_id OR public.is_staff());
-
-DROP POLICY IF EXISTS "Staff can manage all enquiries" ON public.enquiries;
-CREATE POLICY "Staff can manage all enquiries" ON public.enquiries FOR ALL USING (public.is_staff());
-
--- 5. Auto-Create Profile Trigger
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.profiles (id, email, full_name, role)
-  VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'full_name', 'customer'::public.user_role);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+CREATE TABLE public.destinations (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  title character varying NOT NULL,
+  slug character varying NOT NULL UNIQUE,
+  description text,
+  image_url character varying,
+  sort_order integer DEFAULT 0,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT destinations_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.enquiries (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  trip_id uuid,
+  departure_id uuid,
+  first_name character varying NOT NULL,
+  email character varying NOT NULL,
+  passengers_count integer NOT NULL DEFAULT 1 CHECK (passengers_count > 0),
+  message text,
+  trip_name_fallback character varying,
+  proposed_date date,
+  total_amount numeric CHECK (total_amount >= 0::numeric),
+  status USER-DEFINED NOT NULL DEFAULT 'new'::enquiry_status,
+  payment_status USER-DEFINED NOT NULL DEFAULT 'pending'::payment_status,
+  stripe_session_id character varying UNIQUE,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  booking_id uuid,
+  CONSTRAINT enquiries_pkey PRIMARY KEY (id),
+  CONSTRAINT enquiries_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT enquiries_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(id),
+  CONSTRAINT enquiries_departure_id_fkey FOREIGN KEY (departure_id) REFERENCES public.trip_departures(id),
+  CONSTRAINT enquiries_booking_id_fkey FOREIGN KEY (booking_id) REFERENCES public.bookings(id)
+);
+CREATE TABLE public.faqs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  question text NOT NULL UNIQUE,
+  answer text NOT NULL,
+  category character varying,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT faqs_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  email character varying NOT NULL UNIQUE,
+  full_name character varying,
+  role USER-DEFINED NOT NULL DEFAULT 'customer'::user_role,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.site_settings (
+  key character varying NOT NULL,
+  value text,
+  description text,
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT site_settings_pkey PRIMARY KEY (key)
+);
+CREATE TABLE public.testimonials (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  client_name character varying NOT NULL,
+  role character varying,
+  content text NOT NULL,
+  avatar_url character varying,
+  rating integer DEFAULT 5,
+  is_featured boolean NOT NULL DEFAULT false,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT testimonials_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.trip_departures (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  trip_id uuid NOT NULL,
+  start_date date NOT NULL,
+  end_date date NOT NULL,
+  price numeric NOT NULL CHECK (price >= 0::numeric),
+  status USER-DEFINED NOT NULL DEFAULT 'available'::departure_status,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT trip_departures_pkey PRIMARY KEY (id),
+  CONSTRAINT trip_departures_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(id)
+);
+CREATE TABLE public.trip_itineraries (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  trip_id uuid NOT NULL,
+  day_number integer NOT NULL,
+  title character varying NOT NULL,
+  description text,
+  accommodation character varying,
+  meals character varying,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT trip_itineraries_pkey PRIMARY KEY (id),
+  CONSTRAINT trip_itineraries_trip_id_fkey FOREIGN KEY (trip_id) REFERENCES public.trips(id)
+);
+CREATE TABLE public.trips (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title character varying NOT NULL,
+  slug character varying NOT NULL UNIQUE,
+  duration_days integer NOT NULL CHECK (duration_days > 0),
+  duration_nights integer NOT NULL CHECK (duration_nights >= 0),
+  starting_price numeric NOT NULL CHECK (starting_price >= 0::numeric),
+  level character varying,
+  image_url character varying,
+  description text,
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  trip_type character varying,
+  destination character varying,
+  category character varying,
+  CONSTRAINT trips_pkey PRIMARY KEY (id)
+);
