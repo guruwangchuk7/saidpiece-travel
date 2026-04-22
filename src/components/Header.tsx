@@ -292,7 +292,9 @@ export default function Header({ theme: propTheme = 'auto', children, forceShow 
                                 </ul>
                             </div>
                             <div className="mega-col mega-right-col">
-                                <h5>Top 10 Curated</h5>
+                                <Link href="/trips/top-10-curated" className="curated-header-link" onClick={handleMenuLinkClick}>
+                                    <h5>Top 10 Curated</h5>
+                                </Link>
                                 <ul className="mega-list-curated">
                                     <li><Link href="/trips/bhutan-discovery">Bhutan Discovery</Link></li>
                                     <li><Link href="/trips/cultural-immersion">Cultural Immersion</Link></li>

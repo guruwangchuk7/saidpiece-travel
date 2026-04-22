@@ -302,6 +302,33 @@ ul {
   color: var(--color-brand);
 }
 
+.curated-header-link {
+  display: block;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.curated-header-link:hover {
+  opacity: 0.7;
+}
+
+.curated-header-link h5 {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--color-text-primary);
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #EEE;
+  transition: color 0.2s ease;
+}
+
+.curated-header-link:hover h5 {
+  color: var(--color-brand);
+}
+
 .mega-list li {
   margin-bottom: 12px;
 }
@@ -5335,4 +5362,134 @@ select.trip-finder-input {
 .transition-all { transition-property: all; }
 .duration-500 { transition-duration: 500ms; }
 .text-secondary { color: var(--color-text-secondary); }
+
+/* Top 10 Curated Page Styles */
+.top-10-page {
+    padding-top: 0;
+}
+.top-10-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 60px;
+}
+.hero-bg-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+}
+.hero-content-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+.hero-content-inner h1 {
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-family: var(--font-playfair);
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+    margin: 0;
+}
+.top-10-intro {
+    max-width: 900px;
+    margin-bottom: 80px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.intro-text-block {
+    text-align: center;
+}
+.intro-text-block p {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+    margin-bottom: 30px;
+}
+.trips-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px 40px;
+    margin-bottom: 100px;
+}
+.trip-card-v {
+    background: #fff;
+    transition: transform 0.3s ease;
+}
+.trip-card-image {
+    position: relative;
+    aspect-ratio: 4/3;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+.trip-card-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    font-family: var(--font-playfair);
+    color: var(--color-text-primary);
+}
+.trip-card-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 25px;
+}
+.visit-link {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 2px solid var(--color-brand);
+    padding-bottom: 4px;
+    transition: all 0.2s ease;
+}
+.visit-link:hover {
+    color: #152A45;
+    border-bottom-color: #152A45;
+}
+.top-10-cta {
+    margin-bottom: 120px;
+}
+.top-10-page .cta-card {
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10c20 0 20 20 40 20s20-20 40-20v10c-20 0-20 20-40 20s-20-20-40-20V10z' fill='none' stroke='%23f0f0f0' stroke-width='2' opacity='0.5'/%3E%3C/svg%3E"), var(--color-cream, #fdfbf7);
+    display: flex;
+    padding: 60px;
+    gap: 60px;
+    align-items: center;
+    border: 1px solid #EAEAEA;
+}
+.cta-text-side h3 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    font-family: var(--font-playfair);
+}
+.cta-text-side p {
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .trips-grid-inner {
+        grid-template-columns: 1fr;
+    }
+    .top-10-page .cta-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+    }
+    .cta-buttons {
+        justify-content: center;
+    }
+}
 
