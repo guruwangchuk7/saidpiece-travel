@@ -20,22 +20,15 @@ export default function FAQSyncUpgrade() {
     const addLog = (msg: string) => setLog(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
 
     const runBypassSync = async (table: string, data: any, conflictCol: string) => {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-        const response = await fetch(`${url}/rest/v1/${table}?on_conflict=${conflictCol}`, {
+        const response = await fetch('/api/admin/sync', {
             method: 'POST',
-            headers: { 
-                'apikey': key, 
-                'Authorization': `Bearer ${key}`, 
-                'Content-Type': 'application/json', 
-                'Prefer': 'resolution=merge-duplicates' 
-            },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ table, data, conflictCol })
         });
+        
         if (!response.ok) {
-            const err = await response.text();
-            if (err.includes('already exists')) return;
-            throw new Error(`API ${response.status}: ${err}`);
+            const result = await response.json();
+            throw new Error(`API ${response.status}: ${result.error || 'Unknown error'}`);
         }
     };
 
@@ -50,7 +43,7 @@ export default function FAQSyncUpgrade() {
             setStatus(s => ({ ...s, trips: 'success' }));
 
             addLog('SYNC: Validating Geographic Valleys (Destinations)...');
-            await runBypassSync('destinations', [{ name: 'Paro', title: 'Paro Valley', slug: 'paro', description: 'Historic home.', image_url: 'bhutan/13.webp', sort_order: 1 }], 'slug');
+            await runBypassSync('destinations', [{ name: 'Paro', title: 'Paro Valley', slug: 'paro', description: 'Historic home.', image_url: 'bhutan/13.webp', sort_order: 1 }], 'name');
             setStatus(s => ({ ...s, dests: 'success' }));
 
             addLog('SYNC: Indexing Travel Narratives (Blog)...');

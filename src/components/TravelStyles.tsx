@@ -1,21 +1,47 @@
 'use client';
 
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
-const travelStyles = [
-    { name: 'Discovery', image: 'bhutan/7.webp' },
-    { name: 'Romantic Escape', image: 'bhutan/12.webp' },
-    { name: 'Cultural Immersion', image: 'bhutan/8.webp' },
-    { name: 'Nature Retreat', image: 'bhutan/11.webp' },
-    { name: 'Family Adventure', image: 'bhutan/9.webp' },
-    { name: 'Festival Tours', image: 'bhutan/10.webp' },
-    { name: 'Trekking & Hiking', image: 'bhutan/13.webp' }
-];
+interface TravelStyle {
+    name: string;
+    image_url: string;
+}
 
 export default function TravelStyles() {
+    const [styles, setStyles] = useState<TravelStyle[]>([]);
+    const [loading, setLoading] = useState(true);
     const carouselRef = useRef<HTMLDivElement>(null);
+
+    const hardcodedFallback = [
+        { name: 'Discovery', image_url: 'bhutan/7.webp' },
+        { name: 'Romantic Escape', image_url: 'bhutan/12.webp' },
+        { name: 'Cultural Immersion', image_url: 'bhutan/8.webp' },
+        { name: 'Nature Retreat', image_url: 'bhutan/11.webp' },
+        { name: 'Family Adventure', image_url: 'bhutan/9.webp' },
+        { name: 'Festival Tours', image_url: 'bhutan/10.webp' },
+        { name: 'Trekking & Hiking', image_url: 'bhutan/13.webp' }
+    ];
+
+    useEffect(() => {
+        const fetchStyles = async () => {
+            if (!supabase) return;
+            const { data } = await supabase
+                .from('travel_styles')
+                .select('*')
+                .order('sort_order', { ascending: true });
+                
+            if (data && data.length > 0) {
+                setStyles(data);
+            } else {
+                setStyles(hardcodedFallback);
+            }
+            setLoading(false);
+        };
+        fetchStyles();
+    }, []);
 
     const scroll = (direction: 'left' | 'right') => {
         if (carouselRef.current) {
@@ -31,6 +57,13 @@ export default function TravelStyles() {
             }
         }
     };
+
+    const normalizeImageUrl = (url: string): string => {
+        if (url.startsWith('http') || url.startsWith('/') || url.startsWith('data:')) return url;
+        return `/images/${url}`;
+    };
+
+    if (loading && styles.length === 0) return null;
 
     return (
         <section className="styles-section" style={{ position: 'relative', overflow: 'hidden', paddingBottom: '60px' }}>
@@ -53,10 +86,10 @@ export default function TravelStyles() {
                 </button>
 
                 <div className="styles-carousel" ref={carouselRef}>
-                    {[...travelStyles, ...travelStyles].map((style, i) => (
+                    {[...styles, ...styles].map((style, i) => (
                         <Link href={`/browse?type=${style.name.toLowerCase().replace(/ /g, '-')}`} className="style-card" key={i} aria-label={`Browse ${style.name} trips`}>
                             <div className="image-placeholder">
-                                <Image src={`/images/${style.image}`} alt={style.name} fill sizes="(max-width: 768px) 80vw, 320px" style={{ objectFit: 'cover' }} />
+                                <Image src={normalizeImageUrl(style.image_url)} alt={style.name} fill sizes="(max-width: 768px) 80vw, 320px" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="style-overlay">
                                 <h3 className="style-title">{style.name}</h3>

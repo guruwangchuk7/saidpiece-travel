@@ -203,6 +203,7 @@ CREATE TABLE public.trips (
   image_url character varying,
   description text,
   is_active boolean NOT NULL DEFAULT true,
+  is_published boolean NOT NULL DEFAULT false,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
   trip_type character varying,
@@ -210,3 +211,24 @@ CREATE TABLE public.trips (
   category character varying,
   CONSTRAINT trips_pkey PRIMARY KEY (id)
 );
+
+CREATE TABLE public.homepage_services (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title character varying NOT NULL,
+  description text NOT NULL,
+  link_text character varying,
+  link_url character varying,
+  image_url character varying,
+  sort_order integer DEFAULT 0,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT homepage_services_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.travel_styles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  image_url character varying,
+  sort_order integer DEFAULT 0,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT travel_styles_pkey PRIMARY KEY (id)
+);

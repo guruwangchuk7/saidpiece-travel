@@ -148,12 +148,13 @@ export default function FAQManager() {
                         <div className="editor-sidebar">
                             <div className="editor-aside-group">
                                 <label>FAQ Classification</label>
-                                <select value={currentFaq.category} onChange={(e) => setCurrentFaq({ ...currentFaq, category: e.target.value })}>
+                                <select value={currentFaq.category || ''} onChange={(e) => setCurrentFaq({ ...currentFaq, category: e.target.value })}>
+                                    <option value="" disabled>Select Category</option>
                                     <option>General</option>
-                                    <option>Visa & Logistics</option>
-                                    <option>Trekking & Outdoor</option>
-                                    <option>Cultural Etiquette</option>
-                                    <option>Safety & Health</option>
+                                    <option>Booking</option>
+                                    <option>Logistics</option>
+                                    <option>Visa & Permits</option>
+                                    <option>Health & Safety</option>
                                     <option>Sustainable Travel</option>
                                 </select>
                             </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -17,9 +18,24 @@ interface Trip {
     image_url: string;
     description: string;
     is_active: boolean;
-    trip_type: string;
+    is_published: boolean;
+    trip_type?: string;
     destination: string;
     category: string;
+    highlights: string[];
+    meta_description: string;
+    arrive_city: string;
+    depart_city: string;
+    secondary_image_url: string;
+}
+
+interface ItineraryItem {
+    id?: string;
+    day_number: number;
+    title: string;
+    description: string;
+    accommodation?: string;
+    meals?: string;
 }
 
 export default function TripManager() {
@@ -39,11 +55,21 @@ export default function TripManager() {
         image_url: '',
         description: '',
         is_active: true,
+        is_published: false,
         trip_type: 'Private Journey',
         destination: 'Bhutan',
-        category: 'Cultural'
+        category: 'Cultural',
+        highlights: [],
+        meta_description: '',
+        arrive_city: 'Paro, Bhutan',
+        depart_city: 'Paro, Bhutan',
+        secondary_image_url: ''
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterCategory, setFilterCategory] = useState('All');
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,6 +106,83 @@ export default function TripManager() {
         }
     };
 
+    const fetchItinerary = async (tripId: string) => {
+        if (!supabase) return;
+        const { data, error } = await supabase
+            .from('trip_itineraries')
+            .select('*')
+            .eq('trip_id', tripId)
+            .order('day_number', { ascending: true });
+        
+        if (error) {
+            console.error('Error fetching itinerary:', error);
+            setItinerary([]);
+        } else {
+            setItinerary(data || []);
+        }
+    };
+
+    const handleEditTrip = (trip: Trip) => {
+        let tripToEdit = { ...trip };
+        try {
+            const parsed = JSON.parse(trip.description);
+            tripToEdit.description = parsed.overview || '';
+            tripToEdit.highlights = parsed.highlights || [];
+            tripToEdit.meta_description = parsed.meta_description || '';
+            tripToEdit.arrive_city = parsed.arrive_city || 'Paro, Bhutan';
+            tripToEdit.depart_city = parsed.depart_city || 'Paro, Bhutan';
+            tripToEdit.secondary_image_url = parsed.secondary_image_url || '';
+        } catch (e) {
+            // Legacy fallback
+            tripToEdit.highlights = [];
+            tripToEdit.meta_description = '';
+        }
+        setCurrentTrip(tripToEdit);
+        setItinerary([]); // Reset first
+        fetchItinerary(trip.id);
+        setIsEditing(true);
+    };
+
+    const handleAddDay = () => {
+        const nextDay = itinerary.length + 1;
+        setItinerary([...itinerary, {
+            day_number: nextDay,
+            title: '',
+            description: '',
+            accommodation: '',
+            meals: ''
+        }]);
+    };
+
+    const handleRemoveDay = (index: number) => {
+        const newItinerary = itinerary.filter((_, i) => i !== index);
+        // Re-order day numbers
+        const reordered = newItinerary.map((item, i) => ({
+            ...item,
+            day_number: i + 1
+        }));
+        setItinerary(reordered);
+    };
+
+    const filteredTrips = trips.filter(trip => {
+        const matchesSearch = trip.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             trip.slug.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory === 'All' || trip.category === filterCategory;
+        const matchesStatus = filterStatus === 'All' || 
+                             (filterStatus === 'Published' && trip.is_published) || 
+                             (filterStatus === 'Draft' && !trip.is_published);
+        
+        return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    const categories = ['All', ...new Set(trips.map(t => t.category).filter(Boolean))];
+
+    const updateItineraryItem = (index: number, field: keyof ItineraryItem, value: any) => {
+        const newItinerary = [...itinerary];
+        newItinerary[index] = { ...newItinerary[index], [field]: value };
+        setItinerary(newItinerary);
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (isSaving) return;
@@ -98,11 +201,15 @@ export default function TripManager() {
             starting_price: currentTrip.starting_price || 0,
             level: currentTrip.level || 'Moderate',
             image_url: currentTrip.image_url || '',
-            description: currentTrip.description || '',
-            is_active: currentTrip.is_active ?? true,
-            trip_type: currentTrip.trip_type || 'Private Journey',
-            destination: currentTrip.destination || 'Bhutan',
-            category: currentTrip.category || 'Cultural'
+            category: currentTrip.category || 'Cultural',
+            description: JSON.stringify({
+                overview: currentTrip.description || '',
+                highlights: currentTrip.highlights || [],
+                meta_description: currentTrip.meta_description || '',
+                arrive_city: currentTrip.arrive_city || 'Paro, Bhutan',
+                depart_city: currentTrip.depart_city || 'Paro, Bhutan',
+                secondary_image_url: currentTrip.secondary_image_url || ''
+            })
         };
 
         if (!supabase) {
@@ -112,24 +219,55 @@ export default function TripManager() {
 
         setIsSaving(true);
         try {
+            let tripId = currentTrip.id;
             let result;
-            if (currentTrip.id) {
+
+            if (tripId) {
                 result = await supabase
                     .from('trips')
                     .update(tripData)
-                    .eq('id', currentTrip.id);
+                    .eq('id', tripId)
+                    .select();
             } else {
                 result = await supabase
                     .from('trips')
-                    .insert([tripData]);
+                    .insert([tripData])
+                    .select();
             }
 
             if (result.error) throw result.error;
+            
+            const savedTrip = result.data?.[0];
+            if (savedTrip) {
+                tripId = savedTrip.id;
+                
+                // Handle Itinerary Sync
+                // 1. Delete existing itinerary items for this trip
+                await supabase.from('trip_itineraries').delete().eq('trip_id', tripId);
+                
+                // 2. Insert new itinerary items
+                if (itinerary.length > 0) {
+                    const itineraryToSave = itinerary.map(item => ({
+                        trip_id: tripId,
+                        day_number: item.day_number,
+                        title: item.title,
+                        description: item.description,
+                        accommodation: item.accommodation,
+                        meals: item.meals
+                    }));
+                    
+                    const { error: itinError } = await supabase
+                        .from('trip_itineraries')
+                        .insert(itineraryToSave);
+                    
+                    if (itinError) throw itinError;
+                }
+            }
 
             setIsEditing(false);
             await fetchTrips();
             router.refresh();
-            alert('Trip published successfully.');
+            alert('Trip and itinerary published successfully.');
         } catch (error: any) {
             console.error('Error saving trip:', error);
             alert('Error saving: ' + (error.message || 'Unknown error'));
@@ -225,23 +363,54 @@ export default function TripManager() {
                     <p className="subtitle">Curate and publish premium Bhutanese travel experiences.</p>
                 </div>
                 {!isEditing && (
-                    <button className="btn-add-trip" onClick={() => {
-                        setCurrentTrip({
-                            title: '', slug: '', duration_days: 1, duration_nights: 0, starting_price: 0,
-                            level: 'Moderate', is_active: true, trip_type: 'Private Journey', 
-                            destination: 'Bhutan', category: 'Cultural', image_url: '', description: ''
-                        });
-                        setIsEditing(true);
-                    }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Initialize New Trip
-                    </button>
+                    <div className="header-actions">
+                        <Link href="/browse" target="_blank" className="btn-view-site">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            View Public Browse
+                        </Link>
+                        <button className="btn-add-trip" onClick={() => {
+                            setCurrentTrip({
+                                title: '', slug: '', duration_days: 1, duration_nights: 0, starting_price: 0,
+                                level: 'Moderate', is_active: true, is_published: false, trip_type: 'Private Journey', 
+                                destination: 'Bhutan', category: 'Cultural', image_url: '', description: ''
+                            });
+                            setItinerary([]);
+                            setIsEditing(true);
+                        }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Initialize New Trip
+                        </button>
+                    </div>
                 )}
             </header>
+            
+            {!isEditing && (
+                <div className="admin-filters-bar">
+                    <div className="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input 
+                            type="text" 
+                            placeholder="Search journeys by title or slug..." 
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="filter-group">
+                        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}>
+                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                            <option value="All">All Status</option>
+                            <option value="Published">Published</option>
+                            <option value="Draft">Drafts</option>
+                        </select>
+                    </div>
+                </div>
+            )}
 
             {!isEditing ? (
                 <div className="trips-inventory-grid">
-                    {trips.map(trip => (
+                    {filteredTrips.map(trip => (
                         <div key={trip.id} className="inventory-card">
                             <div className="card-image">
                                 {normalizeImageUrl(trip.image_url) ? (
@@ -264,7 +433,10 @@ export default function TripManager() {
                                     <span className="tag">{trip.category}</span>
                                 </div>
                                 <div className="card-actions">
-                                    <button className="btn-edit" onClick={() => { setCurrentTrip(trip); setIsEditing(true); }}>Edit Details</button>
+                                    <button className="btn-edit" onClick={() => handleEditTrip(trip)}>Edit Details</button>
+                                    <Link href={`/trips/${trip.slug}`} target="_blank" className="btn-view-live" title="View on Site">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </Link>
                                     <button className="btn-delete" onClick={() => handleDelete(trip.id)} title="Delete Trip">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                     </button>
@@ -342,6 +514,15 @@ export default function TripManager() {
                                                 required 
                                             />
                                         </div>
+                                        <div className="form-item span-full" style={{ marginTop: '20px' }}>
+                                            <label>Hero Subtitle</label>
+                                            <input 
+                                                type="text" 
+                                                value={(currentTrip as any).meta_description} 
+                                                onChange={(e) => setCurrentTrip({ ...currentTrip, meta_description: e.target.value } as any)} 
+                                                placeholder="e.g. High Altitude Adventure in the High Himalayas" 
+                                            />
+                                        </div>
                                         <div className="form-item">
                                             <label>Duration (Days)</label>
                                             <input type="number" value={currentTrip.duration_days} onChange={(e) => setCurrentTrip({ ...currentTrip, duration_days: Number(e.target.value) })} />
@@ -362,7 +543,8 @@ export default function TripManager() {
                                     <div className="form-grid">
                                         <div className="form-item">
                                             <label>Trip Type</label>
-                                            <select value={currentTrip.trip_type} onChange={(e) => setCurrentTrip({ ...currentTrip, trip_type: e.target.value })}>
+                                            <select value={currentTrip.trip_type || ''} onChange={(e) => setCurrentTrip({ ...currentTrip, trip_type: e.target.value })}>
+                                                <option value="" disabled>Select Trip Type</option>
                                                 <option>Private Journey</option>
                                                 <option>Family Adventure</option>
                                                 <option>Festival Tour</option>
@@ -372,7 +554,8 @@ export default function TripManager() {
                                         </div>
                                         <div className="form-item">
                                             <label>Difficulty Level</label>
-                                            <select value={currentTrip.level} onChange={(e) => setCurrentTrip({ ...currentTrip, level: e.target.value })}>
+                                            <select value={currentTrip.level || ''} onChange={(e) => setCurrentTrip({ ...currentTrip, level: e.target.value })}>
+                                                <option value="" disabled>Select Difficulty</option>
                                                 <option>Easy</option>
                                                 <option>Moderate</option>
                                                 <option>Strenuous</option>
@@ -381,7 +564,8 @@ export default function TripManager() {
                                         </div>
                                         <div className="form-item">
                                             <label>Category</label>
-                                            <select value={currentTrip.category} onChange={(e) => setCurrentTrip({ ...currentTrip, category: e.target.value })}>
+                                            <select value={currentTrip.category || ''} onChange={(e) => setCurrentTrip({ ...currentTrip, category: e.target.value })}>
+                                                <option value="" disabled>Select Category</option>
                                                 <option>Cultural</option>
                                                 <option>Wellness</option>
                                                 <option>Adventure</option>
@@ -393,22 +577,162 @@ export default function TripManager() {
                                             <label>Primary Destination</label>
                                             <input type="text" value={currentTrip.destination} onChange={(e) => setCurrentTrip({ ...currentTrip, destination: e.target.value })} />
                                         </div>
+                                        <div className="form-item">
+                                            <label>Arrive (City/Hub)</label>
+                                            <input type="text" value={currentTrip.arrive_city} onChange={(e) => setCurrentTrip({ ...currentTrip, arrive_city: e.target.value })} />
+                                        </div>
+                                        <div className="form-item">
+                                            <label>Depart (City/Hub)</label>
+                                            <input type="text" value={currentTrip.depart_city} onChange={(e) => setCurrentTrip({ ...currentTrip, depart_city: e.target.value })} />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="section">
-                                    <h4>Content & Narrative</h4>
+                                    <h4>Journey Storytelling</h4>
                                     <div className="form-item">
-                                        <label>Trip Description</label>
+                                        <label>Full Overview</label>
                                         <textarea 
-                                            rows={8} 
+                                            rows={6}
                                             value={currentTrip.description} 
                                             onChange={(e) => setCurrentTrip({ ...currentTrip, description: e.target.value })} 
-                                            placeholder="Write the journey's story here..."
+                                            placeholder="The main narrative for this trip..."
+                                        />
+                                    </div>
+                                    <div className="form-item" style={{ marginTop: '30px' }}>
+                                        <div className="section-header-flex">
+                                            <label>Experience Highlights</label>
+                                            <button type="button" className="btn-add-mini" onClick={() => {
+                                                const h = (currentTrip as any).highlights || [];
+                                                setCurrentTrip({ ...currentTrip, highlights: [...h, ''] } as any);
+                                            }}>+ Highlight</button>
+                                        </div>
+                                        <div className="highlights-builder">
+                                            {((currentTrip as any).highlights || []).map((hl: string, idx: number) => (
+                                                <div key={idx} className="highlight-input-row">
+                                                    <input 
+                                                        type="text" 
+                                                        value={hl}
+                                                        onChange={(e) => {
+                                                            const h = [...((currentTrip as any).highlights || [])];
+                                                            h[idx] = e.target.value;
+                                                            setCurrentTrip({ ...currentTrip, highlights: h } as any);
+                                                        }}
+                                                        placeholder="e.g. Trek to multiple high Himalayan passes"
+                                                    />
+                                                    <button type="button" className="btn-remove-mini" onClick={() => {
+                                                        const h = [...((currentTrip as any).highlights || [])];
+                                                        h.splice(idx, 1);
+                                                        setCurrentTrip({ ...currentTrip, highlights: h } as any);
+                                                    }}>×</button>
+                                                </div>
+                                            ))}
+                                            {(!(currentTrip as any).highlights || (currentTrip as any).highlights.length === 0) && (
+                                                <div className="empty-itinerary-prompt" style={{ padding: '15px' }} onClick={() => {
+                                                    setCurrentTrip({ ...currentTrip, highlights: [''] } as any);
+                                                }}>
+                                                    <span style={{ fontSize: '11px' }}>Click to add your first highlight...</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="form-item" style={{ marginTop: '20px' }}>
+                                        <label>Secondary Image URL (Visualization)</label>
+                                        <input 
+                                            type="text" 
+                                            value={currentTrip.secondary_image_url} 
+                                            onChange={(e) => setCurrentTrip({ ...currentTrip, secondary_image_url: e.target.value })} 
+                                            placeholder="e.g. /images/bhutan/map-preview.webp" 
                                         />
                                     </div>
                                 </div>
+
+                                <div className="section">
+                                    <div className="section-header-flex">
+                                        <h4>Detailed Itinerary</h4>
+                                        <button type="button" className="btn-add-day" onClick={handleAddDay}>+ Add Day</button>
+                                    </div>
+                                    
+                                    <div className="itinerary-builder-list">
+                                        {itinerary.map((item, index) => (
+                                            <div key={index} className="itinerary-day-card">
+                                                <div className="day-card-header">
+                                                    <div className="day-drag-handle">
+                                                        <svg width="12" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                                                    </div>
+                                                    <span className="day-label">Day {item.day_number}</span>
+                                                    <input 
+                                                        type="text" 
+                                                        className="day-title-input"
+                                                        value={item.title} 
+                                                        onChange={(e) => updateItineraryItem(index, 'title', e.target.value)}
+                                                        placeholder="Day Title (e.g. Arrival in Paro)"
+                                                    />
+                                                    <button type="button" className="btn-remove-day" onClick={() => handleRemoveDay(index)} title="Remove Day">
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                    </button>
+                                                </div>
+                                                <div className="day-card-body">
+                                                    <div className="day-main-edit">
+                                                        <label>Daily Narrative</label>
+                                                        <textarea 
+                                                            rows={3}
+                                                            value={item.description} 
+                                                            onChange={(e) => updateItineraryItem(index, 'description', e.target.value)}
+                                                            placeholder="What happens on this day? Describe the journey, hikes, and cultural experiences..."
+                                                        />
+                                                    </div>
+                                                    <div className="day-meta-horizontal">
+                                                        <div className="meta-field">
+                                                            <div className="meta-icon">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                                            </div>
+                                                            <input 
+                                                                type="text" 
+                                                                value={item.accommodation || ''} 
+                                                                onChange={(e) => updateItineraryItem(index, 'accommodation', e.target.value)}
+                                                                placeholder="Accommodation"
+                                                            />
+                                                        </div>
+                                                        <div className="meta-field">
+                                                            <div className="meta-icon">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                                                            </div>
+                                                            <input 
+                                                                type="text" 
+                                                                value={item.meals || ''} 
+                                                                onChange={(e) => updateItineraryItem(index, 'meals', e.target.value)}
+                                                                placeholder="Meals (e.g. B, L, D)"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {itinerary.length === 0 && (
+                                            <div className="empty-itinerary-prompt" onClick={handleAddDay}>
+                                                <div className="plus-circle">+</div>
+                                                <p>No itinerary items defined yet.</p>
+                                                <span>Click here to initialize the first day of the journey.</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <label className="form-checkbox">
+                                    <input type="checkbox" checked={currentTrip.is_published} onChange={e => setCurrentTrip({ ...currentTrip, is_published: e.target.checked })} />
+                                    <span>Published</span>
+                                </label>
                             </div>
+                            {currentTrip.slug && (
+                                <button 
+                                    type="button" 
+                                    className="btn-preview" 
+                                    onClick={() => window.open(`/trips/${currentTrip.slug}?preview=true`, '_blank')}
+                                    style={{ marginTop: '20px', width: '100%', background: '#f5f5f5', border: '1px solid #ddd', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: '700' }}
+                                >
+                                    Preview Journey
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>
@@ -424,13 +748,50 @@ export default function TripManager() {
                     margin: 0;
                     line-height: 1.2;
                 }
-                .admin-page-header {
+                .admin-page-header { 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: flex-end; 
+                    margin-bottom: 30px; 
+                    padding-bottom: 30px; 
+                    border-bottom: 1px solid #eee; 
+                }
+                
+                .admin-filters-bar {
                     display: flex;
                     justify-content: space-between;
-                    align-items: flex-end;
-                    margin-bottom: 50px;
-                    padding-bottom: 30px;
-                    border-bottom: 1px solid #eee;
+                    gap: 20px;
+                    margin-bottom: 40px;
+                    background: #f9f9f9;
+                    padding: 15px;
+                    border-radius: 12px;
+                    border: 1px solid #eee;
+                }
+                .search-box {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    background: white;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    padding: 0 15px;
+                }
+                .search-box input {
+                    border: none;
+                    padding: 12px;
+                    width: 100%;
+                    font-size: 14px;
+                    outline: none;
+                }
+                .filter-group { display: flex; gap: 10px; }
+                .filter-group select {
+                    padding: 10px 15px;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    background: white;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
                 }
                 @media (max-width: 768px) {
                     .admin-page-header {
@@ -452,6 +813,28 @@ export default function TripManager() {
                     font-size: 15px;
                     margin-top: 5px;
                 }
+                .header-actions {
+                    display: flex;
+                    gap: 15px;
+                }
+                .btn-view-site {
+                    background: #fdfcf9;
+                    border: 1px solid #d4c8b0;
+                    color: #7c6f55;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+                .btn-view-site:hover {
+                    background: #f5f2eb;
+                    transform: translateY(-1px);
+                }
                 .btn-add-trip {
                     background: #111;
                     color: white;
@@ -468,6 +851,24 @@ export default function TripManager() {
                 .btn-add-trip:hover {
                     background: #333;
                     transform: translateY(-1px);
+                }
+
+                .btn-view-live {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 40px;
+                    height: 40px;
+                    background: #fdfcf9;
+                    border: 1px solid #e8e4db;
+                    color: #7c6f55;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                }
+                .btn-view-live:hover {
+                    background: #111;
+                    color: white;
+                    border-color: #111;
                 }
 
                 /* Grid Layout */
@@ -809,6 +1210,111 @@ export default function TripManager() {
                     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
                 }
 
+                /* Itinerary Builder Styles */
+                .section-header-flex {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 30px;
+                }
+                .btn-add-day {
+                    background: #f0fdf4;
+                    color: #166534;
+                    border: 1px solid #bbf7d0;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-add-day:hover {
+                    background: #dcfce7;
+                }
+                .itinerary-builder-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                .itinerary-day-card {
+                    background: #fdfcf9;
+                    border: 1px solid #f5f2eb;
+                    border-radius: 12px;
+                    overflow: hidden;
+                }
+                .day-card-header {
+                    background: #fff;
+                    padding: 15px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    border-bottom: 1px solid #f5f2eb;
+                }
+                .day-number {
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    color: #d4c8b0;
+                    white-space: nowrap;
+                }
+                .day-title-input {
+                    flex: 1;
+                    border: none !important;
+                    background: none !important;
+                    font-weight: 700 !important;
+                    padding: 0 !important;
+                    font-size: 16px !important;
+                }
+                .btn-remove-day {
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: none;
+                    background: #fee2e2;
+                    color: #991b1b;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    opacity: 0.6;
+                    transition: opacity 0.2s;
+                }
+                .btn-remove-day:hover { opacity: 1; }
+                .day-card-body {
+                    padding: 20px;
+                }
+                .day-meta-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin-top: 20px;
+                    padding-top: 20px;
+                    border-top: 1px dashed #eee;
+                }
+                .meta-item label {
+                    display: block;
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    color: #aaa;
+                    margin-bottom: 8px;
+                }
+                .meta-item input {
+                    padding: 10px !important;
+                    font-size: 13px !important;
+                }
+                .empty-itinerary-prompt {
+                    padding: 40px;
+                    border: 2px dashed #eee;
+                    border-radius: 12px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: border-color 0.2s;
+                }
+                .empty-itinerary-prompt:hover { border-color: #d4c8b0; }
+                .empty-itinerary-prompt p { font-weight: 700; color: #444; margin: 0; }
+                .empty-itinerary-prompt span { font-size: 12px; color: #999; }
+
                 .admin-loader {
                     display: flex;
                     flex-direction: column;
@@ -827,6 +1333,126 @@ export default function TripManager() {
                     margin-bottom: 20px;
                 }
                 @keyframes spin { to { transform: rotate(360deg); } }
+                .itinerary-day-card {
+                    background: white;
+                    border: 1px solid #e5e5e5;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                    transition: border-color 0.2s;
+                }
+                .itinerary-day-card:hover {
+                    border-color: #d4c8b0;
+                }
+                .day-card-header {
+                    background: #fafafa;
+                    padding: 12px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    border-bottom: 1px solid #eee;
+                }
+                .day-label {
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #7c6f55;
+                    background: #f5f2eb;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    white-space: nowrap;
+                }
+                .day-title-input {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    font-family: var(--font-playfair), serif;
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #111;
+                    outline: none;
+                }
+                .day-card-body {
+                    padding: 20px;
+                }
+                .day-main-edit label {
+                    display: block;
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: 700;
+                    color: #999;
+                    margin-bottom: 8px;
+                }
+                .day-main-edit textarea {
+                    width: 100%;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    padding: 12px;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    resize: vertical;
+                    outline: none;
+                    transition: border-color 0.2s;
+                }
+                .day-main-edit textarea:focus {
+                    border-color: #d4c8b0;
+                }
+                .day-meta-horizontal {
+                    display: flex;
+                    gap: 15px;
+                    margin-top: 15px;
+                }
+                .meta-field {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    background: #f9f9f9;
+                    border: 1px solid #eee;
+                    border-radius: 6px;
+                    padding: 0 10px;
+                }
+                .meta-icon {
+                    color: #ccc;
+                    margin-right: 8px;
+                    display: flex;
+                    align-items: center;
+                }
+                .meta-field input {
+                    width: 100%;
+                    background: transparent;
+                    border: none;
+                    padding: 10px 0;
+                    font-size: 13px;
+                    color: #555;
+                    outline: none;
+                }
+                .btn-remove-day {
+                    background: none;
+                    border: none;
+                    color: #ccc;
+                    cursor: pointer;
+                    padding: 5px;
+                    border-radius: 4px;
+                    transition: all 0.2s;
+                }
+                .btn-remove-day:hover {
+                    color: #ff5f56;
+                    background: #fff0f0;
+                }
+                .plus-circle {
+                    width: 40px;
+                    height: 40px;
+                    background: #f5f2eb;
+                    color: #7c6f55;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    margin: 0 auto 15px;
+                }
             `}</style>
         </div>
     );

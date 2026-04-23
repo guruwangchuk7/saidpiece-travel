@@ -64,6 +64,3 @@ async function ItineraryLoader({ tripId }: { tripId: string }) {
         </div>
     );
 }
-
-
-

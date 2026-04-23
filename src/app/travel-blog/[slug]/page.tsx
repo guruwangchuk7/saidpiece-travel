@@ -156,14 +156,53 @@ export default function DynamicBlogPost() {
 
                 <div className="blog-body container">
                     <div className="blog-content-inner">
-                        {post.content.split('\n').map((para, i) => {
-                            if (!para.trim()) return null;
-                            return (
-                                <p key={i} className={i === 0 ? 'first-paragraph' : ''}>
-                                    {para}
-                                </p>
-                            );
-                        })}
+                        {(() => {
+                            try {
+                                const parsed = JSON.parse(post.content);
+                                return (
+                                    <>
+                                        {parsed.subtitle && <h2 className="blog-subtitle">{parsed.subtitle}</h2>}
+                                        {parsed.sections?.map((sec: any, i: number) => (
+                                            <div key={i} className="content-section">
+                                                {sec.type === 'text' && (
+                                                    <div className="text-block">
+                                                        {sec.value.split('\n').map((p: string, pi: number) => (
+                                                            <p key={pi}>{p}</p>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                {sec.type === 'subtitle' && (
+                                                    <h3 className="section-subtitle">{sec.value}</h3>
+                                                )}
+                                                {sec.type === 'image' && (
+                                                    <figure className="section-image">
+                                                        <div className="section-image-wrapper">
+                                                            <Image 
+                                                                src={sec.url.startsWith('http') ? sec.url : `/images/${sec.url}`} 
+                                                                alt={sec.caption || 'Article image'} 
+                                                                fill
+                                                                className="inner-img"
+                                                            />
+                                                        </div>
+                                                        {sec.caption && <figcaption>{sec.caption}</figcaption>}
+                                                    </figure>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </>
+                                );
+                            } catch (e) {
+                                // Legacy Text Fallback
+                                return post.content.split('\n').map((para, i) => {
+                                    if (!para.trim()) return null;
+                                    return (
+                                        <p key={i} className={i === 0 ? 'first-paragraph' : ''}>
+                                            {para}
+                                        </p>
+                                    );
+                                });
+                            }
+                        })()}
                     </div>
                 </div>
 
@@ -235,6 +274,45 @@ export default function DynamicBlogPost() {
                 .blog-content-inner p {
                     margin-bottom: 35px;
                 }
+                .blog-subtitle {
+                    font-size: 24px;
+                    color: #666;
+                    margin-bottom: 50px;
+                    font-style: italic;
+                    line-height: 1.4;
+                    font-family: var(--font-playfair);
+                }
+                .content-section {
+                    margin-bottom: 40px;
+                }
+                .section-subtitle {
+                    font-family: var(--font-playfair);
+                    font-size: 32px;
+                    margin: 60px 0 30px;
+                    color: #1a1a1a;
+                }
+                .section-image {
+                    margin: 50px -100px;
+                }
+                .section-image-wrapper {
+                    position: relative;
+                    height: 60vh;
+                    width: 100%;
+                }
+                .inner-img {
+                    object-fit: cover;
+                }
+                figcaption {
+                    text-align: center;
+                    font-size: 13px;
+                    color: #888;
+                    margin-top: 15px;
+                    font-style: italic;
+                }
+                @media (max-width: 1100px) {
+                    .section-image { margin: 50px 0; }
+                }
+
                 .first-paragraph::first-letter {
                     float: left;
                     font-size: 84px;

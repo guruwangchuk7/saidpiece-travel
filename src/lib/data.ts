@@ -12,7 +12,8 @@ export const getCachedTrips = unstable_cache(
             const { data, error } = await supabase
                 .from('trips')
                 .select('*')
-                .eq('is_active', true);
+                .eq('is_active', true)
+                .eq('is_published', true);
             
             if (error) throw error;
             return data || [];
@@ -28,20 +29,25 @@ export const getCachedTrips = unstable_cache(
 /**
  * Fetch a single trip by slug with caching.
  */
-export const getCachedTripBySlug = (slug: string) => unstable_cache(
+export const getCachedTripBySlug = (slug: string, isPreview: boolean = false) => unstable_cache(
     async () => {
         const supabase = createSupabaseAdminClient();
-        const { data, error } = await supabase
+        let query = supabase
             .from('trips')
             .select('*')
-            .eq('slug', slug)
-            .single();
+            .eq('slug', slug);
+        
+        if (!isPreview) {
+            query = query.eq('is_published', true);
+        }
+
+        const { data, error } = await query.single();
         
         if (error) return null;
         return data;
     },
-    [`trip-${slug}`],
-    { revalidate: 3600, tags: ['trips', `trip-${slug}`] }
+    [`trip-${slug}-${isPreview}`],
+    { revalidate: isPreview ? 1 : 3600, tags: ['trips', `trip-${slug}`] }
 )();
 
 /**

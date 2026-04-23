@@ -81,7 +81,10 @@ export default function BlogManager() {
             title: currentPost.title,
             slug: slug,
             excerpt: currentPost.excerpt || '',
-            content: currentPost.content || '',
+            content: JSON.stringify({
+                subtitle: (currentPost as any).subtitle || '',
+                sections: (currentPost as any).sections || []
+            }),
             main_image: currentPost.main_image || '',
             status: currentPost.status || 'draft',
             author_id: currentPost.author_id || user?.id,
@@ -233,7 +236,19 @@ export default function BlogManager() {
                                 <div className="card-footer">
                                     <span className="date">{new Date(post.created_at).toLocaleDateString()}</span>
                                     <div className="card-actions">
-                                        <button className="btn-edit" onClick={() => { setCurrentPost(post); setIsEditing(true); }}>Edit Story</button>
+                                        <button className="btn-edit" onClick={() => { 
+                                            let postToEdit = { ...post };
+                                            try {
+                                                const parsed = JSON.parse(post.content);
+                                                (postToEdit as any).subtitle = parsed.subtitle || '';
+                                                (postToEdit as any).sections = parsed.sections || [];
+                                            } catch (e) {
+                                                // Legacy content fallback
+                                                (postToEdit as any).sections = [{ type: 'text', value: post.content }];
+                                            }
+                                            setCurrentPost(postToEdit); 
+                                            setIsEditing(true); 
+                                        }}>Edit Story</button>
                                         <button className="btn-delete" onClick={() => handleDelete(post.id)}>
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                         </button>
@@ -278,7 +293,7 @@ export default function BlogManager() {
                             
                             <div className="editor-aside-group">
                                 <label>Publication Status</label>
-                                <select value={currentPost.status} onChange={(e) => setCurrentPost({ ...currentPost, status: e.target.value as any })}>
+                                <select value={currentPost.status || 'draft'} onChange={(e) => setCurrentPost({ ...currentPost, status: e.target.value as any })}>
                                     <option value="draft">Draft - Private</option>
                                     <option value="published">Published - Live</option>
                                 </select>
@@ -310,6 +325,15 @@ export default function BlogManager() {
                                         />
                                     </div>
                                     <div className="form-item" style={{ marginTop: '20px' }}>
+                                        <label>Story Subtitle</label>
+                                        <input 
+                                            type="text" 
+                                            value={(currentPost as any).subtitle || ''} 
+                                            onChange={(e) => setCurrentPost({ ...currentPost, subtitle: e.target.value } as any)} 
+                                            placeholder="Exploring the hidden sanctuaries..." 
+                                        />
+                                    </div>
+                                    <div className="form-item" style={{ marginTop: '20px' }}>
                                         <label>Slug (URL Identifier)</label>
                                         <input 
                                             type="text" 
@@ -335,15 +359,93 @@ export default function BlogManager() {
                                 </div>
 
                                 <div className="section">
-                                    <h4>Narrative Content</h4>
-                                    <div className="form-item">
-                                        <label>Main Body (Markdown supported)</label>
-                                        <textarea 
-                                            rows={15} 
-                                            value={currentPost.content} 
-                                            onChange={(e) => setCurrentPost({ ...currentPost, content: e.target.value })} 
-                                            placeholder="Write the full story here..."
-                                        />
+                                    <div className="section-header-flex">
+                                        <h4>Narrative Architecture</h4>
+                                        <div className="section-add-controls">
+                                            <button type="button" className="btn-add-block" onClick={() => {
+                                                const sections = (currentPost as any).sections || [];
+                                                setCurrentPost({ ...currentPost, sections: [...sections, { type: 'text', value: '' }] } as any);
+                                            }}>+ Text</button>
+                                            <button type="button" className="btn-add-block" onClick={() => {
+                                                const sections = (currentPost as any).sections || [];
+                                                setCurrentPost({ ...currentPost, sections: [...sections, { type: 'subtitle', value: '' }] } as any);
+                                            }}>+ Subtitle</button>
+                                            <button type="button" className="btn-add-block" onClick={() => {
+                                                const sections = (currentPost as any).sections || [];
+                                                setCurrentPost({ ...currentPost, sections: [...sections, { type: 'image', url: '', caption: '' }] } as any);
+                                            }}>+ Image</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="dynamic-sections">
+                                        {((currentPost as any).sections || []).map((sec: any, idx: number) => (
+                                            <div key={idx} className="block-item">
+                                                <div className="block-header">
+                                                    <span>Block #{idx + 1}: {sec.type}</span>
+                                                    <button type="button" className="btn-remove-block" onClick={() => {
+                                                        const sections = [...(currentPost as any).sections];
+                                                        sections.splice(idx, 1);
+                                                        setCurrentPost({ ...currentPost, sections } as any);
+                                                    }}>×</button>
+                                                </div>
+                                                
+                                                {sec.type === 'text' && (
+                                                    <textarea 
+                                                        rows={6}
+                                                        value={sec.value}
+                                                        onChange={(e) => {
+                                                            const sections = [...(currentPost as any).sections];
+                                                            sections[idx].value = e.target.value;
+                                                            setCurrentPost({ ...currentPost, sections } as any);
+                                                        }}
+                                                        placeholder="Enter narrative text..."
+                                                    />
+                                                )}
+
+                                                {sec.type === 'subtitle' && (
+                                                    <input 
+                                                        type="text"
+                                                        value={sec.value}
+                                                        onChange={(e) => {
+                                                            const sections = [...(currentPost as any).sections];
+                                                            sections[idx].value = e.target.value;
+                                                            setCurrentPost({ ...currentPost, sections } as any);
+                                                        }}
+                                                        placeholder="Enter section subtitle..."
+                                                    />
+                                                )}
+
+                                                {sec.type === 'image' && (
+                                                    <div className="block-image-inputs">
+                                                        <input 
+                                                            type="text"
+                                                            value={sec.url}
+                                                            onChange={(e) => {
+                                                                const sections = [...(currentPost as any).sections];
+                                                                sections[idx].url = e.target.value;
+                                                                setCurrentPost({ ...currentPost, sections } as any);
+                                                            }}
+                                                            placeholder="Image URL (e.g., bhutan/main3.webp)"
+                                                        />
+                                                        <input 
+                                                            type="text"
+                                                            value={sec.caption}
+                                                            onChange={(e) => {
+                                                                const sections = [...(currentPost as any).sections];
+                                                                sections[idx].caption = e.target.value;
+                                                                setCurrentPost({ ...currentPost, sections } as any);
+                                                            }}
+                                                            placeholder="Image Caption (optional)"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        {(!(currentPost as any).sections || (currentPost as any).sections.length === 0) && (
+                                            <div className="block-placeholder">
+                                                No content blocks yet. Use the buttons above to build your story.
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -666,6 +768,80 @@ export default function BlogManager() {
                     margin-bottom: 20px;
                 }
                 @keyframes spin { to { transform: rotate(360deg); } }
+
+                /* Dynamic Sections Styling */
+                .section-header-flex {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 25px;
+                    border-bottom: 1px solid #f0f0f0;
+                    padding-bottom: 15px;
+                }
+                .section-add-controls {
+                    display: flex;
+                    gap: 8px;
+                }
+                .btn-add-block {
+                    background: #fdfcf9;
+                    border: 1px solid #d4c8b0;
+                    color: #7c6f55;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-add-block:hover {
+                    background: #111;
+                    color: white;
+                    border-color: #111;
+                }
+                
+                .dynamic-sections {
+                    display: grid;
+                    gap: 20px;
+                }
+                .block-item {
+                    background: #fcfcfc;
+                    border: 1px solid #eee;
+                    border-radius: 12px;
+                    padding: 20px;
+                    position: relative;
+                }
+                .block-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #bbb;
+                }
+                .btn-remove-block {
+                    background: none;
+                    border: none;
+                    color: #ff5f56;
+                    font-size: 20px;
+                    cursor: pointer;
+                    line-height: 1;
+                }
+                .block-image-inputs {
+                    display: grid;
+                    gap: 12px;
+                }
+                .block-placeholder {
+                    padding: 40px;
+                    text-align: center;
+                    border: 2px dashed #f0f0f0;
+                    border-radius: 12px;
+                    color: #ccc;
+                    font-style: italic;
+                    font-size: 14px;
+                }
             `}</style>
         </div>
     );
