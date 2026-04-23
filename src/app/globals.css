@@ -1345,6 +1345,9 @@ select.trip-finder-input {
   font-size: 1.8rem;
   margin-bottom: 30px;
   color: var(--color-white);
+  display: flex;
+  justify-content: flex-start;
+  margin-left: -28px; /* Compensates for internal PNG whitespace to align with address text below */
 }
 
 .footer-col address {

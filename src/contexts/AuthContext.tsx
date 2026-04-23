@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         document.cookie = "is_staff_hint=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                     }
                 }
-            } else {
+            } else if (typeof window !== 'undefined') {
                 const isPageAdmin = window.location.pathname.startsWith('/admin');
                 if (!isPageAdmin || initializationRef.current) {
                     setRole(null);

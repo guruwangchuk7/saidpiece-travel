@@ -136,9 +136,11 @@ function ConfirmPayContent() {
     };
 
     useEffect(() => {
-        const redirect = localStorage.getItem('booking_redirect');
-        if (redirect && user) {
-            localStorage.removeItem('booking_redirect');
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const redirect = window.localStorage.getItem('booking_redirect');
+            if (redirect && user) {
+                window.localStorage.removeItem('booking_redirect');
+            }
         }
     }, [user]);
 

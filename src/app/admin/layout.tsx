@@ -37,8 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Track last known state for debugging
     useEffect(() => {
         setHasMounted(true);
-        if (!loading && isStaff) {
-            localStorage.setItem('last_known_role', 'staff');
+        if (typeof window !== 'undefined' && window.localStorage && !loading && isStaff) {
+            window.localStorage.setItem('last_known_role', 'staff');
         }
     }, [loading, isStaff]);
 
