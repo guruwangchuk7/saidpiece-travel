@@ -13,10 +13,10 @@ const sitemapData = [
   {
     category: 'Bhutan Itineraries',
     links: [
-        { label: 'Bhutan Discovery', href: '/trips/discovery' },
-        { label: 'Cultural Immersion', href: '/trips/cultural' },
-        { label: 'Nature Retreat', href: '/trips/nature' },
-        { label: 'Family Adventure', href: '/trips/family' },
+      { label: 'Bhutan Discovery', href: '/trips/discovery' },
+      { label: 'Cultural Immersion', href: '/trips/cultural' },
+      { label: 'Nature Retreat', href: '/trips/nature' },
+      { label: 'Family Adventure', href: '/trips/family' },
     ],
   },
   {
@@ -53,7 +53,7 @@ export default function SitemapPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-grow container mx-auto px-4 pt-40 pb-20 max-w-5xl">
         <h1 className="serif-title text-4xl mb-12">Website Sitemap</h1>
-        
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
           {sitemapData.map((section) => (
             <div key={section.category} className="sitemap-section">
@@ -61,8 +61,8 @@ export default function SitemapPage() {
               <ul className="space-y-4">
                 {section.links.map((link) => (
                   <li key={link.href}>
-                    <Link 
-                      href={link.href} 
+                    <Link
+                      href={link.href}
                       className="text-gray-600 hover:text-brand transition-colors duration-200 block text-lg font-medium"
                     >
                       {link.label}
@@ -75,14 +75,14 @@ export default function SitemapPage() {
         </div>
 
         <div className="mt-20 p-8 bg-gray-50 rounded-lg text-center border-1 border-gray-100">
-            <h3 className="serif-title text-xl text-black mb-4 font-semibold">Technical Sitemap</h3>
-            <p className="text-gray-600 mb-6 font-medium">Looking for our XML sitemap for search engines?</p>
-            <a 
-              href="/sitemap.xml" 
-              className="px-6 py-3 bg-black text-white rounded font-bold hover:opacity-90 inline-block transition-opacity"
-            >
-              /sitemap.xml
-            </a>
+          <h3 className="serif-title text-xl text-black mb-4 font-semibold">Technical Sitemap</h3>
+          <p className="text-gray-600 mb-6 font-medium">Looking for our XML sitemap for search engines?</p>
+          <a
+            href="/sitemap.xml"
+            className="px-6 py-3 bg-black text-white rounded font-bold hover:opacity-90 inline-block transition-opacity"
+          >
+            /sitemap.xml
+          </a>
         </div>
       </main>
     </div>

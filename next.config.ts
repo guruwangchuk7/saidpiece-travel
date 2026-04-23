@@ -38,6 +38,30 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/trips/cultural",
+        destination: "/trips/cultural-immersion",
+        permanent: true,
+      },
+      {
+        source: "/trips/discovery",
+        destination: "/trips/bhutan-discovery",
+        permanent: true,
+      },
+      {
+        source: "/trips/family",
+        destination: "/trips/bhutan-family-adventure",
+        permanent: true,
+      },
+      {
+        source: "/trips/nature",
+        destination: "/trips/nature-retreat",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
