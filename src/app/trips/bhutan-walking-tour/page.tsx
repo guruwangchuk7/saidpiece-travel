@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
 
 export default function BhutanWalkingTourTrip() {
     const router = useRouter();
@@ -19,7 +20,9 @@ export default function BhutanWalkingTourTrip() {
     const handleBookOnline = () => {
         if (!user) {
             const destination = `/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=${tripData.price}`;
-            localStorage.setItem('booking_redirect', destination);
+            if (typeof window !== 'undefined' && window.localStorage) {
+                window.localStorage.setItem('booking_redirect', destination);
+            }
             signInWithGoogle();
         } else {
             router.push(`/confirm-pay?trip=${encodeURIComponent(tripData.name)}&amount=${tripData.price}`);
@@ -27,7 +30,8 @@ export default function BhutanWalkingTourTrip() {
     };
 
     return (
-        <main className="trip-detail-page">
+        <main className="trip-detail-page pt-0">
+            <HeaderThemeHandler theme="auto" />
             <div className="trip-hero">
                 <Image src={tripData.image} alt={tripData.name} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
                 <div className="trip-hero-overlay"></div>
