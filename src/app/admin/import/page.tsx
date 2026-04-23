@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function FAQSyncUpgrade() {
+    const router = useRouter();
     const [status, setStatus] = useState({ trips: 'waiting', dests: 'waiting', blog: 'waiting', faqs: 'waiting' });
     const [loading, setLoading] = useState(false);
     const [log, setLog] = useState<string[]>([]);
@@ -63,6 +65,7 @@ export default function FAQSyncUpgrade() {
             setStatus(s => ({ ...s, faqs: 'success' }));
 
             addLog('SUCCESS: Full Architectural Sync Complete.');
+            router.refresh();
         } catch (e: any) {
             addLog(`ERROR: ${e.message}`);
         } finally {

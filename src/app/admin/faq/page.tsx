@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -13,6 +14,7 @@ interface FAQ {
 }
 
 export default function FAQManager() {
+    const router = useRouter();
     const { isStaff } = useAuth();
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
@@ -75,7 +77,8 @@ export default function FAQManager() {
             alert('Error saving FAQ: ' + result.error.message);
         } else {
             setIsEditing(false);
-            fetchFaqs();
+            await fetchFaqs();
+            router.refresh();
         }
     };
 
@@ -84,7 +87,10 @@ export default function FAQManager() {
         if (confirm('Permanently remove this FAQ?')) {
             const { error } = await supabase.from('faqs').delete().eq('id', id);
             if (error) alert('Error: ' + error.message);
-            else fetchFaqs();
+            else {
+                await fetchFaqs();
+                router.refresh();
+            }
         }
     };
 

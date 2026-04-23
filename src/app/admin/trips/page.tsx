@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -22,6 +23,7 @@ interface Trip {
 }
 
 export default function TripManager() {
+    const router = useRouter();
     const { isStaff } = useAuth();
     const [trips, setTrips] = useState<Trip[]>([]);
     const [loading, setLoading] = useState(true);
@@ -125,7 +127,8 @@ export default function TripManager() {
             if (result.error) throw result.error;
 
             setIsEditing(false);
-            fetchTrips();
+            await fetchTrips();
+            router.refresh();
             alert('Trip published successfully.');
         } catch (error: any) {
             console.error('Error saving trip:', error);
@@ -140,7 +143,10 @@ export default function TripManager() {
         if (confirm('Are you sure you want to delete this trip permanently?')) {
             const { error } = await supabase.from('trips').delete().eq('id', id);
             if (error) alert('Error deleting: ' + error.message);
-            else fetchTrips();
+            else {
+                await fetchTrips();
+                router.refresh();
+            }
         }
     };
 

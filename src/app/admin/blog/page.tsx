@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -19,6 +20,7 @@ interface BlogPost {
 }
 
 export default function BlogManager() {
+    const router = useRouter();
     const { isStaff, user } = useAuth();
     const [posts, setPosts] = useState<BlogPost[]>([]);
     const [loading, setLoading] = useState(true);
@@ -109,7 +111,8 @@ export default function BlogManager() {
             if (result.error) throw result.error;
 
             setIsEditing(false);
-            fetchPosts();
+            await fetchPosts();
+            router.refresh();
             alert('Article saved successfully.');
         } catch (error: any) {
             console.error('Error saving article:', error);
@@ -124,7 +127,10 @@ export default function BlogManager() {
         if (confirm('Permanently delete this article?')) {
             const { error } = await supabase.from('blog_posts').delete().eq('id', id);
             if (error) alert('Error: ' + error.message);
-            else fetchPosts();
+            else {
+                await fetchPosts();
+                router.refresh();
+            }
         }
     };
 

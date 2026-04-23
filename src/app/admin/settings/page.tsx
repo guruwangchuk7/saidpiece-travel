@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -11,6 +12,7 @@ interface Setting {
 }
 
 export default function SettingsManager() {
+    const router = useRouter();
     const { isStaff } = useAuth();
     const [settings, setSettings] = useState<Setting[]>([]);
     const [loading, setLoading] = useState(true);
@@ -92,6 +94,7 @@ export default function SettingsManager() {
 
             if (error) throw error;
             setProfiles(prev => prev.map(p => p.id === userId ? { ...p, role: newRole } : p));
+            router.refresh();
             alert(`Role updated to ${newRole} successfully.`);
         } catch (e: any) {
             console.error('Role update failed:', e);
@@ -124,6 +127,7 @@ export default function SettingsManager() {
             const { error } = await supabase.from('site_settings').update({ value }).eq('key', key);
             if (error) throw error;
             setSettings(prev => prev.map(s => s.key === key ? { ...s, value } : s));
+            router.refresh();
         } catch (e) {
             console.error('Update failed:', e);
             alert('Settings sync failed: check connection');

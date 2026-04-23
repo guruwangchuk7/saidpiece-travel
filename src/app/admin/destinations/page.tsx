@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -16,6 +17,7 @@ interface Destination {
 }
 
 export default function DestinationManager() {
+    const router = useRouter();
     const { isStaff } = useAuth();
     const [destinations, setDestinations] = useState<Destination[]>([]);
     const [loading, setLoading] = useState(true);
@@ -106,7 +108,8 @@ export default function DestinationManager() {
             if (result.error) throw result.error;
 
             setIsEditing(false);
-            fetchDestinations();
+            await fetchDestinations();
+            router.refresh();
             alert('Destination saved successfully.');
         } catch (error: any) {
             console.error('Error saving destination:', error);
@@ -121,7 +124,10 @@ export default function DestinationManager() {
         if (confirm('Delete this destination?')) {
             const { error } = await supabase.from('destinations').delete().eq('id', id);
             if (error) alert('Error: ' + error.message);
-            else fetchDestinations();
+            else {
+                await fetchDestinations();
+                router.refresh();
+            }
         }
     };
 

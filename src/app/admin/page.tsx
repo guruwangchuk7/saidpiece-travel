@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -14,6 +15,7 @@ const SyncIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="non
 const SettingsIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path></svg>;
 
 export default function ArchitectDashboard() {
+    const router = useRouter();
     const { isStaff } = useAuth();
     const [counts, setCounts] = useState({ trips: 0, blog: 0, dests: 0, msgs: 0, faqs: 0 });
     const [loading, setLoading] = useState(true);
@@ -48,6 +50,7 @@ export default function ArchitectDashboard() {
                 msgs: enquiries.count || 0,
                 faqs: faqs.count || 0
             });
+            router.refresh();
         } catch (e) {
             console.error('Failed to sync dashboard telemetry:', e);
         } finally {

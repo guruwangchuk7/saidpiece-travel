@@ -112,6 +112,7 @@ export default function EnquiryManager() {
             setEnquiries(prev => prev.map(e => e.id === selectedEnquiry.id ? { ...e, status: newStatus } : e));
             setSelectedEnquiry(prev => prev ? { ...prev, status: newStatus } : null);
             setActiveTemplate(null);
+            router.refresh();
         } catch (err) {
             console.error('Error updating status:', err);
         }
@@ -133,6 +134,7 @@ export default function EnquiryManager() {
 
             setEnquiries(prev => prev.filter(e => e.id !== selectedEnquiry.id));
             setSelectedEnquiry(null);
+            router.refresh();
             alert('Enquiry deleted successfully.');
         } catch (err) {
             console.error('Error deleting enquiry:', err);
@@ -156,6 +158,7 @@ export default function EnquiryManager() {
 
             setBookings(prev => prev.filter(b => b.id !== selectedBooking.id));
             setSelectedBooking(null);
+            router.refresh();
             alert('Booking deleted successfully.');
         } catch (err) {
             console.error('Error deleting booking:', err);
