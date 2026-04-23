@@ -113,7 +113,7 @@ export default function TripManager() {
             .select('*')
             .eq('trip_id', tripId)
             .order('day_number', { ascending: true });
-        
+
         if (error) {
             console.error('Error fetching itinerary:', error);
             setItinerary([]);
@@ -165,13 +165,13 @@ export default function TripManager() {
     };
 
     const filteredTrips = trips.filter(trip => {
-        const matchesSearch = trip.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             trip.slug.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = trip.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            trip.slug.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = filterCategory === 'All' || trip.category === filterCategory;
-        const matchesStatus = filterStatus === 'All' || 
-                             (filterStatus === 'Published' && trip.is_published) || 
-                             (filterStatus === 'Draft' && !trip.is_published);
-        
+        const matchesStatus = filterStatus === 'All' ||
+            (filterStatus === 'Published' && trip.is_published) ||
+            (filterStatus === 'Draft' && !trip.is_published);
+
         return matchesSearch && matchesCategory && matchesStatus;
     });
 
@@ -192,7 +192,7 @@ export default function TripManager() {
             .replace(/\s+/g, '-')
             .replace(/[^\w-]+/g, '')
             .replace(/--+/g, '-');
-            
+
         const tripData = {
             title: currentTrip.title,
             slug: slug,
@@ -236,15 +236,15 @@ export default function TripManager() {
             }
 
             if (result.error) throw result.error;
-            
+
             const savedTrip = result.data?.[0];
             if (savedTrip) {
                 tripId = savedTrip.id;
-                
+
                 // Handle Itinerary Sync
                 // 1. Delete existing itinerary items for this trip
                 await supabase.from('trip_itineraries').delete().eq('trip_id', tripId);
-                
+
                 // 2. Insert new itinerary items
                 if (itinerary.length > 0) {
                     const itineraryToSave = itinerary.map(item => ({
@@ -255,11 +255,11 @@ export default function TripManager() {
                         accommodation: item.accommodation,
                         meals: item.meals
                     }));
-                    
+
                     const { error: itinError } = await supabase
                         .from('trip_itineraries')
                         .insert(itineraryToSave);
-                    
+
                     if (itinError) throw itinError;
                 }
             }
@@ -291,7 +291,7 @@ export default function TripManager() {
     const handleImageUpload = async (file: File) => {
         if (!supabase || !file) return;
         setIsUploading(true);
-        
+
         try {
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
@@ -329,10 +329,10 @@ export default function TripManager() {
         try {
             // If it's already a full URL or a relative path starting with /, it's fine
             if (url.startsWith('http') || url.startsWith('/') || url.startsWith('data:')) return url;
-            
+
             // Legacy fix: if it starts with bhutan/, it actually belongs in /images/bhutan/
             if (url.startsWith('bhutan/')) return `/images/${url}`;
-            
+
             // Otherwise, assume it's a relative path and fix it with a leading slash
             return `/${url}`;
         } catch (e) {
@@ -371,7 +371,7 @@ export default function TripManager() {
                         <button className="btn-add-trip" onClick={() => {
                             setCurrentTrip({
                                 title: '', slug: '', duration_days: 1, duration_nights: 0, starting_price: 0,
-                                level: 'Moderate', is_active: true, is_published: false, trip_type: 'Private Journey', 
+                                level: 'Moderate', is_active: true, is_published: false, trip_type: 'Private Journey',
                                 destination: 'Bhutan', category: 'Cultural', image_url: '', description: ''
                             });
                             setItinerary([]);
@@ -383,14 +383,14 @@ export default function TripManager() {
                     </div>
                 )}
             </header>
-            
+
             {!isEditing && (
                 <div className="admin-filters-bar">
                     <div className="search-box">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input 
-                            type="text" 
-                            placeholder="Search journeys by title or slug..." 
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                        <input
+                            type="text"
+                            placeholder="Search journeys by title or slug..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
@@ -449,7 +449,7 @@ export default function TripManager() {
                 <div className="editor-overlay">
                     <form className="trip-editor-form" onSubmit={handleSave}>
                         <div className="editor-sidebar">
-                            <div 
+                            <div
                                 className={`image-dropzone ${isUploading ? 'uploading' : ''}`}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={onDrop}
@@ -469,15 +469,15 @@ export default function TripManager() {
                                         <span>or click to browse files</span>
                                     </div>
                                 )}
-                                <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    hidden 
-                                    accept="image/*" 
-                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])} 
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    hidden
+                                    accept="image/*"
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
                                 />
                             </div>
-                            
+
                             <div className="editor-aside-group">
                                 <label>Trip Status</label>
                                 <div className="toggle-container" onClick={() => setCurrentTrip({ ...currentTrip, is_active: !currentTrip.is_active })}>
@@ -506,21 +506,21 @@ export default function TripManager() {
                                     <div className="form-grid">
                                         <div className="form-item span-full">
                                             <label>Trip Title</label>
-                                            <input 
-                                                type="text" 
-                                                value={currentTrip.title} 
-                                                onChange={(e) => setCurrentTrip({ ...currentTrip, title: e.target.value })} 
-                                                placeholder="Enter a captivating journey name..." 
-                                                required 
+                                            <input
+                                                type="text"
+                                                value={currentTrip.title}
+                                                onChange={(e) => setCurrentTrip({ ...currentTrip, title: e.target.value })}
+                                                placeholder="Enter a captivating journey name..."
+                                                required
                                             />
                                         </div>
                                         <div className="form-item span-full" style={{ marginTop: '20px' }}>
                                             <label>Hero Subtitle</label>
-                                            <input 
-                                                type="text" 
-                                                value={(currentTrip as any).meta_description} 
-                                                onChange={(e) => setCurrentTrip({ ...currentTrip, meta_description: e.target.value } as any)} 
-                                                placeholder="e.g. High Altitude Adventure in the High Himalayas" 
+                                            <input
+                                                type="text"
+                                                value={(currentTrip as any).meta_description}
+                                                onChange={(e) => setCurrentTrip({ ...currentTrip, meta_description: e.target.value } as any)}
+                                                placeholder="e.g. High Altitude Adventure in the High Himalayas"
                                             />
                                         </div>
                                         <div className="form-item">
@@ -592,10 +592,10 @@ export default function TripManager() {
                                     <h4>Journey Storytelling</h4>
                                     <div className="form-item">
                                         <label>Full Overview</label>
-                                        <textarea 
+                                        <textarea
                                             rows={6}
-                                            value={currentTrip.description} 
-                                            onChange={(e) => setCurrentTrip({ ...currentTrip, description: e.target.value })} 
+                                            value={currentTrip.description}
+                                            onChange={(e) => setCurrentTrip({ ...currentTrip, description: e.target.value })}
                                             placeholder="The main narrative for this trip..."
                                         />
                                     </div>
@@ -610,8 +610,8 @@ export default function TripManager() {
                                         <div className="highlights-builder">
                                             {((currentTrip as any).highlights || []).map((hl: string, idx: number) => (
                                                 <div key={idx} className="highlight-input-row">
-                                                    <input 
-                                                        type="text" 
+                                                    <input
+                                                        type="text"
                                                         value={hl}
                                                         onChange={(e) => {
                                                             const h = [...((currentTrip as any).highlights || [])];
@@ -638,11 +638,11 @@ export default function TripManager() {
                                     </div>
                                     <div className="form-item" style={{ marginTop: '20px' }}>
                                         <label>Secondary Image URL (Visualization)</label>
-                                        <input 
-                                            type="text" 
-                                            value={currentTrip.secondary_image_url} 
-                                            onChange={(e) => setCurrentTrip({ ...currentTrip, secondary_image_url: e.target.value })} 
-                                            placeholder="e.g. /images/bhutan/map-preview.webp" 
+                                        <input
+                                            type="text"
+                                            value={currentTrip.secondary_image_url}
+                                            onChange={(e) => setCurrentTrip({ ...currentTrip, secondary_image_url: e.target.value })}
+                                            placeholder="e.g. /images/bhutan/map-preview.webp"
                                         />
                                     </div>
                                 </div>
@@ -652,19 +652,19 @@ export default function TripManager() {
                                         <h4>Detailed Itinerary</h4>
                                         <button type="button" className="btn-add-day" onClick={handleAddDay}>+ Add Day</button>
                                     </div>
-                                    
+
                                     <div className="itinerary-builder-list">
                                         {itinerary.map((item, index) => (
                                             <div key={index} className="itinerary-day-card">
                                                 <div className="day-card-header">
                                                     <div className="day-drag-handle">
-                                                        <svg width="12" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                                                        <svg width="12" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><circle cx="9" cy="5" r="1" /><circle cx="9" cy="12" r="1" /><circle cx="9" cy="19" r="1" /><circle cx="15" cy="5" r="1" /><circle cx="15" cy="12" r="1" /><circle cx="15" cy="19" r="1" /></svg>
                                                     </div>
                                                     <span className="day-label">Day {item.day_number}</span>
-                                                    <input 
-                                                        type="text" 
+                                                    <input
+                                                        type="text"
                                                         className="day-title-input"
-                                                        value={item.title} 
+                                                        value={item.title}
                                                         onChange={(e) => updateItineraryItem(index, 'title', e.target.value)}
                                                         placeholder="Day Title (e.g. Arrival in Paro)"
                                                     />
@@ -675,9 +675,9 @@ export default function TripManager() {
                                                 <div className="day-card-body">
                                                     <div className="day-main-edit">
                                                         <label>Daily Narrative</label>
-                                                        <textarea 
+                                                        <textarea
                                                             rows={3}
-                                                            value={item.description} 
+                                                            value={item.description}
                                                             onChange={(e) => updateItineraryItem(index, 'description', e.target.value)}
                                                             placeholder="What happens on this day? Describe the journey, hikes, and cultural experiences..."
                                                         />
@@ -687,9 +687,9 @@ export default function TripManager() {
                                                             <div className="meta-icon">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                                                             </div>
-                                                            <input 
-                                                                type="text" 
-                                                                value={item.accommodation || ''} 
+                                                            <input
+                                                                type="text"
+                                                                value={item.accommodation || ''}
                                                                 onChange={(e) => updateItineraryItem(index, 'accommodation', e.target.value)}
                                                                 placeholder="Accommodation"
                                                             />
@@ -698,9 +698,9 @@ export default function TripManager() {
                                                             <div className="meta-icon">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
                                                             </div>
-                                                            <input 
-                                                                type="text" 
-                                                                value={item.meals || ''} 
+                                                            <input
+                                                                type="text"
+                                                                value={item.meals || ''}
                                                                 onChange={(e) => updateItineraryItem(index, 'meals', e.target.value)}
                                                                 placeholder="Meals (e.g. B, L, D)"
                                                             />
@@ -724,9 +724,9 @@ export default function TripManager() {
                                 </label>
                             </div>
                             {currentTrip.slug && (
-                                <button 
-                                    type="button" 
-                                    className="btn-preview" 
+                                <button
+                                    type="button"
+                                    className="btn-preview"
                                     onClick={() => window.open(`/trips/${currentTrip.slug}?preview=true`, '_blank')}
                                     style={{ marginTop: '20px', width: '100%', background: '#f5f5f5', border: '1px solid #ddd', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: '700' }}
                                 >

@@ -68,8 +68,11 @@ export default function Destinations() {
                     <div className="dest-info">
                         <h3>{activeDest.title}</h3>
                         <p>{activeDest.description}</p>
-                        <Link href={`/destinations/${activeDest.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} className="btn btn-primary">
-                            View {activeDest.name} Region
+                        <Link 
+                            href={`/destinations/${activeDest.name === 'Paro' ? 'paro-valley' : activeDest.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} 
+                            className="btn btn-primary"
+                        >
+                            View {activeDest.name === 'Paro' ? 'Paro Valley' : activeDest.name} Region
                         </Link>
                     </div>
                 </div>

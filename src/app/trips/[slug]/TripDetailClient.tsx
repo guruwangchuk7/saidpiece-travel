@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -40,6 +40,8 @@ export default function TripDetailClient({
 
     const [activeTab, setActiveTab] = useState('overview');
     const [openDay, setOpenDay] = useState<number | null>(1);
+    const searchParams = useSearchParams();
+    const isPreview = searchParams.get('preview') === 'true';
 
     const handleBookOnline = () => {
         if (!user) {
@@ -76,6 +78,15 @@ export default function TripDetailClient({
 
     return (
         <main className="trip-detail-page">
+            {isPreview && (
+                <div className="preview-banner-floating">
+                    <button onClick={() => window.close()} className="btn-back-cms">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back to Architect
+                    </button>
+                    <div className="preview-status-pill">Draft Preview Mode</div>
+                </div>
+            )}
             <div className="trip-hero">
                 <Image
                     src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`}
@@ -218,6 +229,59 @@ export default function TripDetailClient({
                     </section>
                 </div>
             </div>
+
+            <style jsx>{`
+                .preview-banner-floating {
+                    position: fixed;
+                    top: 100px;
+                    left: 40px;
+                    z-index: 1000;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .btn-back-cms {
+                    background: #111;
+                    color: white;
+                    border: none;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    cursor: pointer;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    transition: all 0.2s;
+                }
+                .btn-back-cms:hover {
+                    transform: translateX(-5px);
+                    background: #333;
+                }
+                .preview-status-pill {
+                    background: #d4c8b0;
+                    color: #fff;
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    padding: 4px 10px;
+                    border-radius: 4px;
+                    text-align: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+                @media (max-width: 768px) {
+                    .preview-banner-floating {
+                        top: auto;
+                        bottom: 40px;
+                        left: 20px;
+                        right: 20px;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                }
+            `}</style>
         </main>
     );
 }

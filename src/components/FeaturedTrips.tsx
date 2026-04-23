@@ -19,12 +19,12 @@ export default async function FeaturedTrips() {
                     {trips.map((trip: any) => (
                         <div className="trip-card" key={trip.id}>
                             <div className="image-placeholder" style={{ position: 'relative', background: '#f5f5f5' }}>
-                                <Image 
-                                    src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`} 
-                                    alt={trip.title} 
-                                    fill 
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw" 
-                                    style={{ objectFit: 'cover' }} 
+                                <Image
+                                    src={trip.image_url.startsWith('http') ? trip.image_url : `/images/${trip.image_url}`}
+                                    alt={trip.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                                    style={{ objectFit: 'cover' }}
                                 />
                             </div>
                             <div className="trip-card-content">

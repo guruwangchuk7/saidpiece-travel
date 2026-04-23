@@ -5897,4 +5897,167 @@ select.trip-finder-input {
 
 .pt-0 {
   padding-top: 0 !important;
-}
+}
+/* Featured Trips Premium Styles */
+.featured-section {
+    padding: 120px 0;
+    background: #fff;
+}
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+}
+.section-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #d4c8b0;
+    margin-bottom: 15px;
+}
+.serif-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 48px;
+    margin: 0;
+    color: #111;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+@media (max-width: 1024px) {
+    .featured-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+    .featured-grid { grid-template-columns: 1fr; }
+    .serif-title { font-size: 36px; }
+}
+
+.trip-card-premium {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+.card-image-wrapper {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+.card-img {
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trip-card-premium:hover .card-img {
+    transform: scale(1.05);
+}
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.trip-card-premium:hover .card-overlay {
+    opacity: 1;
+}
+.view-label {
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    border: 1px solid white;
+    backdrop-filter: blur(5px);
+}
+.card-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.9);
+    padding: 4px 12px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #111;
+}
+
+.card-content-premium {
+    padding: 25px 0;
+}
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #999;
+    margin-bottom: 12px;
+}
+.dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ccc;
+}
+.card-title-serif {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+    color: #111;
+    height: 58px;
+    overflow: hidden;
+}
+.card-footer-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.price-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    font-weight: 700;
+}
+.price-value {
+    font-size: 18px;
+    font-weight: 900;
+    color: #111;
+}
+
+.no-trips-placeholder {
+    grid-column: span 4;
+    padding: 100px 0;
+    text-align: center;
+    background: #fdfcf9;
+    border: 1px solid #f5f2eb;
+    border-radius: 8px;
+}
+.placeholder-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+.placeholder-content svg {
+    color: #d4c8b0;
+    margin-bottom: 25px;
+}
+.placeholder-content h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+.placeholder-content p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
