@@ -44,7 +44,7 @@ export async function notifyAdminOfNewBooking(tripName: string, travelerName: st
 
   const adminEmails = process.env.ADMIN_NOTIFICATION_EMAIL
     ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
-    : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
+    : ['saidpiece@gmail.com', 'contact@saidpiecetravels.com'];
 
   try {
     await transporter.sendMail({
@@ -72,7 +72,7 @@ export async function sendEnquiryNotificationEmail(first_name: string, email: st
 
   const adminEmails = process.env.ADMIN_NOTIFICATION_EMAIL
     ? process.env.ADMIN_NOTIFICATION_EMAIL.split(',').map(e => e.trim())
-    : ['saidpiece@gmail.com', 'guruwangchuk1234@gmail.com'];
+    : ['saidpiece@gmail.com', 'contact@saidpiecetravels.com'];
 
   try {
     await transporter.sendMail({

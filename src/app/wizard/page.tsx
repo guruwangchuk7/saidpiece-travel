@@ -59,7 +59,6 @@ export default function TripWizard() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!supabase) return;
 
         setStatus('loading');
         setErrorMessage('');
@@ -72,17 +71,23 @@ Duration: ${duration} days
 Interests: ${selectedTags.join(', ')}`;
 
         try {
-            const { error } = await supabase
-                .from('enquiries')
-                .insert([{
+            const response = await fetch('/api/enquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     first_name: firstName,
                     email: email,
                     message: message,
-                    trip_name_fallback: `Wizard: ${selectedStyle} in ${selectedMonth}`,
-                    status: 'new'
-                }]);
+                    trip_name_fallback: `Wizard: ${selectedStyle} in ${selectedMonth}`
+                })
+            });
 
-            if (error) throw error;
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to submit journey request.');
+            }
+
             setStatus('success');
         } catch (err: any) {
             console.error('Wizard submission error:', err);
