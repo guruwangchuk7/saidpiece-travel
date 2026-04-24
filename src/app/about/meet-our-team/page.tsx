@@ -100,10 +100,10 @@ export default function MeetOurTeam() {
 
                 <section className="family-ownership-centered text-center">
                     <div className="column-text">
-                        <span className="date-marker">WEBSUITE DEVELOPER</span>
+                        <span className="date-marker">WEB ENGINEER</span>
                         <h2 className="serif-h2">Guru Wangchuk</h2>
                         <p>
-                            The Saidpiece website & Saidpiece travel was developed by Guru Wangchuk, a full stack engineer based in Bhutan with hands-on experience across modern web platforms, responsive UI systems, performance optimization, blockchain-backed products, and secure application workflows.
+                            The Saidpiece website & Saidpiece Travel was developed by Guru Wangchuk, a full stack engineer based in Bhutan with hands-on experience across modern web platforms, responsive UI systems, performance optimization, blockchain-backed products, and secure application workflows.
                         </p>
                         <Link href="https://guruwangchuk.me/" target="_blank" rel="noreferrer" className="btn btn-primary large-btn">
                             Visit Developer Portfolio
