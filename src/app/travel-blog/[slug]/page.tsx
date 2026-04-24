@@ -5,6 +5,9 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
+import { useUI } from '@/contexts/UIContext';
+import HeaderThemeHandler from '@/components/HeaderThemeHandler';
+
 
 interface BlogPost {
     id: string;
@@ -21,6 +24,8 @@ export default function DynamicBlogPost() {
     const [post, setPost] = useState<BlogPost | null>(null);
     const [loading, setLoading] = useState(true);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const { setHeaderTheme } = useUI();
+
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -51,25 +56,28 @@ export default function DynamicBlogPost() {
 
     if (loading) {
         return (
-            <main className="blog-post-page page-with-header bg-white">
-                <div className="blog-article skeleton-load">
-                    <header className="blog-header container">
-                        <div className="skeleton category-skeleton"></div>
-                        <div className="skeleton title-skeleton"></div>
-                        <div className="skeleton title-skeleton short"></div>
-                        <div className="skeleton meta-skeleton"></div>
-                    </header>
-                    <div className="skeleton image-skeleton"></div>
-                    <div className="blog-body container">
-                        <div className="skeleton text-line"></div>
-                        <div className="skeleton text-line"></div>
-                        <div className="skeleton text-line"></div>
-                        <div className="skeleton text-line short"></div>
-                        <div style={{ height: '40px' }}></div>
-                        <div className="skeleton text-line"></div>
-                        <div className="skeleton text-line"></div>
-                        <div className="skeleton text-line short"></div>
+            <main className="our-story-page pt-0 bg-white">
+                <HeaderThemeHandler theme="auto" />
+                <section className="story-hero-new skeleton-load">
+                    <div className="hero-bg-wrapper">
+                        <div className="skeleton image-skeleton"></div>
+                        <div className="hero-overlay-subtle"></div>
                     </div>
+                    <div className="container hero-content-center">
+                        <div className="skeleton category-skeleton" style={{ margin: '0 auto 20px' }}></div>
+                        <div className="skeleton title-skeleton" style={{ margin: '0 auto' }}></div>
+                        <div className="skeleton meta-skeleton" style={{ margin: '20px auto 0' }}></div>
+                    </div>
+                </section>
+                <div className="blog-body container" style={{ paddingTop: '80px' }}>
+                    <div className="skeleton text-line"></div>
+                    <div className="skeleton text-line"></div>
+                    <div className="skeleton text-line"></div>
+                    <div className="skeleton text-line short"></div>
+                    <div style={{ height: '40px' }}></div>
+                    <div className="skeleton text-line"></div>
+                    <div className="skeleton text-line"></div>
+                    <div className="skeleton text-line short"></div>
                 </div>
                 <style jsx>{`
                     .skeleton {
@@ -82,29 +90,12 @@ export default function DynamicBlogPost() {
                         0% { background-position: 200% 0; }
                         100% { background-position: -200% 0; }
                     }
-                    .category-skeleton { height: 12px; width: 80px; margin: 0 auto 25px; }
-                    .title-skeleton { height: 45px; width: 80%; margin: 0 auto 15px; }
-                    .title-skeleton.short { width: 50%; margin-bottom: 30px; }
-                    .meta-skeleton { height: 14px; width: 200px; margin: 0 auto; }
-                    .image-skeleton { height: 70vh; width: 100%; margin-bottom: 80px; }
+                    .category-skeleton { height: 14px; width: 100px; }
+                    .title-skeleton { height: 60px; width: 80%; }
+                    .meta-skeleton { height: 16px; width: 250px; }
+                    .image-skeleton { height: 100%; width: 100%; }
                     .text-line { height: 18px; width: 100%; margin-bottom: 20px; }
                     .text-line.short { width: 60%; }
-                `}</style>
-                <style jsx>{`
-                    .blog-article {
-                        padding-top: 160px;
-                        padding-bottom: 100px;
-                    }
-                    .blog-header {
-                        max-width: 900px;
-                        margin: 0 auto 60px;
-                        text-align: center;
-                    }
-                    .blog-body {
-                        max-width: 740px;
-                        margin: 0 auto;
-                        padding: 0 20px;
-                    }
                 `}</style>
             </main>
         );
@@ -113,7 +104,9 @@ export default function DynamicBlogPost() {
     if (!post) return <div style={{ padding: '100px', textAlign: 'center' }}>Story not found. <Link href="/travel-blog">Return to Blog</Link></div>;
 
     return (
-        <main className="blog-post-page page-with-header bg-white">
+        <main className="our-story-page pt-0 bg-white">
+            <HeaderThemeHandler theme="auto" />
+
             
             {/* Scroll Progress Bar */}
             <div className="scroll-progress-container" style={{
@@ -133,26 +126,32 @@ export default function DynamicBlogPost() {
                 }} />
             </div>
 
-            <article className="blog-article">
-                <header className="blog-header container">
-                    <div className="category-tag">{post.category || 'Field Notes'}</div>
-                    <h1 className="blog-title serif-title">{post.title}</h1>
-                    <div className="blog-meta">
-                        <span className="author">By {post.author_name || 'Saidpiece Team'}</span>
-                        <span className="separator">•</span>
-                        <span className="date">{new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                    </div>
-                </header>
-
-                <div className="featured-image-wrapper">
+            {/* Hero Section */}
+            <section className="story-hero-new">
+                <div className="hero-bg-wrapper">
                     <Image
                         src={(post.featured_image?.startsWith('http') ? post.featured_image : `/images/bhutan/main2.webp`)}
                         alt={post.title}
                         fill
-                        className="featured-image"
+                        className="object-cover"
+                        style={{ objectFit: 'cover' }}
                         priority
                     />
+                    <div className="hero-overlay-subtle"></div>
                 </div>
+                <div className="container hero-content-center">
+                    <div className="category-tag !text-white !opacity-80 !mb-4">{post.category || 'Field Notes'}</div>
+                    <h1 className="hero-title">{post.title}</h1>
+                    <div className="blog-meta !text-white !opacity-80 mt-6">
+                        <span className="author">By {post.author_name || 'Saidpiece Team'}</span>
+                        <span className="separator">•</span>
+                        <span className="date">{new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                </div>
+            </section>
+
+            <article className="blog-article" style={{ paddingTop: '80px' }}>
+
 
                 <div className="blog-body container">
                     <div className="blog-content-inner">
@@ -217,9 +216,10 @@ export default function DynamicBlogPost() {
 
             <style jsx>{`
                 .blog-article {
-                    padding-top: 160px;
+                    padding-top: 80px;
                     padding-bottom: 100px;
                 }
+
                 .blog-header {
                     max-width: 900px;
                     margin: 0 auto 60px;
