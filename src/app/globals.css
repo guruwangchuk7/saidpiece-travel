@@ -6094,8 +6094,54 @@ select.trip-finder-input {
 
 .blog-card-image {
     position: relative;
-    height: 240px;
+    height: 250px;
     width: 100%;
+    overflow: hidden;
+}
+
+/* Blog Post Grid & Cards */
+.blog-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 80px;
+}
+
+.blog-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.blog-card {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.blog-card-link:hover .blog-card {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.blog-card-image {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.blog-card-image img {
+    transition: transform 0.5s ease;
+}
+
+.blog-card-link:hover .blog-card-image img {
+    transform: scale(1.08);
 }
 
 .blog-card-content {
@@ -6105,23 +6151,29 @@ select.trip-finder-input {
 
 .blog-card-category {
     display: inline-block;
-    background: #e9e5d9;
-    color: #4a4a4a;
+    background: #f3f1eb;
+    color: #1a3c5e;
     padding: 6px 14px;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
     margin-bottom: 20px;
     border-radius: 2px;
+    text-transform: uppercase;
 }
 
 .blog-card-title {
     font-family: var(--font-playfair), serif;
-    font-size: 22px;
-    line-height: 1.35;
+    font-size: 24px;
+    line-height: 1.3;
     margin-bottom: 20px;
-    font-weight: 600;
+    font-weight: 700;
     color: #1a1a1a;
+    transition: color 0.2s ease;
+}
+
+.blog-card-link:hover .blog-card-title {
+    color: var(--color-brand);
 }
 
 .blog-card-meta {
@@ -6134,13 +6186,14 @@ select.trip-finder-input {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #4a4a4a;
+    color: #666;
     font-size: 14px;
     font-weight: 500;
 }
 
 .meta-item svg {
-    opacity: 0.8;
+    opacity: 0.7;
+    color: var(--color-brand);
 }
 
 .blog-card-footer {
@@ -6149,13 +6202,16 @@ select.trip-finder-input {
     border-top: 1px solid #f0f0f0;
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     color: #1a3c5e;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    background: #fff;
+    position: relative;
 }
 
 .blog-card-link:hover .blog-card-footer {
-    background: #f9f9f9;
+    background: var(--color-brand);
+    color: #fff;
 }
 
 .no-posts {
@@ -6163,6 +6219,12 @@ select.trip-finder-input {
     padding: 100px 0;
     color: #999;
     font-style: italic;
+}
+
+@media (max-width: 1024px) {
+    .blog-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
