@@ -6061,3 +6061,113 @@ select.trip-finder-input {
     line-height: 1.6;
     margin-bottom: 25px;
 }
+
+/* Blog Card Grid System */
+.blog-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 40px;
+    margin-bottom: 80px;
+}
+
+.blog-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.blog-card-link:hover {
+    transform: translateY(-8px);
+}
+
+.blog-card {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.06);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f0f0f0;
+}
+
+.blog-card-image {
+    position: relative;
+    height: 240px;
+    width: 100%;
+}
+
+.blog-card-content {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+.blog-card-category {
+    display: inline-block;
+    background: #e9e5d9;
+    color: #4a4a4a;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+}
+
+.blog-card-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    line-height: 1.35;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.blog-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4a4a4a;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.meta-item svg {
+    opacity: 0.8;
+}
+
+.blog-card-footer {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #f0f0f0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #1a3c5e;
+    transition: background 0.2s;
+}
+
+.blog-card-link:hover .blog-card-footer {
+    background: #f9f9f9;
+}
+
+.no-posts {
+    text-align: center;
+    padding: 100px 0;
+    color: #999;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .blog-card-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}

@@ -90,7 +90,7 @@ export const getCachedBlogPosts = unstable_cache(
         }
     },
     ['blog-posts'],
-    { revalidate: 60, tags: ['blog'] }
+    { revalidate: 5, tags: ['blog'] }
 );
 
 /**
@@ -109,7 +109,7 @@ export const getCachedBlogPostBySlug = (slug: string) => unstable_cache(
         return data;
     },
     [`blog-${slug}`],
-    { revalidate: 60, tags: ['blog', `blog-${slug}`] }
+    { revalidate: 5, tags: ['blog', `blog-${slug}`] }
 )();
 
 /**

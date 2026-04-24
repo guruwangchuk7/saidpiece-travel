@@ -71,17 +71,7 @@ export default function OurStory() {
                         />
                     </div>
                     <div className="text-wrapper relative">
-                        {/* Circular Stamp */}
-                        <div className="est-badge">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                                <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" />
-                                <text>
-                                    <textPath xlinkHref="#circlePath" className="badge-text" startOffset="0%">
-                                        ESTABLISHED 1978 • {siteName.toUpperCase()} • ESTABLISHED 1978 • {siteName.toUpperCase()} • 
-                                    </textPath>
-                                </text>
-                            </svg>
-                        </div>
+                        {/* Circular Stamp Removed */}
                         <h2 className="split-title">The Story of {siteName}</h2>
                         <div className="story-text-content">
                             <p className="mb-6">

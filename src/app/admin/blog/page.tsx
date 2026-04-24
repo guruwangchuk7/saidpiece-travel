@@ -17,6 +17,11 @@ interface BlogPost {
     published_at: string | null;
     created_at: string;
     author_id: string;
+    // UI extended fields
+    sections?: any[];
+    subtitle?: string;
+    category?: string;
+    location?: string;
 }
 
 export default function BlogManager() {
@@ -32,9 +37,20 @@ export default function BlogManager() {
         excerpt: '',
         content: '',
         main_image: '',
-        status: 'published'
+        status: 'published',
+        sections: [],
+        subtitle: '',
+        category: '',
+        location: ''
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
+    const [categories, setCategories] = useState([
+        "Wildlife & Nature", 
+        "Cultural Heritage", 
+        "Adventure Travel", 
+        "Sustainable Tourism"
+    ]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,20 +92,22 @@ export default function BlogManager() {
             .replace(/\s+/g, '-')
             .replace(/[^\w-]+/g, '')
             .replace(/--+/g, '-');
-            
+
         const postData = {
             title: currentPost.title,
             slug: slug,
             excerpt: currentPost.excerpt || '',
             content: JSON.stringify({
-                subtitle: (currentPost as any).subtitle || '',
-                sections: (currentPost as any).sections || []
+                subtitle: currentPost.subtitle || '',
+                sections: currentPost.sections || []
             }),
             main_image: currentPost.main_image || '',
-            status: currentPost.status || 'draft',
+            status: 'published',
+            category: currentPost.category || 'Wildlife & Natural History',
+            location: currentPost.location || 'Bhutan',
             author_id: currentPost.author_id || user?.id,
             updated_at: new Date().toISOString(),
-            published_at: currentPost.status === 'published' ? (currentPost.published_at || new Date().toISOString()) : null
+            published_at: currentPost.published_at || new Date().toISOString()
         };
 
         if (!supabase) {
@@ -104,14 +122,18 @@ export default function BlogManager() {
                 result = await supabase
                     .from('blog_posts')
                     .update(postData)
-                    .eq('id', currentPost.id);
+                    .eq('id', currentPost.id)
+                    .select();
             } else {
                 result = await supabase
                     .from('blog_posts')
-                    .insert([postData]);
+                    .insert([postData])
+                    .select();
             }
 
             if (result.error) throw result.error;
+
+            console.log('Post saved successfully:', result.data);
 
             setIsEditing(false);
             await fetchPosts();
@@ -140,7 +162,7 @@ export default function BlogManager() {
     const handleImageUpload = async (file: File) => {
         if (!supabase || !file) return;
         setIsUploading(true);
-        
+
         try {
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
@@ -236,18 +258,19 @@ export default function BlogManager() {
                                 <div className="card-footer">
                                     <span className="date">{new Date(post.created_at).toLocaleDateString()}</span>
                                     <div className="card-actions">
-                                        <button className="btn-edit" onClick={() => { 
+                                        <button className="btn-edit" onClick={() => {
                                             let postToEdit = { ...post };
                                             try {
                                                 const parsed = JSON.parse(post.content);
-                                                (postToEdit as any).subtitle = parsed.subtitle || '';
-                                                (postToEdit as any).sections = parsed.sections || [];
+                                                postToEdit.subtitle = parsed.subtitle || '';
+                                                postToEdit.sections = parsed.sections || [];
                                             } catch (e) {
                                                 // Legacy content fallback
-                                                (postToEdit as any).sections = [{ type: 'text', value: post.content }];
+                                                postToEdit.sections = [{ type: 'text', value: post.content }];
+                                                postToEdit.subtitle = '';
                                             }
-                                            setCurrentPost(postToEdit); 
-                                            setIsEditing(true); 
+                                            setCurrentPost(postToEdit);
+                                            setIsEditing(true);
                                         }}>Edit Story</button>
                                         <button className="btn-delete" onClick={() => handleDelete(post.id)}>
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -262,7 +285,7 @@ export default function BlogManager() {
                 <div className="editor-overlay">
                     <form className="blog-editor-form" onSubmit={handleSave}>
                         <div className="editor-sidebar">
-                            <div 
+                            <div
                                 className={`image-dropzone ${isUploading ? 'uploading' : ''}`}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={onDrop}
@@ -282,21 +305,28 @@ export default function BlogManager() {
                                         <span>Click to browse</span>
                                     </div>
                                 )}
-                                <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    hidden 
-                                    accept="image/*" 
-                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])} 
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    hidden
+                                    accept="image/*"
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
                                 />
                             </div>
-                            
-                            <div className="editor-aside-group">
-                                <label>Publication Status</label>
-                                <select value={currentPost.status || 'draft'} onChange={(e) => setCurrentPost({ ...currentPost, status: e.target.value as any })}>
-                                    <option value="draft">Draft - Private</option>
-                                    <option value="published">Published - Live</option>
-                                </select>
+
+                            <div className="status-badge-auto" style={{
+                                padding: '12px',
+                                backgroundColor: '#ecfdf5',
+                                color: '#059669',
+                                borderRadius: '8px',
+                                fontSize: '11px',
+                                fontWeight: '700',
+                                textAlign: 'center',
+                                border: '1px solid #10b981',
+                                letterSpacing: '1px'
+                            }}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginRight: '8px', verticalAlign: 'middle' }}><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                LIVE & PUBLISHED
                             </div>
                         </div>
 
@@ -315,32 +345,93 @@ export default function BlogManager() {
                                 <div className="section">
                                     <div className="form-item">
                                         <label>Story Title</label>
+                                        <input
+                                            type="text"
+                                            className="title-input"
+                                            value={currentPost.title}
+                                            onChange={(e) => setCurrentPost({ ...currentPost, title: e.target.value })}
+                                            placeholder="The Sacred Rhythm of Paro..."
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-item" style={{ marginTop: '20px' }}>
+                                        <label>Category</label>
+                                        <div className="category-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                                            {categories.map(cat => (
+                                                <span 
+                                                    key={cat}
+                                                    onClick={() => setCurrentPost({ ...currentPost, category: cat })}
+                                                    style={{
+                                                        padding: '6px 12px',
+                                                        fontSize: '12px',
+                                                        borderRadius: '20px',
+                                                        cursor: 'pointer',
+                                                        backgroundColor: currentPost.category === cat ? 'var(--color-brand)' : '#f0f0f0',
+                                                        color: currentPost.category === cat ? 'white' : '#666',
+                                                        border: '1px solid',
+                                                        borderColor: currentPost.category === cat ? 'var(--color-brand)' : '#ddd',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    {cat}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <div className="add-category-box" style={{ display: 'flex', gap: '8px' }}>
+                                            <input 
+                                                type="text" 
+                                                value={newCategory}
+                                                onChange={(e) => setNewCategory(e.target.value)}
+                                                placeholder="Add custom category..."
+                                                style={{ flex: 1, padding: '8px', fontSize: '13px' }}
+                                            />
+                                            <button 
+                                                onClick={() => {
+                                                    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
+                                                        const cat = newCategory.trim();
+                                                        setCategories([...categories, cat]);
+                                                        setCurrentPost({ ...currentPost, category: cat });
+                                                        setNewCategory('');
+                                                    }
+                                                }}
+                                                style={{
+                                                    padding: '0 15px',
+                                                    backgroundColor: '#eee',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="form-item" style={{ marginTop: '20px' }}>
+                                        <label>Location</label>
                                         <input 
                                             type="text" 
-                                            className="title-input"
-                                            value={currentPost.title} 
-                                            onChange={(e) => setCurrentPost({ ...currentPost, title: e.target.value })} 
-                                            placeholder="The Sacred Rhythm of Paro..." 
-                                            required 
+                                            value={currentPost.location || ''} 
+                                            onChange={(e) => setCurrentPost({ ...currentPost, location: e.target.value })}
+                                            placeholder="e.g. Bhutan"
                                         />
                                     </div>
                                     <div className="form-item" style={{ marginTop: '20px' }}>
                                         <label>Story Subtitle</label>
-                                        <input 
-                                            type="text" 
-                                            value={(currentPost as any).subtitle || ''} 
-                                            onChange={(e) => setCurrentPost({ ...currentPost, subtitle: e.target.value } as any)} 
-                                            placeholder="Exploring the hidden sanctuaries..." 
+                                        <input
+                                            type="text"
+                                            value={(currentPost as any).subtitle || ''}
+                                            onChange={(e) => setCurrentPost({ ...currentPost, subtitle: e.target.value } as any)}
+                                            placeholder="Exploring the hidden sanctuaries..."
                                         />
                                     </div>
                                     <div className="form-item" style={{ marginTop: '20px' }}>
                                         <label>Slug (URL Identifier)</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             className="slug-input"
-                                            value={currentPost.slug} 
-                                            onChange={(e) => setCurrentPost({ ...currentPost, slug: e.target.value })} 
-                                            placeholder="the-sacred-rhythm-of-paro" 
+                                            value={currentPost.slug}
+                                            onChange={(e) => setCurrentPost({ ...currentPost, slug: e.target.value })}
+                                            placeholder="the-sacred-rhythm-of-paro"
                                         />
                                     </div>
                                 </div>
@@ -349,10 +440,10 @@ export default function BlogManager() {
                                     <h4>Briefing</h4>
                                     <div className="form-item">
                                         <label>Excerpt / Summary</label>
-                                        <textarea 
-                                            rows={3} 
-                                            value={currentPost.excerpt} 
-                                            onChange={(e) => setCurrentPost({ ...currentPost, excerpt: e.target.value })} 
+                                        <textarea
+                                            rows={3}
+                                            value={currentPost.excerpt}
+                                            onChange={(e) => setCurrentPost({ ...currentPost, excerpt: e.target.value })}
                                             placeholder="A short hook for the blog grid..."
                                         />
                                     </div>
@@ -388,9 +479,9 @@ export default function BlogManager() {
                                                         setCurrentPost({ ...currentPost, sections } as any);
                                                     }}>×</button>
                                                 </div>
-                                                
+
                                                 {sec.type === 'text' && (
-                                                    <textarea 
+                                                    <textarea
                                                         rows={6}
                                                         value={sec.value}
                                                         onChange={(e) => {
@@ -403,7 +494,7 @@ export default function BlogManager() {
                                                 )}
 
                                                 {sec.type === 'subtitle' && (
-                                                    <input 
+                                                    <input
                                                         type="text"
                                                         value={sec.value}
                                                         onChange={(e) => {
@@ -417,7 +508,7 @@ export default function BlogManager() {
 
                                                 {sec.type === 'image' && (
                                                     <div className="block-image-inputs">
-                                                        <input 
+                                                        <input
                                                             type="text"
                                                             value={sec.url}
                                                             onChange={(e) => {
@@ -427,7 +518,7 @@ export default function BlogManager() {
                                                             }}
                                                             placeholder="Image URL (e.g., bhutan/main3.webp)"
                                                         />
-                                                        <input 
+                                                        <input
                                                             type="text"
                                                             value={sec.caption}
                                                             onChange={(e) => {
