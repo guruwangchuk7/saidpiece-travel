@@ -60,6 +60,11 @@ const nextConfig: NextConfig = {
         destination: "/trips/nature-retreat",
         permanent: true,
       },
+      {
+        source: "/trip-detail/:slug",
+        destination: "/trips/:slug",
+        permanent: true,
+      },
     ];
   },
   async headers() {

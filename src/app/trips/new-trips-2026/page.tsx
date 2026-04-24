@@ -14,7 +14,7 @@ export default function NewTrips2026Page() {
             level: 'Level 2+',
             days: '15 Days',
             price: '11,295',
-            link: '/trip-detail/treasures-of-himalayas'
+            link: '/trips/treasures-of-himalayas'
         },
         {
             id: 'bhutan-walking-tour',
@@ -25,7 +25,7 @@ export default function NewTrips2026Page() {
             level: 'Level 3',
             days: '12 Days',
             price: '7,495',
-            link: '/trip-detail/bhutan-walking-tour'
+            link: '/trips/bhutan-walking-tour'
         },
         {
             id: 'cultural-crossroads',
@@ -36,7 +36,7 @@ export default function NewTrips2026Page() {
             level: 'Level 2',
             days: '10 Days',
             price: '5,995',
-            link: '/trip-detail/cultural-crossroads'
+            link: '/trips/cultural-crossroads'
         },
         {
             id: 'bhutan-peaks-valleys',
@@ -47,7 +47,7 @@ export default function NewTrips2026Page() {
             level: 'Level 4',
             days: '14 Days',
             price: '8,295',
-            link: '/trip-detail/bhutan-peaks-valleys'
+            link: '/trips/bhutan-peaks-valleys'
         }
     ];
 

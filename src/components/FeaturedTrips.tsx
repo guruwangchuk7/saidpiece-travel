@@ -34,7 +34,7 @@ export default async function FeaturedTrips() {
                                 </div>
                                 <div className="trip-card-footer">
                                     <span className="trip-price">From ${trip.starting_price}</span>
-                                    <Link href={`/trip-detail/${trip.slug}`} className="link-btn-small">View Trip</Link>
+                                    <Link href={`/trips/${trip.slug}`} className="link-btn-small">View Trip</Link>
                                 </div>
                             </div>
                         </div>

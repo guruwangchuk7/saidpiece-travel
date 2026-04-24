@@ -230,7 +230,7 @@ export default function DynamicBlogPost() {
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 3px;
-                    color: var(--color-brand);
+                    color: #fff;
                     margin-bottom: 25px;
                     opacity: 0.8;
                 }
@@ -242,7 +242,7 @@ export default function DynamicBlogPost() {
                 }
                 .blog-meta {
                     font-size: 14px;
-                    color: #666;
+                    color: #fff;
                     letter-spacing: 0.5px;
                 }
                 .blog-meta .separator {

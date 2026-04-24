@@ -202,7 +202,7 @@ export default function ResponsibleTravel() {
                                         <span>From</span>
                                         <div className="cons-price-val">${trip.starting_price?.toLocaleString()}</div>
                                     </div>
-                                    <Link href={`/trip-detail/${trip.slug}`} className="cons-view-link">
+                                    <Link href={`/trips/${trip.slug}`} className="cons-view-link">
                                         View Trip
                                     </Link>
                                 </div>
